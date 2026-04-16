@@ -560,7 +560,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.mobile || !formData.email || !formData.dateOfBirth || !formData.program) {
+    if (!formData.name || !formData.mobile || !formData.email || !formData.dateOfBirth || !formData.institution || !formData.department || !formData.type) {
       showMessage('Please fill in all required fields', 'error');
       return;
     }
@@ -1629,16 +1629,18 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       const appNo = scholar.application_no || scholar.applicationNo || '';
       const mobile = scholar.mobile_number || scholar.mobile || '';
       const email = scholar.email || scholar.email_id || '';
-      const program = scholar.program || '';
+      const institution = scholar.institution || '';
       const department = scholar.department || '';
+      const type = scholar.type || '';
       const faculty = scholar.institution || scholar.faculty || '';
       
       const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         appNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
         email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        program.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        institution.toLowerCase().includes(searchTerm.toLowerCase()) ||
         department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        type.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesFaculty = selectedFaculty === '' || faculty === selectedFaculty;
@@ -1871,7 +1873,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                     <td>{scholar.application_no || scholar.applicationNo}</td>
                     <td>{scholar.institution || 'N/A'}</td>
                     <td>{scholar.department || 'N/A'}</td>
-                    <td>{extractProgramType(scholar.program) || scholar.programType || 'N/A'}</td>
+                    <td>{scholar.type || 'N/A'}</td>
                     <td>{scholar.mobile_number || scholar.mobile || '+91 9876543210'}</td>
                     <td>{scholar.email || scholar.email_id}</td>
                     <td>{scholar.gender || 'Male'}</td>

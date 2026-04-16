@@ -681,7 +681,9 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
       'Mobile': scholar.mobile,
       'Certificates': scholar.certificates,
       'Faculty': scholar.faculty,
-      'Program': scholar.program,
+      'Institution': scholar.institution,
+      'Department': scholar.department,
+      'Type': scholar.type,
       'UG Qualification': scholar.ugQualification,
       'UG Institute': scholar.ugInstitute,
       'UG Degree': scholar.ugDegree,
@@ -753,7 +755,9 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
       'Mobile': scholar.mobile,
       'Certificates': scholar.certificates,
       'Faculty': scholar.faculty,
-      'Program': scholar.program,
+      'Institution': scholar.institution,
+      'Department': scholar.department,
+      'Type': scholar.type,
       'UG Qualification': scholar.ugQualification,
       'UG Institute': scholar.ugInstitute,
       'UG Degree': scholar.ugDegree,
@@ -816,7 +820,7 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.mobile || !formData.email || !formData.dateOfBirth || !formData.program) {
+    if (!formData.name || !formData.mobile || !formData.email || !formData.dateOfBirth || !formData.institution || !formData.department || !formData.type) {
       showMessage('Please fill in all required fields', 'error');
       return;
     }
@@ -2702,7 +2706,9 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
         scholar.applicationNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (scholar.mobile && scholar.mobile.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (scholar.email && scholar.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (scholar.program && scholar.program.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (scholar.institution && scholar.institution.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (scholar.department && scholar.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (scholar.type && scholar.type.toLowerCase().includes(searchTerm.toLowerCase())) ||
         scholar.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
         scholar.faculty.toLowerCase().includes(searchTerm.toLowerCase());
 

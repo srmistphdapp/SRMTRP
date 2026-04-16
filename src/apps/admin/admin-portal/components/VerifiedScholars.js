@@ -610,7 +610,7 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.mobile || !formData.email || !formData.dateOfBirth || !formData.program) {
+    if (!formData.name || !formData.mobile || !formData.email || !formData.dateOfBirth || !formData.institution || !formData.department || !formData.type) {
       showMessage('Please fill in all required fields', 'error');
       return;
     }
@@ -1573,16 +1573,18 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
       const appNo = scholar.application_no || scholar.applicationNo || '';
       const mobile = scholar.mobile_number || scholar.mobile || '';
       const email = scholar.email || scholar.email_id || '';
-      const program = scholar.program || '';
+      const institution = scholar.institution || '';
       const department = scholar.department || '';
+      const type = scholar.type || '';
       const faculty = scholar.institution || scholar.faculty || '';
 
       const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         appNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
         email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        program.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        institution.toLowerCase().includes(searchTerm.toLowerCase()) ||
         department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        type.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesFaculty = selectedFaculty === '' || faculty === selectedFaculty;

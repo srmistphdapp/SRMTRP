@@ -109,9 +109,9 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
     // Apply active filters
     if (activeFilters.type !== 'All Types') {
       scholars = scholars.filter(s => {
-        const programUpper = (s.program || '').toUpperCase();
-        if (activeFilters.type === 'Full Time') return programUpper.includes('FT');
-        if (activeFilters.type === 'Part Time') return programUpper.includes('PT');
+        const scholarType = (s.type || '').toLowerCase();
+        if (activeFilters.type === 'Full Time') return scholarType.includes('full time') || scholarType === 'ft';
+        if (activeFilters.type === 'Part Time') return scholarType.includes('part time') || scholarType === 'pt';
         return true;
       });
     }
@@ -129,8 +129,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
 
     if (activeFilters.department !== 'All Departments') {
       scholars = scholars.filter(s => {
-        const deptFromProgram = (s.program || '').split('(')[0].trim();
-        return deptFromProgram === activeFilters.department;
+        return (s.department || '') === activeFilters.department;
       });
     }
 
@@ -195,7 +194,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
   const getUniqueDepartments = () => {
     const depts = new Set(['All Departments']);
     adminScholarsData.forEach(s => {
-      const dept = (s.program || '').split('(')[0].trim();
+      const dept = (s.department || '').trim();
       if (dept) depts.add(dept);
     });
     return Array.from(depts).sort();
@@ -682,7 +681,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                     <td>{scholar.application_no}</td>
                     <td>{scholar.institution || '-'}</td>
                     <td>{scholar.department || '-'}</td>
-                    <td>{scholar.program_type || extractProgramType(scholar.program) || '-'}</td>
+                    <td>{scholar.program_type || scholar.type || '-'}</td>
                     <td>{scholar.mobile_number}</td>
                     <td>{scholar.email}</td>
                     <td>{scholar.gender}</td>

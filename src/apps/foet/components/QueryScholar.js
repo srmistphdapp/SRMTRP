@@ -98,7 +98,9 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
         (s.registered_name || '').toLowerCase().includes(searchLower) ||
         (s.application_no || '').toLowerCase().includes(searchLower) ||
         (s.faculty || '').toLowerCase().includes(searchLower) ||
-        (s.program || '').toLowerCase().includes(searchLower)
+        (s.institution || '').toLowerCase().includes(searchLower) ||
+        (s.department || '').toLowerCase().includes(searchLower) ||
+        (s.type || '').toLowerCase().includes(searchLower)
       );
     }
 
@@ -388,13 +390,14 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     const forwardingData = scholarsToForward.map(scholar => ({
       id: scholar.id,
       name: scholar.registered_name,
-      faculty: scholar.faculty,
-      program: scholar.program
+      institution: scholar.institution,
+      department: scholar.department,
+      type: scholar.type
     }));
 
     // Show confirmation
     const scholarList = forwardingData
-      .map(d => `${d.name} (${d.program})`)
+      .map(d => `${d.name} (${d.department || d.institution || ''})`)
       .join('\n');
 
     setConfirmMessage(
@@ -411,7 +414,9 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     const forwardingData = [{
       id: scholar.id,
       name: scholar.registered_name,
-      program: scholar.program
+      institution: scholar.institution,
+      department: scholar.department,
+      type: scholar.type
     }];
 
     setConfirmAgreed(false);
@@ -426,12 +431,12 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     try {
       console.log('🔄 Starting forward process for resolved query scholars:', forwardingData);
 
-      // Update each scholar individually based on their program, faculty, and department
+      // Update each scholar individually based on their institution and department
       const updatePromises = forwardingData.map(async (data) => {
-        // Get the scholar's full data to access their program, faculty, and department
+        // Get the scholar's institution and department columns directly
         const { data: scholarData, error: fetchError } = await supabase
           .from('scholar_applications')
-          .select('program, faculty, course, department')
+          .select('institution, department, type')
           .eq('id', data.id)
           .single();
 
@@ -441,59 +446,52 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
         }
 
         console.log(`🔍 DEBUG - Scholar ${data.id} data:`, {
-          program: scholarData.program,
-          faculty: scholarData.faculty,
+          institution: scholarData.institution,
           department: scholarData.department,
-          course: scholarData.course,
+          type: scholarData.type,
           assignedFaculty: assignedFaculty
         });
 
-        // Use the enhanced getDepartmentFromProgram function with faculty and department context
+        // Use department + institution to derive the department code
         let departmentCode = null;
 
         // Import the function from departmentMapping utils
         const { getDepartmentFromProgram } = await import('../utils/departmentMapping');
 
-        // Try to get department code using the enhanced mapping logic
+        // Derive department code from department name + institution (no program needed)
         departmentCode = getDepartmentFromProgram(
-          scholarData.program,
-          scholarData.faculty,
-          scholarData.department
+          scholarData.department,
+          scholarData.institution
         );
-
-        // If still no match, try with course field
-        if (!departmentCode && scholarData.course) {
-          departmentCode = getDepartmentFromProgram(
-            scholarData.course,
-            scholarData.faculty,
-            scholarData.department
-          );
-        }
 
         // Construct the resolved_to_* value
         let resolvedDeptValue = null;
         if (departmentCode) {
           resolvedDeptValue = `resolved_to_${departmentCode}`;
-          console.log(`✅ Found department code using enhanced mapping: ${departmentCode} → ${resolvedDeptValue}`);
+          console.log(`✅ Found department code: ${departmentCode} → ${resolvedDeptValue}`);
         }
 
-        // Fallback logic if enhanced mapping didn't work
+        // Fallback logic if mapping didn't work
         if (!resolvedDeptValue) {
-          console.log(`⚠️ Enhanced mapping failed, using fallback logic for scholar ${data.id}`);
+          console.log(`⚠️ Mapping failed, using institution fallback for scholar ${data.id}`);
 
-          // Faculty-based fallback for all faculties
-          const facultyToResolvedDept = {
-            'Faculty of Engineering & Technology': 'resolved_to_CSE',
-            'Faculty of Management': 'resolved_to_MBA',
-            'Faculty of Medical & Health Science': 'resolved_to_BMS',
-            'Faculty of Medical and Health Sciences': 'resolved_to_BMS',
-            'Faculty of Science & Humanities': 'resolved_to_CS'
-          };
-          resolvedDeptValue = facultyToResolvedDept[scholarData.faculty] || 'resolved_to_CSE';
-          console.log(`⚠️ Using faculty fallback: ${scholarData.faculty} → ${resolvedDeptValue}`);
+          // Institution-based fallback
+          const inst = (scholarData.institution || '').toLowerCase();
+          if (inst.includes('engineering') || inst.includes('technology')) {
+            resolvedDeptValue = 'resolved_to_CSE';
+          } else if (inst.includes('management')) {
+            resolvedDeptValue = 'resolved_to_MBA';
+          } else if (inst.includes('medical') || inst.includes('health')) {
+            resolvedDeptValue = 'resolved_to_BMS';
+          } else if (inst.includes('science') || inst.includes('humanities')) {
+            resolvedDeptValue = 'resolved_to_CS';
+          } else {
+            resolvedDeptValue = 'resolved_to_CSE';
+          }
+          console.log(`⚠️ Using institution fallback: ${scholarData.institution} → ${resolvedDeptValue}`);
         }
 
-        console.log(`📝 FINAL: Updating scholar ${data.id} (${data.name}) with faculty "${scholarData.faculty}", department "${scholarData.department}", program "${scholarData.program}" - setting query_resolved_dept to '${resolvedDeptValue}'`);
+        console.log(`📝 FINAL: Updating scholar ${data.id} (${data.name}) with institution "${scholarData.institution}", department "${scholarData.department}", type "${scholarData.type}" - setting query_resolved_dept to '${resolvedDeptValue}'`);
 
         return supabase
           .from('scholar_applications')

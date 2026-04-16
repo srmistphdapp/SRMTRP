@@ -2,29 +2,59 @@ import { supabase, supabaseAdmin } from '../supabaseClient';
 import * as XLSX from 'xlsx';
 
 // Fetch scholars from scholar_applications whose hall ticket has been generated (status = 'Generated')
+// Merges marks data from examination_records (linked by application_no)
 export const fetchHallTicketGeneratedScholars = async () => {
   try {
-    const { data, error } = await supabase
+    const { data: scholars, error: scholarsError } = await supabase
       .from('scholar_applications')
       .select('*')
       .eq('status', 'Generated')
       .order('created_at', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching hall-ticket-generated scholars:', error);
-      return { data: null, error };
+    if (scholarsError) {
+      console.error('Error fetching hall-ticket-generated scholars:', scholarsError);
+      return { data: null, error: scholarsError };
     }
 
-    // Map scholar_applications fields to the shape Examination components expect
-    const mapped = (data || []).map(s => ({
-      ...s,
-      // Normalise field names used by Examination UI
-      name: s.registered_name || s.name || '',
-      written_marks: s.written_marks ?? 0,
-      written_marks_100: s.written_marks_100 ?? null,
-      interview_marks: s.interview_marks ?? 0,
-      total_marks: s.total_marks ?? null,
-    }));
+    // Fetch all examination_records to merge marks
+    const { data: examRecords, error: examError } = await supabase
+      .from('examination_records')
+      .select('id, application_no, written_marks, written_marks_100, interview_marks, total_marks, status, faculty_written, director_interview, result_dir');
+
+    if (examError) {
+      console.error('Error fetching examination records for merge:', examError);
+      // Continue without marks rather than failing completely
+    }
+
+    // Build a lookup map: application_no -> examination_record
+    const examMap = {};
+    (examRecords || []).forEach(r => {
+      if (r.application_no) examMap[r.application_no] = r;
+    });
+
+    // Merge scholar data with marks from examination_records
+    const mapped = (scholars || []).map(s => {
+      const examRecord = examMap[s.application_no] || {};
+      return {
+        ...s,
+        name: s.registered_name || s.name || '',
+        // Marks come from examination_records; fall back to 0 if no record yet
+        written_marks: examRecord.written_marks ?? 0,
+        written_marks_100: examRecord.written_marks_100 ?? null,
+        interview_marks: examRecord.interview_marks ?? 0,
+        total_marks: examRecord.total_marks ?? null,
+        // Examination workflow fields
+        faculty_written: examRecord.faculty_written ?? null,
+        director_interview: examRecord.director_interview ?? null,
+        result_dir: examRecord.result_dir ?? null,
+        // Keep exam record id for direct updates
+        exam_record_id: examRecord.id ?? null,
+        // Override status with exam record status if forwarded
+        status: examRecord.status && examRecord.status !== 'pending'
+          ? examRecord.status
+          : s.status,
+      };
+    });
 
     return { data: mapped, error: null };
   } catch (err) {
@@ -107,67 +137,121 @@ export const addExaminationRecord = async (recordData) => {
   }
 };
 
-// Update examination record (including marks)
+// Helper: get or create examination_record for a scholar (by scholar_applications.id)
+const getOrCreateExamRecord = async (scholarId) => {
+  // Get the scholar's application_no
+  const { data: scholar, error: scholarError } = await supabase
+    .from('scholar_applications')
+    .select('application_no, registered_name, faculty, program, program_type, type')
+    .eq('id', scholarId)
+    .maybeSingle();
+
+  if (scholarError || !scholar) {
+    return { examRecord: null, error: scholarError || { message: 'Scholar not found' } };
+  }
+
+  // Find existing examination_record by application_no
+  const { data: existing, error: findError } = await supabase
+    .from('examination_records')
+    .select('*')
+    .eq('application_no', scholar.application_no)
+    .maybeSingle();
+
+  if (findError) return { examRecord: null, error: findError };
+
+  if (existing) return { examRecord: existing, error: null };
+
+  // Create a new examination_record for this scholar
+  const { data: created, error: createError } = await supabase
+    .from('examination_records')
+    .insert([{
+      application_no: scholar.application_no,
+      registered_name: scholar.registered_name || 'Unknown',
+      faculty: scholar.faculty,
+      program: scholar.program,
+      program_type: scholar.program_type || scholar.type || 'Full Time',
+      written_marks: 0,
+      interview_marks: 0,
+      total_marks: null,
+      status: 'pending',
+      current_owner: 'director',
+    }])
+    .select()
+    .maybeSingle();
+
+  return { examRecord: created, error: createError };
+};
+
+// Update examination record (including marks) - writes to examination_records
 export const updateExaminationRecord = async (id, updates) => {
   try {
-    // If interview_marks is being updated, calculate total_marks
-    if (updates.interview_marks !== undefined) {
-      // Get current written marks
-      const { data: currentRecord, error: fetchError } = await supabase
-        .from('examination_records')
-        .select('written_marks')
-        .eq('id', id)
-        .single();
+    const { examRecord, error: lookupError } = await getOrCreateExamRecord(id);
+    if (lookupError || !examRecord) {
+      console.error('Error finding/creating exam record:', lookupError);
+      return { data: null, error: lookupError || { message: 'Could not find exam record' } };
+    }
 
-      if (fetchError) {
-        console.error('Error fetching current record:', fetchError);
-        return { data: null, error: fetchError };
+    // Separate marks fields (go to examination_records) from scholar fields (go to scholar_applications)
+    const marksFields = ['written_marks', 'written_marks_100', 'interview_marks', 'total_marks',
+      'status', 'faculty_written', 'director_interview', 'result_dir'];
+    const examUpdates = {};
+    const scholarUpdates = {};
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (marksFields.includes(key)) {
+        examUpdates[key] = value;
+      } else {
+        scholarUpdates[key] = value;
       }
+    });
 
-      const writtenMarks = currentRecord?.written_marks || 0;
-      const interviewMarks = parseFloat(updates.interview_marks) || 0;
+    // Recalculate total_marks if written or interview marks are being updated
+    const newWritten = examUpdates.written_marks !== undefined
+      ? parseFloat(examUpdates.written_marks) || 0
+      : parseFloat(examRecord.written_marks) || 0;
+    const newInterview = examUpdates.interview_marks !== undefined
+      ? parseFloat(examUpdates.interview_marks) || 0
+      : parseFloat(examRecord.interview_marks) || 0;
 
-      // Calculate total marks only if both marks are present (> 0)
-      updates.total_marks = (writtenMarks > 0 && interviewMarks > 0)
-        ? writtenMarks + interviewMarks
-        : null;
-    }
-
-    // If written_marks is being updated, calculate total_marks
-    if (updates.written_marks !== undefined) {
-      // Get current interview marks
-      const { data: currentRecord, error: fetchError } = await supabase
-        .from('examination_records')
-        .select('interview_marks')
-        .eq('id', id)
-        .single();
-
-      if (fetchError) {
-        console.error('Error fetching current record:', fetchError);
-        return { data: null, error: fetchError };
+    if (examUpdates.written_marks !== undefined || examUpdates.interview_marks !== undefined) {
+      // Only set total if both are numeric and > 0
+      const writtenIsAbsent = examUpdates.written_marks === 'Ab' || examUpdates.written_marks === 'AB' || examRecord.written_marks === 'Ab';
+      const interviewIsAbsent = examUpdates.interview_marks === 'Ab' || examUpdates.interview_marks === 'AB' || examRecord.interview_marks === 'Ab';
+      if (writtenIsAbsent || interviewIsAbsent) {
+        if (writtenIsAbsent && interviewIsAbsent) examUpdates.total_marks = 'Absent';
+      } else if (newWritten > 0 && newInterview > 0) {
+        examUpdates.total_marks = newWritten + newInterview;
       }
-
-      const writtenMarks = parseFloat(updates.written_marks) || 0;
-      const interviewMarks = currentRecord?.interview_marks || 0;
-
-      // Calculate total marks only if both marks are present (> 0)
-      updates.total_marks = (writtenMarks > 0 && interviewMarks > 0)
-        ? writtenMarks + interviewMarks
-        : null;
     }
 
-    const { data, error } = await supabase
-      .from('examination_records')
-      .update(updates)
-      .eq('id', id)
-      .select();
-
-    if (error) {
-      console.error('Error updating examination record:', error);
-      return { data: null, error };
+    // Update examination_records if there are marks/status fields
+    let examData = null;
+    if (Object.keys(examUpdates).length > 0) {
+      const { data, error } = await supabase
+        .from('examination_records')
+        .update(examUpdates)
+        .eq('id', examRecord.id)
+        .select();
+      if (error) {
+        console.error('Error updating examination record marks:', error);
+        return { data: null, error };
+      }
+      examData = data;
     }
 
-    return { data, error: null };
+    // Update scholar_applications if there are non-marks fields
+    if (Object.keys(scholarUpdates).length > 0) {
+      const { error } = await supabase
+        .from('scholar_applications')
+        .update(scholarUpdates)
+        .eq('id', id);
+      if (error) {
+        console.error('Error updating scholar application:', error);
+        return { data: null, error };
+      }
+    }
+
+    return { data: examData || examRecord, error: null };
   } catch (err) {
     console.error('Exception in updateExaminationRecord:', err);
     return { data: null, error: err };
@@ -177,33 +261,22 @@ export const updateExaminationRecord = async (id, updates) => {
 // Update marks for an examination record
 export const updateExaminationMarks = async (id, marks) => {
   try {
-    // First, get the current interview marks
-    const { data: currentRecord, error: fetchError } = await supabase
-      .from('examination_records')
-      .select('interview_marks')
-      .eq('id', id)
-      .single();
-
-    if (fetchError) {
-      console.error('Error fetching current record:', fetchError);
-      return { data: null, error: fetchError };
+    const { examRecord, error: lookupError } = await getOrCreateExamRecord(id);
+    if (lookupError || !examRecord) {
+      console.error('Error finding/creating exam record:', lookupError);
+      return { data: null, error: lookupError || { message: 'Could not find exam record' } };
     }
 
     const writtenMarks = parseFloat(marks) || 0;
-    const interviewMarks = currentRecord?.interview_marks || 0;
-
-    // Calculate total marks only if both marks are present (> 0)
+    const interviewMarks = parseFloat(examRecord.interview_marks) || 0;
     const totalMarks = (writtenMarks > 0 && interviewMarks > 0)
       ? writtenMarks + interviewMarks
       : null;
 
     const { data, error } = await supabase
       .from('examination_records')
-      .update({
-        written_marks: writtenMarks,
-        total_marks: totalMarks
-      })
-      .eq('id', id)
+      .update({ written_marks: writtenMarks, total_marks: totalMarks })
+      .eq('id', examRecord.id)
       .select();
 
     if (error) {
@@ -221,14 +294,28 @@ export const updateExaminationMarks = async (id, marks) => {
 // Delete examination record
 export const deleteExaminationRecord = async (id) => {
   try {
-    const { data, error } = await supabase
-      .from('examination_records')
-      .delete()
+    // Delete from examination_records by application_no
+    const { data: scholar } = await supabase
+      .from('scholar_applications')
+      .select('application_no')
       .eq('id', id)
-      .select();
+      .maybeSingle();
+
+    if (scholar?.application_no) {
+      await supabase
+        .from('examination_records')
+        .delete()
+        .eq('application_no', scholar.application_no);
+    }
+
+    // Also reset the scholar status back from Generated if needed
+    const { data, error } = await supabase
+      .from('scholar_applications')
+      .select('id')
+      .eq('id', id);
 
     if (error) {
-      console.error('Error deleting examination record:', error);
+      console.error('Error in deleteExaminationRecord:', error);
       return { data: null, error };
     }
 
@@ -534,175 +621,81 @@ export const uploadExaminationExcel = async (file) => {
 // Forward individual examination record - store status in examination_records table
 export const forwardExaminationRecord = async (id) => {
   try {
-    console.log('🚀 Starting forward process for examination record ID:', id);
+    console.log('🚀 Starting forward process for scholar ID:', id);
 
-    // Get the examination record with all details
-    const { data: examRecord, error: fetchError } = await supabase
-      .from('examination_records')
-      .select('*')
+    // Get scholar details from scholar_applications
+    const { data: scholar, error: fetchError } = await supabase
+      .from('scholar_applications')
+      .select('id, application_no, registered_name, faculty, status')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
-    if (fetchError) {
-      console.error('❌ Error fetching examination record:', fetchError);
-      return {
-        data: null,
-        error: {
-          message: `Failed to fetch examination record: ${fetchError.message}`,
-          code: 'FETCH_ERROR',
-          details: fetchError
-        }
-      };
+    if (fetchError || !scholar) {
+      return { data: null, error: fetchError || { message: 'Scholar not found', code: 'RECORD_NOT_FOUND' } };
     }
 
-    if (!examRecord) {
-      console.error('❌ Examination record not found for ID:', id);
-      return {
-        data: null,
-        error: {
-          message: 'Examination record not found',
-          code: 'RECORD_NOT_FOUND'
-        }
-      };
-    }
-
-    console.log('✅ Found examination record:', {
-      id: examRecord.id,
-      application_no: examRecord.application_no,
-      name: examRecord.registered_name || examRecord.name,
-      faculty: examRecord.faculty,
-      status: examRecord.status
-    });
-
-    // Check if already forwarded
-    if (examRecord.status && examRecord.status.toLowerCase().includes('forwarded')) {
-      console.log('⚠️ Record already forwarded, skipping');
-      return {
-        data: null,
-        error: {
-          message: 'This examination record has already been forwarded',
-          code: 'ALREADY_FORWARDED'
-        }
-      };
-    }
-
-    // Determine the forward status based on exact faculty names
+    // Determine forward status based on faculty
     let forwardStatus = 'Forwarded';
-    if (examRecord.faculty) {
-      const facultyName = examRecord.faculty.trim();
-      console.log('🏫 Faculty name from record:', facultyName);
-
-      if (facultyName === 'Faculty of Engineering & Technology') {
-        forwardStatus = 'Forwarded to Engineering';
-      } else if (facultyName === 'Faculty of Management') {
-        forwardStatus = 'Forwarded to Management';
-      } else if (facultyName === 'Faculty of Science & Humanities') {
-        forwardStatus = 'Forwarded to Science';
-      } else if (facultyName === 'Faculty of Medical & Health Science') {
-        forwardStatus = 'Forwarded to Medical';
-      } else {
-        // Fallback to partial matching for any variations
-        const facultyLower = facultyName.toLowerCase();
-        if (facultyLower.includes('engineering')) {
-          forwardStatus = 'Forwarded to Engineering';
-        } else if (facultyLower.includes('management')) {
-          forwardStatus = 'Forwarded to Management';
-        } else if (facultyLower.includes('science') || facultyLower.includes('humanities')) {
-          forwardStatus = 'Forwarded to Science';
-        } else if (facultyLower.includes('medical') || facultyLower.includes('health')) {
-          forwardStatus = 'Forwarded to Medical';
-        }
-      }
+    if (scholar.faculty) {
+      const facultyLower = scholar.faculty.toLowerCase();
+      if (facultyLower.includes('engineering')) forwardStatus = 'Forwarded to Engineering';
+      else if (facultyLower.includes('management')) forwardStatus = 'Forwarded to Management';
+      else if (facultyLower.includes('science') || facultyLower.includes('humanities')) forwardStatus = 'Forwarded to Science';
+      else if (facultyLower.includes('medical') || facultyLower.includes('health')) forwardStatus = 'Forwarded to Medical';
     }
 
-    console.log('📋 Determined forward status:', forwardStatus);
+    // Get or create the examination_record
+    const { examRecord, error: examLookupError } = await getOrCreateExamRecord(id);
+    if (examLookupError || !examRecord) {
+      return { data: null, error: examLookupError || { message: 'Could not find/create exam record' } };
+    }
 
-    // Update examination record with forward status and faculty_written
-    console.log('🔄 Updating examination record with forward status');
-    const { data: examUpdateData, error: examUpdateError } = await supabase
+    if (examRecord.status && examRecord.status.toLowerCase().includes('forwarded')) {
+      return { data: null, error: { message: 'Already forwarded', code: 'ALREADY_FORWARDED' } };
+    }
+
+    // Update examination_records with forward status
+    const { data: updated, error: updateError } = await supabase
       .from('examination_records')
-      .update({
-        status: 'forwarded',
-        faculty_written: forwardStatus,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
+      .update({ status: 'forwarded', faculty_written: forwardStatus })
+      .eq('id', examRecord.id)
       .select();
 
-    if (examUpdateError) {
-      console.error('❌ Error updating examination record:', examUpdateError);
-      return {
-        data: null,
-        error: {
-          message: `Failed to update examination record: ${examUpdateError.message}`,
-          code: 'UPDATE_ERROR',
-          details: examUpdateError
-        }
-      };
+    if (updateError) {
+      return { data: null, error: { message: `Failed to update: ${updateError.message}`, code: 'UPDATE_ERROR' } };
     }
 
-    console.log('🎉 Successfully forwarded examination record');
-    console.log('✅ Updated record:', {
-      id: examUpdateData[0].id,
-      status: examUpdateData[0].status,
-      faculty_written: examUpdateData[0].faculty_written
-    });
-
-    return {
-      data: {
-        examination: examUpdateData[0],
-        forwardStatus
-      },
-      error: null
-    };
+    return { data: { examination: updated[0], forwardStatus }, error: null };
   } catch (err) {
-    console.error('💥 Exception in forwardExaminationRecord:', err);
-    console.error('💥 Exception details:', err.message, err.stack);
-    return {
-      data: null,
-      error: {
-        message: `Unexpected error: ${err.message || 'Unknown error occurred'}`,
-        code: 'EXCEPTION_ERROR',
-        details: err
-      }
-    };
+    return { data: null, error: { message: err.message || 'Unknown error', code: 'EXCEPTION_ERROR' } };
   }
 };
 
 // Forward all examination records
 export const forwardAllExaminationRecords = async () => {
   try {
-    // Get all pending examination records
-    const { data: pendingRecords, error: fetchError } = await supabase
-      .from('examination_records')
-      .select('*')
-      .eq('status', 'pending');
+    // Get all Generated scholars that haven't been forwarded yet
+    const { data: scholars, error: fetchError } = await supabase
+      .from('scholar_applications')
+      .select('id')
+      .eq('status', 'Generated');
 
     if (fetchError) {
-      console.error('Error fetching pending examination records:', fetchError);
+      console.error('Error fetching scholars:', fetchError);
       return { data: null, error: fetchError };
     }
 
-    if (!pendingRecords || pendingRecords.length === 0) {
+    if (!scholars || scholars.length === 0) {
       return { data: [], error: null };
     }
 
-    // Forward each record individually
-    const forwardPromises = pendingRecords.map(record =>
-      forwardExaminationRecord(record.id)
-    );
-
-    const results = await Promise.all(forwardPromises);
-
-    // Check for any errors
-    const errors = results.filter(result => result.error);
+    const results = await Promise.all(scholars.map(s => forwardExaminationRecord(s.id)));
+    const errors = results.filter(r => r.error && r.error.code !== 'ALREADY_FORWARDED');
     if (errors.length > 0) {
-      console.error('Some records failed to forward:', errors);
       return { data: null, error: { message: `${errors.length} records failed to forward` } };
     }
 
-    const successfulForwards = results.map(result => result.data);
-    return { data: successfulForwards, error: null };
+    return { data: results.map(r => r.data).filter(Boolean), error: null };
   } catch (err) {
     console.error('Exception in forwardAllExaminationRecords:', err);
     return { data: null, error: err };
@@ -715,7 +708,7 @@ export const deleteAllExaminationRecords = async () => {
     const { data, error } = await supabase
       .from('examination_records')
       .delete()
-      .neq('id', 0) // Delete all records (neq 0 matches all)
+      .neq('id', 0)
       .select();
 
     if (error) {
@@ -733,15 +726,15 @@ export const deleteAllExaminationRecords = async () => {
 // Set director_interview status to 'Forwarded to Director'
 export const forwardToDirectorForInterview = async (id) => {
   try {
-    console.log('🎯 Setting director_interview to "Forwarded to Director" for record ID:', id);
+    const { examRecord, error: lookupError } = await getOrCreateExamRecord(id);
+    if (lookupError || !examRecord) {
+      return { data: null, error: lookupError || { message: 'Could not find exam record' } };
+    }
 
     const { data, error } = await supabase
       .from('examination_records')
-      .update({
-        director_interview: 'Forwarded to Director',
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
+      .update({ director_interview: 'Forwarded to Director' })
+      .eq('id', examRecord.id)
       .select();
 
     if (error) {
@@ -749,7 +742,6 @@ export const forwardToDirectorForInterview = async (id) => {
       return { data: null, error };
     }
 
-    console.log('✅ Successfully set director_interview to "Forwarded to Director"');
     return { data, error: null };
   } catch (err) {
     console.error('💥 Exception in forwardToDirectorForInterview:', err);
@@ -760,15 +752,18 @@ export const forwardToDirectorForInterview = async (id) => {
 // Bulk set director_interview status to 'Forwarded to Director'
 export const bulkForwardToDirectorForInterview = async (ids) => {
   try {
-    console.log('🎯 Bulk setting director_interview to "Forwarded to Director" for records:', ids);
+    // ids are scholar_applications.id — resolve to exam record ids
+    const results = await Promise.all(ids.map(id => getOrCreateExamRecord(id)));
+    const examIds = results.map(r => r.examRecord?.id).filter(Boolean);
+
+    if (examIds.length === 0) {
+      return { data: null, error: { message: 'No exam records found for given IDs' } };
+    }
 
     const { data, error } = await supabase
       .from('examination_records')
-      .update({
-        director_interview: 'Forwarded to Director',
-        updated_at: new Date().toISOString()
-      })
-      .in('id', ids)
+      .update({ director_interview: 'Forwarded to Director' })
+      .in('id', examIds)
       .select();
 
     if (error) {
@@ -815,11 +810,23 @@ export const publishFacultyResults = async (facultyName, scholarIds) => {
     console.log('Writing to result_dir:', publishStatus);
     console.log('Updating scholars:', scholarIds.length);
 
-    // Update only the specific scholars by their IDs
+    // Get application_nos for these scholar IDs
+    const { data: scholars, error: scholarsError } = await supabase
+      .from('scholar_applications')
+      .select('application_no')
+      .in('id', scholarIds);
+
+    if (scholarsError || !scholars?.length) {
+      return { data: null, error: scholarsError || { message: 'No scholars found' } };
+    }
+
+    const appNos = scholars.map(s => s.application_no).filter(Boolean);
+
+    // Update examination_records by application_no
     const { data, error, count } = await supabaseAdmin
       .from('examination_records')
       .update({ result_dir: publishStatus })
-      .in('id', scholarIds) // Only update scholars with these IDs
+      .in('application_no', appNos)
       .select('id', { count: 'exact' });
 
     if (error) {
@@ -879,8 +886,9 @@ export const fetchExaminationResultsRecords = async () => {
 export const getExaminationCountsByType = async () => {
   try {
     const { data, error } = await supabase
-      .from('examination_records')
-      .select('program_type');
+      .from('scholar_applications')
+      .select('program_type')
+      .eq('status', 'Generated');
 
     if (error) {
       console.error('Error fetching examination counts:', error);

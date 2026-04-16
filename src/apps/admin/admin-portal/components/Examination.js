@@ -12,7 +12,9 @@ import {
   uploadExaminationExcel,
   forwardAllExaminationRecords,
   forwardExaminationRecord,
-  deleteAllExaminationRecords
+  deleteAllExaminationRecords,
+  forwardToDirectorForInterview,
+  bulkForwardToDirectorForInterview
 } from '../../../../services/examinationService';
 
 // Helper data for dropdowns (replicated from context for local use)
@@ -151,8 +153,11 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
   const [showForwardModal, setShowForwardModal] = useState(false);
   const [showForwardAllModal, setShowForwardAllModal] = useState(false);
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  const [showForwardToDirectorModal, setShowForwardToDirectorModal] = useState(false);
+  const [showBulkForwardToDirectorModal, setShowBulkForwardToDirectorModal] = useState(false);
   const [scholarToVerify, setScholarToVerify] = useState(null);
   const [scholarToForward, setScholarToForward] = useState(null);
+  const [scholarToForwardToDirector, setScholarToForwardToDirector] = useState(null);
 
   // Comprehensive Form Data State
   const [formData, setFormData] = useState({
@@ -782,10 +787,15 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
     setShowVerifyModal(true);
   };
 
-  const confirmVerify = () => {
+  const confirmVerify = async () => {
     if (scholarToVerify) {
-      setExamData(examData.map(item => item.id === scholarToVerify.id ? { ...item, status: 'verified' } : item));
-      toast.success('Verified successfully!');
+      const { error } = await updateExaminationRecord(scholarToVerify.id, { status: 'verified' });
+      if (error) {
+        toast.error('Failed to verify scholar');
+      } else {
+        setExamData(examData.map(item => item.id === scholarToVerify.id ? { ...item, status: 'verified' } : item));
+        toast.success('Verified successfully!');
+      }
       setShowVerifyModal(false);
       setScholarToVerify(null);
     }
@@ -819,6 +829,48 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
 
       setShowForwardModal(false);
       setScholarToForward(null);
+    }
+  };
+
+  // Forward to Director for Interview handlers
+  const handleForwardToDirector = (scholar) => {
+    if (scholar.director_interview === 'Forwarded to Director') {
+      return toast.info('Already forwarded to director for interview');
+    }
+    setScholarToForwardToDirector(scholar);
+    setShowForwardToDirectorModal(true);
+  };
+
+  const confirmForwardToDirector = async () => {
+    if (scholarToForwardToDirector) {
+      const { error } = await forwardToDirectorForInterview(scholarToForwardToDirector.id);
+      if (error) {
+        toast.error(`Failed to forward to director: ${error.message || 'Unknown error'}`);
+      } else {
+        toast.success('Forwarded to director for interview successfully!');
+        loadExaminationRecords();
+      }
+      setShowForwardToDirectorModal(false);
+      setScholarToForwardToDirector(null);
+    }
+  };
+
+  const handleBulkForwardToDirector = () => {
+    if (selectedScholars.length === 0) {
+      return toast.info('Please select scholars to forward to director');
+    }
+    setShowBulkForwardToDirectorModal(true);
+  };
+
+  const confirmBulkForwardToDirector = async () => {
+    const { error } = await bulkForwardToDirectorForInterview(selectedScholars);
+    if (error) {
+      toast.error(`Failed to bulk forward to director: ${error.message || 'Unknown error'}`);
+    } else {
+      toast.success(`${selectedScholars.length} scholar(s) forwarded to director for interview!`);
+      setShowBulkForwardToDirectorModal(false);
+      handleClearSelection();
+      loadExaminationRecords();
     }
   };
 
@@ -1155,13 +1207,15 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
   useEffect(() => {
     const hasModal = isAddScholarModalOpen || isEditModalOpen || isViewModalOpen || showFilterModal ||
       showUploadModal || showVerifyModal || showForwardModal || showDownloadModal ||
-      showForwardAllModal || showDeleteAllModal || showBulkDeleteModal || showBulkForwardModal;
+      showForwardAllModal || showDeleteAllModal || showBulkDeleteModal || showBulkForwardModal ||
+      showForwardToDirectorModal || showBulkForwardToDirectorModal;
     if (onModalStateChange) {
       onModalStateChange(hasModal);
     }
   }, [isAddScholarModalOpen, isEditModalOpen, isViewModalOpen, showFilterModal, showUploadModal,
     showVerifyModal, showForwardModal, showForwardAllModal, showDeleteAllModal,
-    showBulkDeleteModal, showBulkForwardModal, showDownloadModal, onModalStateChange]);
+    showBulkDeleteModal, showBulkForwardModal, showDownloadModal, showForwardToDirectorModal,
+    showBulkForwardToDirectorModal, onModalStateChange]);
 
   // Filtering
   const filteredData = examData.filter(item => {
@@ -1843,6 +1897,29 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                             <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
                           </svg>
                         </button>
+                        <button onClick={() => handleEdit(item)} className="examination-action-btn edit" title="Edit Scholar" disabled={item.status?.toLowerCase().includes('forwarded')}>
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleForwardToDirector(item)}
+                          className={`examination-action-btn ${item.director_interview === 'Forwarded to Director' ? 'text-green-600' : 'text-purple-600 hover:text-purple-800'}`}
+                          title={item.director_interview === 'Forwarded to Director' ? 'Already forwarded to director' : 'Forward to Director for Interview'}
+                        >
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => { if (window.confirm(`Delete ${item.registered_name || item.name}?`)) deleteExaminationRecord(item.id).then(() => loadExaminationRecords()); }}
+                          className="examination-action-btn delete"
+                          title="Delete Record"
+                        >
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -2133,6 +2210,74 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                 >
                   Apply Filters
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Forward to Director Modal */}
+      {showForwardToDirectorModal && scholarToForwardToDirector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style={{ paddingTop: '60px' }}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">Forward to Director</h3>
+                <button onClick={() => setShowForwardToDirectorModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="text-center mb-6">
+                <div className="mx-auto flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <h4 className="text-lg font-medium text-gray-900 mb-2">Forward to Director for Interview</h4>
+                <p className="text-gray-600 mb-2">
+                  Forward <strong className="text-gray-900">{scholarToForwardToDirector.registered_name || scholarToForwardToDirector.name}</strong> to the director for interview?
+                </p>
+                <p className="text-sm text-purple-600">This will enable interview marks entry for this scholar.</p>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowForwardToDirectorModal(false)} className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors font-medium">Cancel</button>
+                <button onClick={confirmForwardToDirector} className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium">Forward to Director</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Forward to Director Modal */}
+      {showBulkForwardToDirectorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style={{ paddingTop: '60px' }}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">Bulk Forward to Director</h3>
+                <button onClick={() => setShowBulkForwardToDirectorModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="text-center mb-6">
+                <div className="mx-auto flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <h4 className="text-lg font-medium text-gray-900 mb-2">Forward Selected to Director</h4>
+                <p className="text-gray-600 mb-2">
+                  Forward <span className="font-bold text-purple-600">{selectedScholars.length} scholar(s)</span> to the director for interview?
+                </p>
+                <p className="text-sm text-purple-600">This will enable interview marks entry for all selected scholars.</p>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setShowBulkForwardToDirectorModal(false)} className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors font-medium">Cancel</button>
+                <button onClick={confirmBulkForwardToDirector} className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium">Forward to Director</button>
               </div>
             </div>
           </div>
@@ -2472,6 +2617,16 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
               </button>
 
               <button
+                onClick={handleBulkForwardToDirector}
+                className="flex items-center gap-2 px-5 py-2.5 bg-purple-500/80 hover:bg-purple-600 rounded-xl transition-all duration-200 font-medium backdrop-blur-sm border border-purple-400/30 hover:scale-105"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Fwd to Director
+              </button>
+
+              <button
                 onClick={handleBulkDelete}
                 className="flex items-center gap-2 px-5 py-2.5 bg-red-500/90 hover:bg-red-600 rounded-xl transition-all duration-200 font-medium backdrop-blur-sm border border-red-400/30 hover:scale-105"
               >
@@ -2741,8 +2896,8 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                 onClick={confirmDownloadExcel}
                 disabled={selectedColumns.length === 0}
                 className={`px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-sm ${selectedColumns.length > 0
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-md'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-md'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
               >
                 <FaDownload className={selectedColumns.length > 0 ? "animate-bounce-subtle" : ""} />

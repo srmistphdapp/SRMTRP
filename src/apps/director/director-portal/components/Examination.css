@@ -4085,3 +4085,22 @@ input[type="checkbox"]:checked {
 .examination-table th {
   border-bottom: 1px solid #e5e7eb !important;
 }
+
+/* Delete action button */
+.examination-action-btn.delete {
+  background-color: #ef4444;
+  color: white;
+}
+
+.examination-action-btn.delete:hover {
+  background-color: #dc2626;
+}
+
+.examination-table .examination-actions .examination-action-btn.delete {
+  background-color: #ef4444 !important;
+  color: white !important;
+}
+
+.examination-table .examination-actions .examination-action-btn.delete:hover {
+  background-color: #dc2626 !important;
+}

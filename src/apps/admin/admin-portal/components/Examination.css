@@ -1596,3 +1596,67 @@
     padding-bottom: 50px !important;
   }
 }
+
+/* Examination action buttons */
+.examination-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.examination-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.examination-action-btn:hover {
+  transform: scale(1.1);
+}
+
+.examination-action-btn svg {
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.examination-action-btn.view {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.examination-action-btn.view:hover {
+  background-color: #7c3aed;
+}
+
+.examination-action-btn.edit {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.examination-action-btn.edit:hover {
+  background-color: #2563eb;
+}
+
+.examination-action-btn.delete {
+  background-color: #ef4444;
+  color: white;
+}
+
+.examination-action-btn.delete:hover {
+  background-color: #dc2626;
+}
+
+.examination-action-btn:disabled {
+  background-color: #9ca3af !important;
+  cursor: not-allowed;
+  transform: none;
+}

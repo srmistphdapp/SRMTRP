@@ -54,18 +54,14 @@ const ScholarManagement = () => {
     { key: 'application_no', label: 'Application No', sortable: true },
     { key: 'faculty', label: 'Institution' },
     { 
-      key: 'program', 
-      label: 'Program',
-      render: (s) => s.program ? s.program.split('(')[0].trim() : '-'
+      key: 'department', 
+      label: 'Department',
+      render: (s) => s.department || '-'
     },
     { 
       key: 'type', 
       label: 'Type',
-      render: (s) => {
-        if (s.program_type) return s.program_type;
-        const match = (s.program || '').match(/\(([^)]+)\)/);
-        return match ? match[1] : '-';
-      }
+      render: (s) => s.type || s.program_type || '-'
     },
     { key: 'mobile_number', label: 'Mobile' },
     { key: 'email', label: 'Email' },
@@ -100,7 +96,7 @@ const ScholarManagement = () => {
   const getUniqueDepartments = () => {
     const depts = new Set(['All Departments']);
     scholarsData.forEach(s => {
-      const dept = (s.program || '').split('(')[0].trim();
+      const dept = (s.department || '').trim();
       if (dept) depts.add(dept);
     });
     return Array.from(depts).sort();

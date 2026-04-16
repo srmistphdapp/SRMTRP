@@ -237,10 +237,10 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
         'Registered Name': scholar.registered_name || '-',
         'Application No': scholar.application_no || '-',
         'Have You Graduated From India?': scholar.graduated_from_india || 'Yes',
-        'Course': scholar.course || scholar.program || '-',
+        'Course': scholar.course || '-',
         'Select Institution': scholar.institution || '-',
         'Department': scholar.department || '-',
-        'Type': scholar.program_type || extractProgramType(scholar.program) || '-',
+        'Type': scholar.program_type || scholar.type || '-',
         'Certificates (Link)': scholar.certificates || '-',
         '1 - Employee Id': scholar.employee_id || '-',
         '1 - Designation': scholar.designation || '-',
@@ -824,7 +824,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Course:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || selectedScholar.program || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Select Institution:</label>
@@ -836,7 +836,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Type:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || extractProgramType(selectedScholar.program) || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || selectedScholar.type || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Certificates Drive Link:</label>

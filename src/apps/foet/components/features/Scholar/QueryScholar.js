@@ -52,7 +52,7 @@ const QueryScholar = () => {
     { key: 'registered_name', label: 'Registered Name', sortable: true },
     { key: 'application_no', label: 'Application No', sortable: true },
     { key: 'faculty', label: 'Institution' },
-    { key: 'program', label: 'Program', render: (s) => s.program?.split('(')[0].trim() || '-' },
+    { key: 'department', label: 'Department', render: (s) => s.department || '-' },
     { key: 'mobile_number', label: 'Mobile' },
     { key: 'email', label: 'Email' },
     { 

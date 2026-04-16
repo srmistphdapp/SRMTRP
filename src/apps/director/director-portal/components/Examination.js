@@ -370,7 +370,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
     e.preventDefault();
 
     const updates = {
-      application_no: formData.applicationNo,
+      // Scholar profile fields → go to scholar_applications
       registered_name: formData.name,
       institution: formData.faculty || formData.institution,
       program: formData.program || formData.faculty,
@@ -381,10 +381,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
       gender: formData.gender,
       faculty: formData.faculty,
       department: formData.department,
-      written_marks: parseFloat(formData.marks) || 0,
-      interview_marks: parseFloat(formData.interviewMarks) || 0,
       date_of_birth: formData.dateOfBirth,
-      // Include other fields from formData
       graduated_from_india: formData.graduatedFromIndia,
       course: formData.course,
       employee_id: formData.employeeId,
@@ -402,6 +399,9 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
       pg_degree: formData.pgDegree,
       pg_institute: formData.pgInstitute,
       pg_cgpa: formData.pgCgpa,
+      // Marks fields → go to examination_records
+      written_marks: parseFloat(formData.marks) || 0,
+      interview_marks: parseFloat(formData.interviewMarks) || 0,
     };
 
     const { data, error } = await updateExaminationRecord(editingScholar.id, updates);
@@ -697,8 +697,10 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
       return;
     }
 
-    if (numValue >= 0 && numValue <= 100) {
+    if (numValue >= 0 && numValue <= 30) {
       setEditingInterviewMarks({ [scholarId]: numValue });
+    } else if (numValue > 30) {
+      toast.error('Interview marks cannot exceed 30!');
     }
   };
 
@@ -876,8 +878,8 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
 
   // Batch actions
   const handleForwardAll = () => {
-    const eligible = filteredData.filter(s => s.status === 'pending');
-    if (eligible.length === 0) return toast.info('No pending examination records to forward');
+    const eligible = filteredData.filter(s => !s.status?.toLowerCase().includes('forwarded'));
+    if (eligible.length === 0) return toast.info('No eligible examination records to forward');
     setShowForwardAllModal(true);
   };
 
@@ -1919,8 +1921,19 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                           </svg>
                         </button>
                         <button
+                          onClick={() => handleForward(item)}
+                          className="examination-action-btn forward"
+                          title={item.status?.toLowerCase().includes('forwarded') ? 'Already forwarded' : 'Forward to Faculty'}
+                          disabled={item.status?.toLowerCase().includes('forwarded')}
+                        >
+                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </button>
+                        <button
                           onClick={() => handleForwardToDirector(item)}
-                          className={`examination-action-btn ${item.director_interview === 'Forwarded to Director' ? 'text-green-600' : 'text-purple-600 hover:text-purple-800'}`}
+                          className={`examination-action-btn ${item.director_interview === 'Forwarded to Director' ? 'forward' : 'forward'}`}
+                          style={{ backgroundColor: item.director_interview === 'Forwarded to Director' ? '#6b7280' : '#8b5cf6' }}
                           title={item.director_interview === 'Forwarded to Director' ? 'Already forwarded to director' : 'Forward to Director for Interview'}
                         >
                           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1942,7 +1955,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="15" className="px-4 py-8 text-center">
+                  <td colSpan="16" className="px-4 py-8 text-center">
                     <div className="empty-state">
                       <h3 className="text-lg font-medium text-gray-900 mb-2">No Examination Records Found</h3>
                       <p className="text-gray-500">{loading ? 'Loading...' : 'No records match your criteria.'}</p>

@@ -112,25 +112,77 @@ export const fetchExaminationRecordById = async (id) => {
 // Add new examination record
 export const addExaminationRecord = async (recordData) => {
   try {
-    // Ensure marks is set to 0 initially
-    const dataWithMarks = {
-      ...recordData,
-      marks: 0,
-      status: 'pending',
-      current_owner: 'director'
+    // Insert into scholar_applications with status 'Generated' so it appears in the examination fetch
+    const scholarData = {
+      registered_name: recordData.registered_name,
+      form_name: recordData.form_name || 'PhD Application Form',
+      application_no: recordData.application_no || null,
+      institution: recordData.institution,
+      program: recordData.program,
+      program_type: recordData.program_type,
+      type: recordData.type || recordData.program_type,
+      mobile_number: recordData.mobile_number,
+      email: recordData.email,
+      date_of_birth: recordData.date_of_birth,
+      gender: recordData.gender,
+      faculty: recordData.faculty,
+      department: recordData.department,
+      graduated_from_india: recordData.graduated_from_india,
+      course: recordData.course,
+      employee_id: recordData.employee_id,
+      designation: recordData.designation,
+      organization_name: recordData.organization_name,
+      organization_address: recordData.organization_address,
+      differently_abled: recordData.differently_abled,
+      nationality: recordData.nationality,
+      aadhaar_no: recordData.aadhaar_no,
+      mode_of_profession: recordData.mode_of_profession,
+      area_of_interest: recordData.area_of_interest,
+      ug_degree: recordData.ug_degree,
+      ug_institute: recordData.ug_institute,
+      ug_cgpa: recordData.ug_cgpa,
+      pg_degree: recordData.pg_degree,
+      pg_institute: recordData.pg_institute,
+      pg_cgpa: recordData.pg_cgpa,
+      status: 'Generated', // Must be 'Generated' to appear in examination fetch
     };
 
-    const { data, error } = await supabase
-      .from('examination_records')
-      .insert([dataWithMarks])
-      .select();
+    const { data: scholar, error: scholarError } = await supabase
+      .from('scholar_applications')
+      .insert([scholarData])
+      .select()
+      .maybeSingle();
 
-    if (error) {
-      console.error('Error adding examination record:', error);
-      return { data: null, error };
+    if (scholarError) {
+      console.error('Error adding scholar application:', scholarError);
+      return { data: null, error: scholarError };
     }
 
-    return { data, error: null };
+    // Also create the examination_record row with initial marks
+    const { data: examRecord, error: examError } = await supabase
+      .from('examination_records')
+      .insert([{
+        application_no: scholar.application_no,
+        registered_name: scholar.registered_name,
+        faculty: scholar.faculty,
+        program: scholar.program,
+        program_type: scholar.program_type,
+        written_marks: 0,
+        written_marks_100: null,
+        interview_marks: 0,
+        total_marks: null,
+        status: 'pending',
+        current_owner: 'director',
+      }])
+      .select()
+      .maybeSingle();
+
+    if (examError) {
+      console.error('Error creating examination record:', examError);
+      // Non-fatal — scholar was added, exam record will be created on first update
+    }
+
+    return { data: scholar, error: null };
   } catch (err) {
     console.error('Exception in addExaminationRecord:', err);
     return { data: null, error: err };
@@ -215,8 +267,8 @@ export const updateExaminationRecord = async (id, updates) => {
 
     if (examUpdates.written_marks !== undefined || examUpdates.interview_marks !== undefined) {
       // Only set total if both are numeric and > 0
-      const writtenIsAbsent = examUpdates.written_marks === 'Ab' || examUpdates.written_marks === 'AB' || examRecord.written_marks === 'Ab';
-      const interviewIsAbsent = examUpdates.interview_marks === 'Ab' || examUpdates.interview_marks === 'AB' || examRecord.interview_marks === 'Ab';
+      const writtenIsAbsent = ['Ab', 'AB', 'ab'].includes(examUpdates.written_marks) || ['Ab', 'AB', 'ab'].includes(examRecord.written_marks);
+      const interviewIsAbsent = ['Ab', 'AB', 'ab'].includes(examUpdates.interview_marks) || ['Ab', 'AB', 'ab'].includes(examRecord.interview_marks);
       if (writtenIsAbsent || interviewIsAbsent) {
         if (writtenIsAbsent && interviewIsAbsent) examUpdates.total_marks = 'Absent';
       } else if (newWritten > 0 && newInterview > 0) {
@@ -308,11 +360,12 @@ export const deleteExaminationRecord = async (id) => {
         .eq('application_no', scholar.application_no);
     }
 
-    // Also reset the scholar status back from Generated if needed
+    // Reset scholar status so it no longer appears in the examination list
     const { data, error } = await supabase
       .from('scholar_applications')
-      .select('id')
-      .eq('id', id);
+      .update({ status: 'Hall Ticket Generated' })
+      .eq('id', id)
+      .select('id');
 
     if (error) {
       console.error('Error in deleteExaminationRecord:', error);
@@ -589,28 +642,58 @@ export const uploadExaminationExcel = async (file) => {
     console.log('Total records to insert:', records.length);
     console.log('\n=== SAMPLE RECORD (FIRST ROW) ===');
     console.log(JSON.stringify(records[0], null, 2));
-    console.log('\n=== FIELD COUNT CHECK ===');
-    const firstRecord = records[0];
-    const nonNullFields = Object.entries(firstRecord).filter(([key, value]) => value !== null && value !== undefined && value !== '');
-    console.log('Total fields in record:', Object.keys(firstRecord).length);
-    console.log('Non-null fields:', nonNullFields.length);
-    console.log('Non-null field names:', nonNullFields.map(([key]) => key).join(', '));
     console.log('\n=== UPLOADING TO SUPABASE ===');
 
-    const { data: insertedData, error } = await supabase
-      .from('examination_records')
-      .insert(records)
-      .select();
+    // Exam-specific fields that belong in examination_records only
+    const examOnlyFields = ['written_marks_100', 'written_marks', 'interview_marks', 'total_marks',
+      'faculty_written', 'director_interview', 'current_owner'];
 
-    if (error) {
-      console.error('Error inserting examination records:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
-      console.error('Sample record that failed:', records[0]);
-      return { data: null, error };
+    // Insert into scholar_applications first (status = 'Generated' so they appear in examination fetch)
+    const scholarRecords = records.map(r => {
+      const scholar = { ...r };
+      examOnlyFields.forEach(f => delete scholar[f]);
+      scholar.status = 'Generated';
+      return scholar;
+    });
+
+    const { data: insertedScholars, error: scholarInsertError } = await supabase
+      .from('scholar_applications')
+      .insert(scholarRecords)
+      .select('id, application_no, registered_name, faculty, program, program_type');
+
+    if (scholarInsertError) {
+      console.error('Error inserting scholar applications:', scholarInsertError);
+      return { data: null, error: scholarInsertError };
     }
 
-    console.log('Successfully inserted', insertedData?.length || 0, 'examination records');
-    return { data: insertedData, error: null };
+    // Create matching examination_records rows
+    const examRecordsToInsert = insertedScholars.map(s => ({
+      application_no: s.application_no,
+      registered_name: s.registered_name,
+      faculty: s.faculty,
+      program: s.program,
+      program_type: s.program_type,
+      written_marks: 0,
+      written_marks_100: null,
+      interview_marks: 0,
+      total_marks: null,
+      status: 'pending',
+      current_owner: 'director',
+      faculty_written: null,
+      director_interview: null,
+    }));
+
+    const { error: examInsertError } = await supabase
+      .from('examination_records')
+      .insert(examRecordsToInsert);
+
+    if (examInsertError) {
+      console.error('Error creating examination records for uploaded scholars:', examInsertError);
+      // Non-fatal — scholars were added, exam records will be created on first update
+    }
+
+    console.log('Successfully inserted', insertedScholars?.length || 0, 'scholars from Excel');
+    return { data: insertedScholars, error: null };
   } catch (err) {
     console.error('Exception in uploadExaminationExcel:', err);
     console.error('Exception details:', err.message, err.stack);

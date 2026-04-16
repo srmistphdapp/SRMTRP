@@ -55,7 +55,7 @@ export default function Results() {
       const { data, error } = await supabase
         .from('examination_records')
         .select('*')
-        .ilike('program', `%${currentUser.department}%`)
+        .ilike('department', `%${currentUser.department}%`)
         .eq('dept_result', expectedDeptResult) // Filter by exact dept_result value like "Published_To_CSE"
         .order('total_marks', { ascending: false }); // Order by total_marks descending for ranking
 

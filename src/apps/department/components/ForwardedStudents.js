@@ -37,7 +37,7 @@ const ForwardedStudents = () => {
     
     return isForwarded &&
       statusMatch &&
-      (filterDepartment === 'All' || (s.program || s.specialization || '').toLowerCase().includes(filterDepartment.toLowerCase())) &&
+      (filterDepartment === 'All' || (s.specialization || s.department || '').toLowerCase().includes(filterDepartment.toLowerCase())) &&
       (filterType === 'All' || s.type === filterType) &&
       (filterName === '' || s.name.toLowerCase().includes(filterName.toLowerCase())) &&
       (search === '' || s.name.toLowerCase().includes(search.toLowerCase()) || s.regNo.toLowerCase().includes(search.toLowerCase()));

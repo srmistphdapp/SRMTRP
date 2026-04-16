@@ -552,10 +552,10 @@ export default function QueriesPage() {
                                             <ViewField label="Registered Name" value={viewModal.scholar?.name} />
                                             <ViewField label="Application No" value={viewModal.scholar?.regNo} />
                                             <ViewField label="Have You Graduated From India?" value={viewModal.scholar?.graduatedFromIndia || 'Yes'} />
-                                            <ViewField label="Course" value={formatText(viewModal.scholar?.course || viewModal.scholar?.program)} />
+                                            <ViewField label="Course" value={formatText(viewModal.scholar?.course)} />
                                             <ViewField label="Select Institution" value={formatText(viewModal.scholar?.institution || '-')} />
                                             <ViewField label="Department" value={formatText(viewModal.scholar?.specialization || '-')} />
-                                            <ViewField label="Type" value={formatText(extractProgramType(viewModal.scholar?.program) || viewModal.scholar?.type)} />
+                                            <ViewField label="Type" value={formatText(viewModal.scholar?.type)} />
                                             <div className="flex flex-col gap-1">
                                                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Certificates Drive Link:</label>
                                                 {viewModal.scholar?.certificatesLink && viewModal.scholar.certificatesLink !== '#' ? (
@@ -771,7 +771,7 @@ export default function QueriesPage() {
                                                 </span>
                                             </div>
                                             <ViewField label="Faculty" value={formatText(viewModal.scholar?.faculty)} />
-                                            <ViewField label="Department" value={formatText(viewModal.scholar?.program || viewModal.scholar?.specialization)} />
+                                            <ViewField label="Department" value={formatText(viewModal.scholar?.specialization)} />
                                             <ViewField label="Type" value={formatText(viewModal.scholar?.type)} />
                                             <ViewField label="Department Review" value={formatText(viewModal.scholar?.deptReview || 'Pending')} />
                                             <ViewField label="Faculty Status" value={formatText(viewModal.scholar?._supabaseData?.facultyStatus || 'N/A')} />

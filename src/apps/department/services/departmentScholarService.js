@@ -897,7 +897,7 @@ export const forwardScholar = async (scholarId, currentStatus) => {
     // First, get the current scholar data to check their faculty information
     const { data: currentScholar, error: fetchError } = await supabase
       .from('scholar_applications')
-      .select('id, registered_name, dept_review, dept_status, status, faculty_status, faculty, program')
+      .select('id, registered_name, dept_review, dept_status, status, faculty_status, faculty, institution, department, type')
       .eq('id', scholarId)
       .single();
 
@@ -917,7 +917,9 @@ export const forwardScholar = async (scholarId, currentStatus) => {
       status: currentScholar.status,
       faculty_status: currentScholar.faculty_status,
       faculty: currentScholar.faculty,
-      program: currentScholar.program
+      institution: currentScholar.institution,
+      department: currentScholar.department,
+      type: currentScholar.type
     });
 
     // Determine the faculty using multiple sources (in order of preference)
@@ -1226,8 +1228,8 @@ export const checkDepartmentResultsPublished = async (departmentName, department
 
     const { data, error } = await supabase
       .from('examination_records')
-      .select('dept_result, program')
-      .ilike('program', `%${departmentName}%`)
+      .select('dept_result, department')
+      .ilike('department', `%${departmentName}%`)
       .eq('dept_result', expectedDeptResult) // Check for exact dept_result value like "Published_To_CSE"
       .limit(1);
 
@@ -1344,9 +1346,9 @@ export const fetchExaminationRecordsForInterview = async (departmentName, instit
 
     if (institutionFilteredRecords.length > 0) {
       console.log(`📋 Sample from institution-filtered records:`, institutionFilteredRecords.slice(0, 2).map(r => ({
-        program: r.program,
         department: r.department,
         institution: r.institution,
+        type: r.type,
         name: r.registered_name || r.name
       })));
     }
@@ -1371,16 +1373,12 @@ export const fetchExaminationRecordsForInterview = async (departmentName, instit
         }
       }
 
-      // Fallback: use program->department mapping
-      if (record.program && typeof record.program === 'string') {
-        try {
-          const recordProgDept = getDepartmentFromProgram(record.program, institution);
-          if (recordProgDept && targetDeptCode && recordProgDept === targetDeptCode) {
-            console.log(`✅ Program->Dept match: "${record.program}" -> ${recordProgDept}`);
-            return true;
-          }
-        } catch (e) {
-          console.warn(`⚠️ getDepartmentFromProgram error for "${record.program}":`, e.message);
+      // Fallback: use department text match if code match failed
+      if (record.department && typeof record.department === 'string' && record.department.trim() !== '') {
+        const recDeptNorm = record.department.toLowerCase().replace(/department of /g, '').trim();
+        const targetNorm = (departmentName || '').toLowerCase().replace(/department of /g, '').trim();
+        if (recDeptNorm.includes(targetNorm) || targetNorm.includes(recDeptNorm)) {
+          return true;
         }
       }
 
@@ -1396,19 +1394,11 @@ export const fetchExaminationRecordsForInterview = async (departmentName, instit
       const deptNameNormalized = (departmentName || '').toLowerCase().replace(/department of /g, '').trim();
 
       finalRecords = institutionFilteredRecords.filter(record => {
-        // Try explicit department field
+        // Try explicit department field only
         if (record.department) {
           const recDeptNorm = record.department.toLowerCase().replace(/department of /g, '').trim();
           if (recDeptNorm.includes(deptNameNormalized) || deptNameNormalized.includes(recDeptNorm)) {
             console.log(`✅ Text match (dept): "${record.department}" includes "${deptNameNormalized}"`);
-            return true;
-          }
-        }
-        // Try program field
-        if (record.program) {
-          const progNorm = record.program.toLowerCase();
-          if (progNorm.includes(deptNameNormalized) || deptNameNormalized.includes(progNorm.split(/\s+/)[0])) {
-            console.log(`✅ Text match (program): "${record.program}" matches "${deptNameNormalized}"`);
             return true;
           }
         }
@@ -1428,9 +1418,9 @@ export const fetchExaminationRecordsForInterview = async (departmentName, instit
     if (finalRecords.length > 0) {
       console.log(`📋 Final matching records (first 3):`, finalRecords.slice(0, 3).map(r => ({
         id: r.id,
-        program: r.program,
         department: r.department,
         institution: r.institution,
+        type: r.type,
         name: r.registered_name || r.name
       })));
     }
@@ -1745,7 +1735,7 @@ export const forwardScholarInterview = async (scholarId, departmentName = null, 
     if (!targetFaculty && !departmentName) {
       const { data: scholarData, error: fetchError } = await supabase
         .from('examination_records')
-        .select('program, institution')
+        .select('department, institution, type')
         .eq('id', scholarId)
         .single();
 
@@ -1754,8 +1744,8 @@ export const forwardScholarInterview = async (scholarId, departmentName = null, 
         return { data: null, error: fetchError };
       }
 
-      departmentName = scholarData.program;
-      // Determine faculty from institution or program
+      departmentName = scholarData.department;
+      // Determine faculty from institution
       if (scholarData.institution) {
         targetFaculty = scholarData.institution;
       }

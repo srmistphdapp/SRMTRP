@@ -477,9 +477,9 @@ export default function ScholarApplications() {
                             gender: scholar.gender || 'Male',
                             faculty: scholar.institution || '-',
                             institution: scholar.institution || '-',
-                            program: scholar.program || 'Computer Science Engineering',
+                            program: scholar.department || 'Computer Science Engineering',
                             specialization: scholar.department || 'Computer Science Engineering',
-                            type: scholar.program_type || scholar.type || 'Full Time',
+                            type: scholar.type || scholar.program_type || 'Full Time',
                             cgpa: (typeof scholar.cgpa === 'object') ? scholar.cgpa : { ug: scholar.cgpa || 8.5, pg: scholar.cgpa || 8.5 },
                             guideName: 'TBD',
                             researchTopic: scholar.research_interest || 'TBD',
@@ -1376,10 +1376,10 @@ export default function ScholarApplications() {
                                 <ViewField label="Registered Name" value={viewModal.app?.name} />
                                 <ViewField label="Application No" value={viewModal.app?.regNo} />
                                 <ViewField label="Have You Graduated From India?" value={viewModal.app?.graduatedFromIndia || 'Yes'} />
-                                <ViewField label="Course" value={formatText(viewModal.app?.course || viewModal.app?.program)} />
+                                <ViewField label="Course" value={formatText(viewModal.app?.course)} />
                                 <ViewField label="Select Institution" value={formatText(viewModal.app?.institution || '-')} />
                                 <ViewField label="Department" value={formatText(viewModal.app?.specialization || '-')} />
-                                <ViewField label="Type" value={formatText(extractProgramType(viewModal.app?.program) || viewModal.app?.type)} />
+                                <ViewField label="Type" value={formatText(viewModal.app?.type)} />
                                 <div className="view-field">
                                     <label className="view-label">Certificates Drive Link:</label>
                                     {viewModal.app?.certificatesLink && viewModal.app.certificatesLink !== '#' ? (
@@ -1558,7 +1558,7 @@ export default function ScholarApplications() {
                                     </span>
                                 </div>
                                 <ViewField label="Faculty" value={formatText(viewModal.app?.faculty)} />
-                                <ViewField label="Department" value={formatText(viewModal.app?.program || viewModal.app?.specialization)} />
+                                <ViewField label="Department" value={formatText(viewModal.app?.specialization)} />
                                 <ViewField label="Type" value={formatText(viewModal.app?.type)} />
                                 <ViewField label="Department Review" value={formatText(viewModal.app?.deptReview || 'Pending')} />
                                 <ViewField label="Department Status" value={formatText(viewModal.app?._supabaseData?.deptStatus || 'N/A')} />

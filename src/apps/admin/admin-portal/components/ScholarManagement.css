@@ -1,0 +1,3949 @@
+/* Scholar Management Modern Styles - Workflow Theme */
+
+/* Main Container */
+.scholar-management-container {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow: visible;
+}
+
+/* Workflow Table Styles for Scholar Management */
+.scholar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  position: relative;
+  table-layout: auto;
+}
+
+.scholar-table thead {
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scholar-table thead tr {
+  background: #f8fafc;
+}
+
+.scholar-table th {
+  padding: 14px 10px;
+  text-align: center;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+  background: #f8fafc !important;
+  position: sticky;
+  top: 0;
+  z-index: 16;
+  vertical-align: middle;
+}
+
+.scholar-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.scholar-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.scholar-table td {
+  padding: 12px 10px;
+  font-size: 13px;
+  color: #374151;
+  white-space: nowrap;
+  overflow: visible;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* Status Pills - Original Style */
+.status-pill {
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: inline-block;
+  white-space: nowrap;
+  margin: 0 auto;
+  max-width: 200px;
+}
+
+.status-pill.forwarded {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-pill.verified {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.status-pill.pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.status-pill.duplicate {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: white;
+}
+
+.status-pill.rejected {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.status-pill.generated {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+}
+
+/* Main Content Area */
+.scholar-main-content {
+  /* Let the parent content area manage layout (margin-left from DirectorPortal) */
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  background: white;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin: 0 24px 24px 24px;
+  transition: margin 0.3s ease, width 0.3s ease;
+  width: auto;
+}
+
+/* Fullscreen mode adjustments */
+.fixed.inset-0 .scholar-main-content {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  margin: 20px 0 0 0;
+  border-radius: 8px;
+}
+
+/* Table Container - Ensure horizontal scrolling works properly */
+.table-responsive {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: visible;
+  height: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure table container shows scrollbar when needed */
+.table-container .overflow-x-auto {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  position: relative;
+}
+
+/* ===== STICKY COLUMNS (first 5 columns) ===== */
+/* Checkbox - column 1 */
+.scholar-table th:nth-child(1),
+.scholar-table td:nth-child(1) {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 20 !important;
+  background: #ffffff !important;
+  min-width: 40px;
+}
+
+/* S.No - column 2 */
+.scholar-table th:nth-child(2),
+.scholar-table td:nth-child(2) {
+  position: sticky !important;
+  left: 40px !important;
+  z-index: 20 !important;
+  background: #ffffff !important;
+  min-width: 5px;
+}
+
+/* Registered Name - column 3 */
+.scholar-table th:nth-child(3),
+.scholar-table td:nth-child(3) {
+  position: sticky !important;
+  left: 95px !important;
+  z-index: 20 !important;
+  background: #ffffff !important;
+  min-width: 160px;
+}
+
+/* Application No - column 4 */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  position: sticky !important;
+  left: 255px !important;
+  z-index: 20 !important;
+  background: #ffffff !important;
+  min-width: 140px;
+}
+
+/* Select Institution - column 5 (last sticky) */
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  position: sticky !important;
+  left: 395px !important;
+  z-index: 20 !important;
+  background: #ffffff !important;
+  min-width: 180px;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.15);
+}
+
+/* Sticky header cells need even higher z-index */
+.scholar-table th:nth-child(1),
+.scholar-table th:nth-child(2),
+.scholar-table th:nth-child(3),
+.scholar-table th:nth-child(4),
+.scholar-table th:nth-child(5) {
+  z-index: 25 !important;
+}
+
+/* S.NO */
+.scholar-table th:nth-child(2),
+.scholar-table td:nth-child(2) {
+  white-space: nowrap;
+  padding: 12px 6px;
+}
+
+/* REGISTERED NAME */
+.scholar-table th:nth-child(3),
+.scholar-table td:nth-child(3) {
+  white-space: nowrap;
+  padding: 12px 8px;
+}
+
+/* APPLICATION NO */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  white-space: nowrap;
+  padding: 12px 4px;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* SELECT INSTITUTION / FACULTY */
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  white-space: nowrap;
+  padding: 12px 8px;
+}
+
+/* SELECT PROGRAM - gets remaining space */
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  width: auto;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* TYPE - shrink to content */
+.scholar-table th:nth-child(7),
+.scholar-table td:nth-child(7) {
+  width: 1%;
+  white-space: nowrap;
+  padding: 12px 6px;
+}
+
+/* MOBILE NUMBER - shrink to content */
+.scholar-table th:nth-child(8),
+.scholar-table td:nth-child(8) {
+  width: 1%;
+  text-align: left;
+  white-space: nowrap;
+  padding: 12px 8px;
+}
+
+/* EMAIL ID - gets remaining space */
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9) {
+  width: auto;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* GENDER - shrink to content */
+.scholar-table th:nth-child(10),
+.scholar-table td:nth-child(10) {
+  width: 1%;
+  text-align: left;
+  white-space: nowrap;
+  padding: 12px 6px;
+}
+
+/* CERTIFICATES - shrink to content */
+.scholar-table th:nth-child(11),
+.scholar-table td:nth-child(11) {
+  width: 1%;
+  text-align: left;
+  white-space: nowrap;
+  padding: 12px 6px;
+}
+
+/* STATUS - shrink to content */
+.scholar-table th:nth-child(12),
+.scholar-table td:nth-child(12) {
+  width: 1%;
+  text-align: left;
+  white-space: nowrap;
+  padding: 12px 6px;
+}
+
+/* Fixed Header Section */
+.scholar-header-fixed {
+  /* Make header sticky within the main content so it moves with the page layout */
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  height: 95px;
+  padding: 1px 24px;
+}
+
+/* Header Title */
+.scholar-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.scholar-title-icon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: white;
+}
+
+/* Statistics Cards Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  margin-bottom: 0px;
+  margin-top: -1px;
+  align-items: stretch;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 5px;
+  padding: 4px 6px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 38px;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.total {
+  --accent-color: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.stat-card.eligible {
+  --accent-color: linear-gradient(90deg, #10b981, #059669);
+}
+
+.stat-card.not-eligible {
+  --accent-color: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.stat-card.rate {
+  --accent-color: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.stat-number {
+  font-size: 18px;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 1px;
+  line-height: 1;
+  text-align: left;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: left;
+}
+
+.stat-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.15;
+}
+
+/* Combined Action Buttons and Search Row */
+.actions-search-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  margin-bottom: 0px;
+  margin-top: 6px;
+  box-shadow: none;
+  flex-wrap: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1;
+}
+
+.action-btn {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 80px;
+  justify-content: center;
+  white-space: nowrap;
+  height: 28px;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-upload {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.btn-duplicates {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.btn-forward {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-download {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.btn-add {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  color: white;
+}
+
+.action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Search and Filter Controls - Now inline with buttons */
+.search-filter-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  flex-shrink: 0;
+}
+
+.search-container {
+  position: relative;
+  min-width: 240px;
+  flex-shrink: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 5px 8px 5px 26px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 11px;
+  background: white;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 28px;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.search-icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  width: 14px;
+  height: 14px;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.filter-btn {
+  padding: 5px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.filter-btn:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+  color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+/* Table Container */
+.table-container {
+  margin-top: 190px;
+  min-height: calc(100vh - 210px);
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+}
+
+/* Fullscreen mode - increase table height */
+.fixed.inset-0 .table-container {
+  min-height: calc(100vh - 120px) !important;
+  margin-top: 100px !important;
+  height: calc(100vh - 120px) !important;
+}
+
+.table-container .overflow-x-auto {
+  overflow-x: auto;
+  overflow-y: visible;
+  position: relative;
+}
+
+/* Table Styles */
+.scholar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  position: relative;
+  table-layout: auto;
+}
+
+.scholar-table thead {
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scholar-table thead tr {
+  background: #f8fafc;
+}
+
+.scholar-table th {
+  padding: 14px 10px;
+  text-align: center;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+  background: #f8fafc !important;
+  position: sticky;
+  top: 0;
+  z-index: 16;
+  vertical-align: middle;
+}
+
+/* Ensure table header doesn't extend beyond container */
+.table-container .scholar-table thead {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 15;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.table-container .scholar-table th {
+  position: sticky;
+  top: 0;
+  z-index: 16;
+  max-width: inherit;
+  overflow: hidden;
+}
+
+/* Duplicate column width specifications removed to prevent collision */
+
+.scholar-table th:first-child,
+.scholar-table th:nth-child(6),
+.scholar-table th:nth-child(9),
+.scholar-table th:nth-child(10),
+.scholar-table th:nth-child(11),
+.scholar-table th:nth-child(12),
+.scholar-table th:nth-child(13) {
+  text-align: center;
+}
+
+.scholar-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.scholar-table tbody tr:hover {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  transform: scale(1.001);
+}
+
+.scholar-table td {
+  padding: 12px 15px;
+  color: #374151;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: inline-block;
+  white-space: nowrap;
+  text-align: left;
+  min-width: 70px;
+}
+
+.status-forwarded {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.status-pending {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+.status-rejected {
+  background: linear-gradient(135deg, #fecaca, #fca5a5);
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+
+/* Type Badges */
+.type-badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+  text-align: left;
+  min-width: 60px;
+}
+
+.type-full-time {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.type-part-time {
+  background: linear-gradient(135deg, #fed7aa, #fdba74);
+  color: #c2410c;
+  border: 1px solid #fb923c;
+}
+
+/* Action Buttons in Table */
+.table-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 0 10px;
+}
+
+.table-action-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.table-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-view {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.btn-approve {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+/* Certificate Link */
+.certificate-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-block;
+  text-align: left;
+  border: 1px solid transparent;
+}
+
+.certificate-link:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+/* Scrollbar Styling */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  opacity: 0.3;
+}
+
+.empty-state h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+
+
+/* Loading Animation */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Glassmorphism Effect */
+.glassmorphic-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Focus States */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.notification.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.notification.error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.notification.info {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+/* Section Separators */
+.section-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 20px 0;
+}
+
+/* Combined Row Label - Removed */
+
+/* Removed duplicate positioning rule */
+
+/* Enhanced spacing for better visual hierarchy */
+.stats-grid {
+  margin-top: 8px;
+}
+
+/* Improved button hover states */
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Better focus states */
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  background: white;
+}
+
+/* Additional alignment fixes */
+.scholar-table tbody tr:nth-child(even) {
+  background-color: rgba(248, 250, 252, 0.3);
+}
+
+.scholar-table tbody tr:hover {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9) !important;
+  transform: scale(1.001);
+}
+
+/* Ensure proper text alignment for all centered columns */
+.scholar-table td:nth-child(1),
+.scholar-table td:nth-child(6),
+.scholar-table td:nth-child(9),
+.scholar-table td:nth-child(10),
+.scholar-table td:nth-child(11),
+.scholar-table td:nth-child(12),
+.scholar-table td:nth-child(13) {
+  text-align: left;
+}
+
+/* Responsive improvements */
+@media (max-width: 1400px) {
+  .action-buttons {
+    gap: 6px;
+  }
+
+  .action-btn {
+    min-width: 70px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .search-container {
+    min-width: 250px;
+  }
+
+  .scholar-table {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .scholar-header-fixed {
+    left: 0;
+    padding: 2px 20px;
+    height: 130px;
+  }
+
+  .table-container {
+    margin-top: 210px;
+    min-height: calc(100vh - 230px);
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .actions-search-row {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .search-filter-section {
+    justify-content: center;
+  }
+
+  .search-container {
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .scholar-header-fixed {
+    height: 150px;
+    padding: 2px 16px;
+  }
+
+  .table-container {
+    margin-top: 230px;
+    min-height: calc(100vh - 250px);
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .actions-search-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .action-buttons {
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    flex: 1;
+    min-width: 60px;
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  .search-filter-section {
+    justify-content: center;
+  }
+
+  .search-container {
+    min-width: 180px;
+  }
+}
+
+/* Fix for table header collision with side panel */
+.table-container {
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+.table-container .overflow-x-auto {
+  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+}
+
+.scholar-table {
+  transform: translateZ(0);
+}
+
+.scholar-table thead {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.scholar-table th {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Ensure proper layering */
+.scholar-management-container {
+  position: relative;
+  z-index: 1;
+}
+
+.scholar-header-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.table-container {
+  position: relative;
+  z-index: 50;
+  isolation: isolate;
+}
+
+.scholar-table thead {
+  position: sticky;
+  z-index: 60;
+}
+
+.scholar-table th {
+  position: sticky;
+  z-index: 61;
+}
+
+/* Additional containment for better performance */
+.table-container .overflow-x-auto {
+  overflow-anchor: none;
+}
+
+/* Status Badge Styles */
+.status-verified {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-duplicate {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Enhanced Table Action Buttons */
+.table-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-action-btn {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.table-action-btn:active {
+  transform: translateY(0);
+}
+
+.table-action-btn:disabled {
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* View Modal Enhancements */
+.view-modal {
+  max-width: 600px;
+  width: 90%;
+}
+
+.view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.view-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.view-item label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.view-item span {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.view-item .marks {
+  font-weight: 600;
+  color: #059669;
+}
+
+.view-item .eligible {
+  color: #059669;
+  font-weight: 600;
+}
+
+.view-item .not-eligible {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Enhanced Action Buttons */
+.action-btn {
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.notification.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.notification.error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.notification.warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.notification.info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .table-action-btn {
+    padding: 6px;
+  }
+}
+
+/* Sortable header styles */
+.sortable-header {
+  cursor: pointer !important;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.sortable-header:hover {
+  background-color: #e2e8f0 !important;
+}
+
+.sortable-header .flex {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sortable-header .flex svg {
+  flex-shrink: 0;
+}
+
+/* Fix for column collision issue - Override all table cell padding and box-sizing */
+.scholar-table th,
+.scholar-table td {
+  padding: 12px 6px !important;
+  box-sizing: border-box !important;
+  border-right: 1px solid #f1f5f9;
+}
+
+/* Ensure proper column spacing and prevent overflow */
+.scholar-table {
+  border-spacing: 0;
+  border-collapse: separate;
+}
+
+/* Fix for table container to prevent horizontal collision */
+.table-responsive {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Additional fix for action column to prevent button collision */
+.scholar-table th:nth-child(13),
+.scholar-table td:nth-child(13) {
+  padding: 8px 4px !important;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px !important;
+  flex-wrap: nowrap;
+}
+
+.table-action-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  flex-shrink: 0;
+}
+
+/* Additional fixes for text overflow and proper column spacing */
+.scholar-table th,
+.scholar-table td {
+  padding: 12px 10px !important;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Apply ellipsis only to Faculty, UG Degree, and PG Degree columns */
+.scholar-table td:nth-child(4),
+/* Faculty */
+.scholar-table td:nth-child(7),
+/* UG Degree */
+.scholar-table td:nth-child(8) {
+  /* PG Degree */
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Improve table container scrolling */
+.table-responsive {
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+/* CRITICAL FIX: Prevent text overlap and ensure proper column separation */
+.scholar-table th,
+.scholar-table td {
+  padding: 12px 20px !important;
+  border-right: 2px solid #e5e7eb !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Remove border from last column */
+.scholar-table th:last-child,
+.scholar-table td:last-child {
+  border-right: none !important;
+}
+
+/* Ensure Faculty and Department columns have extra space */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4),
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  padding: 12px 25px !important;
+  font-size: 12px !important;
+}
+
+/* Force table to respect column widths */
+.scholar-table {
+  table-layout: fixed !important;
+  width: 2800px !important;
+  min-width: 2800px !important;
+}
+
+/* EXTRA STRONG separation for Faculty and Department columns */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  border-right: 4px solid #cbd5e1 !important;
+  padding-right: 12px !important;
+}
+
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  padding-left: 12px !important;
+  border-left: 2px solid #e5e7eb !important;
+}
+
+/* Ensure no text wrapping in Faculty and Department */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4),
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  font-size: 12px !important;
+}
+
+/* FINAL OVERRIDE: Clean table styling to fix collision and line issues */
+.scholar-table {
+  table-layout: fixed !important;
+  width: 3000px !important;
+  min-width: 3000px !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+}
+
+.scholar-table th,
+.scholar-table td {
+  padding: 12px 8px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  border: none !important;
+  border-right: none !important;
+  border-left: none !important;
+  background: transparent !important;
+}
+
+/* Specific column adjustments to prevent collision */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  padding: 12px 8px !important;
+}
+
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  padding: 12px 8px !important;
+}
+
+/* RE
+MOVE ALL LINES - Complete border removal */
+.scholar-table,
+.scholar-table *,
+.scholar-table th,
+.scholar-table td,
+.scholar-table thead,
+.scholar-table tbody,
+.scholar-table tr {
+  border: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  outline: none !important;
+  text-align: center !important;
+}
+
+/* Specifically target Faculty and Department columns to remove any lines */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4),
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  border: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove any table borders completely */
+.scholar-table {
+  border: none !important;
+  border-collapse: collapse !important;
+}
+
+/* Remove any row borders */
+.scholar-table tbody tr {
+  border: none !important;
+  border-bottom: none !important;
+}
+
+/* ULT
+IMATE FIX: Force all column widths to prevent collision */
+.scholar-table th:nth-child(1),
+.scholar-table td:nth-child(1) {
+  width: 60px !important;
+  min-width: 60px !important;
+  max-width: 60px !important;
+}
+
+/* S.NO */
+.scholar-table th:nth-child(2),
+.scholar-table td:nth-child(2) {
+  width: 150px !important;
+}
+
+/* FORM NAME */
+.scholar-table th:nth-child(3),
+.scholar-table td:nth-child(3) {
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+}
+
+/* REGISTERED NAME */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+}
+
+/* APPLICATION NO */
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+/* SELECT INSTITUTION */
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  width: 350px !important;
+  min-width: 350px !important;
+  max-width: 350px !important;
+}
+
+/* SELECT PROGRAM */
+.scholar-table th:nth-child(7),
+.scholar-table td:nth-child(7) {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+/* TYPE */
+.scholar-table th:nth-child(8),
+.scholar-table td:nth-child(8) {
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+}
+
+/* MOBILE NUMBER - increased */
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9) {
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
+}
+
+/* EMAIL ID - increased */
+.scholar-table th:nth-child(10),
+.scholar-table td:nth-child(10) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+/* DATE OF BIRTH */
+.scholar-table th:nth-child(11),
+.scholar-table td:nth-child(11) {
+  width: 15vw !important;
+  min-width: 200px !important;
+  max-width: 400px !important;
+}
+
+/* GENDER */
+.scholar-table th:nth-child(12),
+.scholar-table td:nth-child(12) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+
+/* CERTIFICATES */
+.scholar-table th:nth-child(13),
+.scholar-table td:nth-child(13) {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+}
+
+/* QUERY STATUS */
+.scholar-table th:nth-child(14),
+.scholar-table td:nth-child(14) {
+  width: 175px !important;
+  min-width: 175px !important;
+  max-width: 175px !important;
+}
+
+/* STATUS */
+.scholar-table th:nth-child(15),
+.scholar-table td:nth-child(15) {
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  text-align: left !important;
+  padding: 8px 4px !important;
+}
+
+/* ACTIONS */
+
+/* Force table dimensions - Increased width to show all 15 columns including ACTIONS */
+.scholar-table {
+  width: 3200px !important;
+  min-width: 3200px !important;
+  max-width: 3200px !important;
+  table-layout: fixed !important;
+}
+
+/* Ensure no text overflow */
+.scholar-table th,
+.scholar-table td {
+  overflow: visible !important;
+  white-space: nowrap !important;
+  text-overflow: unset !important;
+  padding: 12px 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* TARGETED FIX: Expand table only, not modals */
+
+/* Override table width constraints ONLY for the table container and table itself */
+.fixed.inset-0 .scholar-main-content .table-responsive {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.fixed.inset-0 .scholar-main-content .scholar-table {
+  width: 100% !important;
+  min-width: 100% !important;
+  table-layout: auto !important;
+}
+
+/* Make columns flexible in fullscreen mode */
+.fixed.inset-0 .scholar-table th,
+.fixed.inset-0 .scholar-table td {
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+}
+
+/* Distribute columns proportionally in fullscreen */
+.fixed.inset-0 .scholar-table th:nth-child(1),
+.fixed.inset-0 .scholar-table td:nth-child(1) {
+  width: 5% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(2),
+.fixed.inset-0 .scholar-table td:nth-child(2) {
+  width: 8% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(3),
+.fixed.inset-0 .scholar-table td:nth-child(3) {
+  width: 12% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(4),
+.fixed.inset-0 .scholar-table td:nth-child(4) {
+  width: 15% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(5),
+.fixed.inset-0 .scholar-table td:nth-child(5) {
+  width: 15% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(6),
+.fixed.inset-0 .scholar-table td:nth-child(6) {
+  width: 6% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(7),
+.fixed.inset-0 .scholar-table td:nth-child(7) {
+  width: 12% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(8),
+.fixed.inset-0 .scholar-table td:nth-child(8) {
+  width: 12% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(9),
+.fixed.inset-0 .scholar-table td:nth-child(9) {
+  width: 6% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(10),
+.fixed.inset-0 .scholar-table td:nth-child(10) {
+  width: 6% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(11),
+.fixed.inset-0 .scholar-table td:nth-child(11) {
+  width: 8% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(12),
+.fixed.inset-0 .scholar-table td:nth-child(12) {
+  width: 7% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(13),
+.fixed.inset-0 .scholar-table td:nth-child(13) {
+  width: 6% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(14),
+.fixed.inset-0 .scholar-table td:nth-child(14) {
+  width: 6% !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(15),
+.fixed.inset-0 .scholar-table td:nth-child(15) {
+  width: 10% !important;
+  text-align: left !important;
+}
+
+/* Ensure main content area uses full width */
+.fixed.inset-0 .scholar-main-content {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* IMPORTANT: Keep modals at normal size - DO NOT expand */
+.fixed.inset-0 .modal-overlay {
+  width: auto !important;
+  max-width: none !important;
+}
+
+.fixed.inset-0 .modal-content {
+  width: auto !important;
+  max-width: 600px !important;
+  margin: auto !important;
+}
+
+/* Keep confirmation dialogs normal size */
+.fixed.inset-0 .view-modal,
+.fixed.inset-0 .edit-modal,
+.fixed.inset-0 .add-modal,
+.fixed.inset-0 .upload-modal,
+.fixed.inset-0 .filter-modal {
+  width: auto !important;
+  max-width: 600px !important;
+}
+
+/* Ensure buttons inside modals stay normal size */
+.fixed.inset-0 .modal-content .action-btn,
+.fixed.inset-0 .modal-content button {
+  width: auto !important;
+  min-width: auto !important;
+  max-width: none !important;
+}
+
+/* Keep form elements in modals normal size */
+.fixed.inset-0 .modal-content input,
+.fixed.inset-0 .modal-content select,
+.fixed.inset-0 .modal-content textarea {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Override any container that might affect modals */
+.fixed.inset-0>div:not(.scholar-main-content) {
+  width: auto !important;
+  max-width: none !important;
+}
+
+/* COLLISION FIX: Override all table styling to prevent text overlap */
+.scholar-table {
+  table-layout: fixed !important;
+  width: 100% !important;
+  min-width: 2000px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.scholar-table th,
+.scholar-table td {
+  padding: 12px 20px !important;
+  border-right: 1px solid #e5e7eb !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: unset !important;
+  font-size: 12px !important;
+}
+
+/* Remove border from last column */
+.scholar-table th:last-child,
+.scholar-table td:last-child {
+  border-right: none !important;
+}
+
+/* Specific column widths to prevent collision */
+.scholar-table th:nth-child(1),
+.scholar-table td:nth-child(1) {
+  width: 150px !important;
+  min-width: 150px !important;
+}
+
+.scholar-table th:nth-child(3),
+.scholar-table td:nth-child(3) {
+  width: 20vw !important;
+  min-width: 250px !important;
+}
+
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  width: 300px !important;
+  min-width: 300px !important;
+}
+
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  width: 200px !important;
+  min-width: 200px !important;
+}
+
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  width: 400px !important;
+  min-width: 300px !important;
+}
+
+.scholar-table th:nth-child(7),
+.scholar-table td:nth-child(7) {
+  width: 200px !important;
+  min-width: 200px !important;
+}
+
+.scholar-table th:nth-child(8),
+.scholar-table td:nth-child(8) {
+  width: 120px !important;
+  min-width: 120px !important;
+}
+
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9) {
+  width: 100px !important;
+  min-width: 100px !important;
+}
+
+.scholar-table th:nth-child(10),
+.scholar-table td:nth-child(10) {
+  width: 120px !important;
+  min-width: 120px !important;
+}
+
+.scholar-table th:nth-child(11),
+.scholar-table td:nth-child(11) {
+  width: 15vw !important;
+  min-width: 200px !important;
+}
+
+.scholar-table th:nth-child(12),
+.scholar-table td:nth-child(12) {
+  width: 160px !important;
+  min-width: 160px !important;
+}
+
+/* Center align specific columns */
+.scholar-table th:nth-child(1),
+.scholar-table td:nth-child(1),
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6),
+.scholar-table th:nth-child(8),
+.scholar-table td:nth-child(8),
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9),
+.scholar-table th:nth-child(10),
+.scholar-table td:nth-child(10),
+.scholar-table th:nth-child(11),
+.scholar-table td:nth-child(11),
+.scholar-table th:nth-child(12),
+.scholar-table td:nth-child(12) {
+  text-align: left !important;
+}
+
+/* Ensure action buttons don't overlap */
+.table-actions {
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+}
+
+.table-action-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  flex-shrink: 0 !important;
+}
+
+/* View Modal Styles */
+.view-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.view-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.view-value {
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  min-height: 20px;
+}
+
+/* Responsive view modal */
+@media (max-width: 768px) {
+  .view-field {
+    margin-bottom: 16px;
+  }
+
+  .view-label {
+    font-size: 11px;
+  }
+
+  .view-value {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}
+
+/* CRITICAL FIX: Prevent SELECT PROGRAM and TYPE columns from merging in non-fullscreen mode */
+.scholar-table th:nth-child(5),
+.scholar-table td:nth-child(5) {
+  width: 350px !important;
+  min-width: 350px !important;
+  max-width: 350px !important;
+  padding: 12px 15px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  padding: 12px 15px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Ensure proper spacing between columns */
+.scholar-table th,
+.scholar-table td {
+  border-right: 1px solid #e5e7eb !important;
+}
+
+.scholar-table th:last-child,
+.scholar-table td:last-child {
+  border-right: none !important;
+}
+
+/* Fullscreen mode - use percentage widths */
+.fixed.inset-0 .scholar-table th:nth-child(5),
+.fixed.inset-0 .scholar-table td:nth-child(5) {
+  width: 18% !important;
+  min-width: 250px !important;
+}
+
+.fixed.inset-0 .scholar-table th:nth-child(6),
+.fixed.inset-0 .scholar-table td:nth-child(6) {
+  width: 15% !important;
+  min-width: 200px !important;
+}
+
+/* Modern Upload Modal Styles */
+.upload-modal-modern {
+  max-width: 900px !important;
+  width: 95% !important;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.upload-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 28px;
+  border-bottom: 2px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.upload-header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.upload-header-text {
+  flex: 1;
+}
+
+.upload-header-text h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.upload-header-text p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.upload-modal-close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.upload-modal-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: rotate(90deg);
+}
+
+.upload-modal-body {
+  padding: 28px;
+}
+
+.upload-dropzone {
+  margin-bottom: 28px;
+}
+
+.upload-file-input {
+  display: none;
+}
+
+.upload-dropzone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  border: 3px dashed #cbd5e1;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-dropzone-label::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(124, 58, 237, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.upload-dropzone-label:hover {
+  border-color: #8b5cf6;
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+}
+
+.upload-dropzone-label:hover::before {
+  opacity: 1;
+}
+
+.upload-dropzone-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b5cf6;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.upload-dropzone-label:hover .upload-dropzone-icon {
+  transform: scale(1.1) rotate(5deg);
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+}
+
+.upload-dropzone-text {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.upload-dropzone-text h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.upload-dropzone-text p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.upload-dropzone-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.upload-dropzone-label:hover .upload-dropzone-button {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+.upload-info-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.upload-info-card {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.upload-info-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.upload-info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.upload-info-icon.success {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #059669;
+}
+
+.upload-info-icon.info {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #2563eb;
+}
+
+.upload-info-icon.warning {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #d97706;
+}
+
+.upload-info-content {
+  flex: 1;
+}
+
+.upload-info-content h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.upload-info-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.upload-info-content li {
+  font-size: 13px;
+  color: #64748b;
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.upload-info-content li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #cbd5e1;
+  font-weight: bold;
+}
+
+.upload-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  border-top: 2px solid #f1f5f9;
+  background: #f8fafc;
+  border-radius: 0 0 16px 16px;
+}
+
+.upload-cancel-btn {
+  padding: 10px 24px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-cancel-btn:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.upload-help-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.upload-help-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .upload-modal-modern {
+    max-width: 95% !important;
+    margin: 20px;
+  }
+
+  .upload-modal-header {
+    padding: 20px;
+  }
+
+  .upload-modal-body {
+    padding: 20px;
+  }
+
+  .upload-dropzone-label {
+    padding: 32px 20px;
+  }
+
+  .upload-info-section {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-modal-footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .upload-cancel-btn,
+  .upload-help-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Drag and Drop Active State */
+.upload-dropzone-label.drag-active {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
+  transform: scale(1.02);
+}
+
+/* File Processing Animation */
+@keyframes processingPulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.upload-processing {
+  animation: processingPulse 1.5s ease-in-out infinite;
+}
+
+/* FINAL OVERRIDES: convert residual px widths to percentage-based layout
+   so the scholar table always fills its container in normal and fullscreen. */
+.scholar-management-container,
+.table-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: auto !important;
+}
+
+.table-container .overflow-x-auto {
+  width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+.table-container .scholar-table {
+  width: 100% !important;
+  min-width: auto !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+}
+
+/* Column percentage allocation (sum = 100%) - Updated for QueryScholars 15 columns */
+.table-container .scholar-table th:nth-child(1),
+.table-container .scholar-table td:nth-child(1) {
+  width: 3% !important;
+}
+
+/* CHECKBOX */
+.table-container .scholar-table th:nth-child(2),
+.table-container .scholar-table td:nth-child(2) {
+  width: 5% !important;
+}
+
+/* S.NO */
+.table-container .scholar-table th:nth-child(3),
+.table-container .scholar-table td:nth-child(3) {
+  width: 12% !important;
+}
+
+/* REGISTERED NAME */
+.table-container .scholar-table th:nth-child(4),
+.table-container .scholar-table td:nth-child(4) {
+  width: 8% !important;
+}
+
+/* APPLICATION NO */
+.table-container .scholar-table th:nth-child(5),
+.table-container .scholar-table td:nth-child(5) {
+  width: 15% !important;
+}
+
+/* SELECT INSTITUTION */
+.table-container .scholar-table th:nth-child(6),
+.table-container .scholar-table td:nth-child(6) {
+  width: 18% !important;
+}
+
+/* SELECT PROGRAM */
+.table-container .scholar-table th:nth-child(7),
+.table-container .scholar-table td:nth-child(7) {
+  width: 8% !important;
+}
+
+/* TYPE */
+.table-container .scholar-table th:nth-child(8),
+.table-container .scholar-table td:nth-child(8) {
+  width: 8% !important;
+}
+
+/* MOBILE NUMBER */
+.table-container .scholar-table th:nth-child(9),
+.table-container .scholar-table td:nth-child(9) {
+  width: 12% !important;
+}
+
+/* EMAIL ID */
+.table-container .scholar-table th:nth-child(10),
+.table-container .scholar-table td:nth-child(10) {
+  width: 5% !important;
+}
+
+/* GENDER */
+.table-container .scholar-table th:nth-child(11),
+.table-container .scholar-table td:nth-child(11) {
+  width: 6% !important;
+}
+
+/* CERTIFICATES */
+.table-container .scholar-table th:nth-child(12),
+.table-container .scholar-table td:nth-child(12) {
+  width: 8% !important;
+}
+
+/* QUERIES */
+.table-container .scholar-table th:nth-child(13),
+.table-container .scholar-table td:nth-child(13) {
+  width: 6% !important;
+}
+
+/* QUERY STATUS */
+.table-container .scholar-table th:nth-child(14),
+.table-container .scholar-table td:nth-child(14) {
+  width: 6% !important;
+}
+
+/* STATUS */
+.table-container .scholar-table th:nth-child(15),
+.table-container .scholar-table td:nth-child(15) {
+  width: 10% !important;
+  text-align: left !important;
+}
+
+/* ACTIONS */
+
+/* Make any remaining inline styles flexible */
+.table-container .scholar-table th[style],
+.table-container .scholar-table td[style] {
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* Small-screen behavior */
+@media (max-width: 1200px) {
+  .table-container .scholar-table {
+    table-layout: auto !important;
+  }
+
+  .table-container .scholar-table th,
+  .table-container .scholar-table td {
+    white-space: nowrap !important;
+  }
+}
+
+/* High-specificity fixes for wrapper cases seen in DevTools
+   Target the fullscreen/page wrappers and the scrolling wrapper to
+   ensure the table-responsive element fills the available width. */
+.fullscreen-page-wrapper.p-4 .h-full.overflow-y-auto.custom-scrollbar .table-responsive,
+.fullscreen-page-wrapper .h-full.overflow-y-auto.custom-scrollbar .table-responsive,
+.main-content-area .table-responsive,
+.scholar-main-content .table-responsive,
+.fixed.inset-0 .scholar-main-content .table-responsive {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.fullscreen-page-wrapper.p-4 .h-full.overflow-y-auto.custom-scrollbar .table-responsive .scholar-table,
+.main-content-area .table-responsive .scholar-table,
+.scholar-main-content .table-responsive .scholar-table {
+  width: 100% !important;
+  min-width: auto !important;
+  table-layout: fixed !important;
+}
+
+/* Final targeted override: make Email column fully visible in a single line
+   - Use a large min-width and nowrap so the address stays on one line
+   - Use !important and high-specificity to win over other rules
+*/
+.table-responsive .scholar-table th:nth-child(9),
+.table-responsive .scholar-table td:nth-child(9) {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  width: 10vw !important;
+  /* allow column to grow to viewport fraction */
+  min-width: 300px !important;
+  /* ensure most emails fit on one line */
+  max-width: none !important;
+}
+
+.table-responsive .scholar-table th:nth-child(9),
+.table-responsive .scholar-table td:nth-child(9) {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  width: 15vw !important;
+  /* allow column to grow to viewport fraction */
+  min-width: 200px !important;
+  /* ensure most emails fit on one line */
+  max-width: none !important;
+}
+
+/* Ensure table allows horizontal scrolling when a column grows */
+.table-responsive {
+  overflow-x: auto !important;
+}
+
+
+
+
+
+/* CRITICAL: Center align ALL table headers */
+.scholar-table th,
+.scholar-table thead th,
+.table-container .scholar-table th,
+.table-responsive .scholar-table th {
+  text-align: center !important;
+}
+
+
+/* Center align S.NO column (first column) */
+.scholar-table th:nth-child(1),
+.scholar-table td:nth-child(1) {
+  text-align: center !important;
+}
+
+
+/* Center align TYPE column (6th column) */
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  text-align: center !important;
+}
+
+
+/* Center align GENDER column (9th column) */
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9) {
+  text-align: center !important;
+}
+
+.scholar-table th:nth-child(10),
+.scholar-table td:nth-child(10) {
+  text-align: center !important;
+}
+
+
+/* Adjust width of TYPE column (6th column) */
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  width: 20vw !important;
+  min-width: 200px !important;
+  max-width: none !important;
+
+}
+
+/* Reduce width of GENDER column (9th column) */
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9) {
+  width: 60px !important;
+  min-width: 60px !important;
+  max-width: 60px !important;
+}
+
+.table-responsive .scholar-table th:nth-child(11),
+.table-responsive .scholar-table td:nth-child(11) {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  width: 13vw !important;
+  /* allow column to grow to viewport fraction */
+  min-width: 200px !important;
+  /* ensure most emails fit on one line */
+  max-width: none !important;
+  text-align: center !important;
+}
+
+
+/* Expand ACTIONS column (12th column) to show all buttons */
+.scholar-table th:nth-child(12),
+.scholar-table td:nth-child(12) {
+  width: 15vw !important;
+  min-width: 200px !important;
+  max-width: 300px !important;
+  text-align: center !important;
+}
+
+.scholar-table th:nth-child(13),
+.scholar-table td:nth-child(13) {
+  width: 13vw !important;
+  min-width: 200px !important;
+  max-width: 300px !important;
+  text-align: center !important;
+}
+
+
+/* FULLSCREEN MODE: Remove white space and fill entire screen */
+.fixed.inset-0 {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.fixed.inset-0 .scholar-management-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.fixed.inset-0 .scholar-main-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.fixed.inset-0 .scholar-header-fixed {
+  margin: 0 !important;
+  padding: 16px 24px !important;
+  border-radius: 0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.fixed.inset-0 .table-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow-y: hidden !important;
+  overflow-x: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.fixed.inset-0 .table-responsive {
+  flex: 1 !important;
+  overflow-y: hidden !important;
+  overflow-x: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+/* Hide scrollbar in fullscreen mode */
+.fixed.inset-0 .table-container::-webkit-scrollbar,
+.fixed.inset-0 .table-responsive::-webkit-scrollbar,
+.fixed.inset-0 .overflow-x-auto::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.fixed.inset-0 .table-container,
+.fixed.inset-0 .table-responsive,
+.fixed.inset-0 .overflow-x-auto {
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
+}
+
+/* FULLSCREEN MODE STYLES - Matching Examination Component */
+.fullscreen-mode {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background: #f8fafc !important;
+  padding: 20px !important;
+  overflow: auto !important;
+}
+
+.fullscreen-mode>div {
+  height: auto !important;
+  max-height: none !important;
+  display: block !important;
+}
+
+/* Table container in fullscreen - maintain normal sizing */
+.fullscreen-mode .table-container,
+.fullscreen-mode .table-responsive {
+  height: 500px !important;
+  max-height: 500px !important;
+  min-height: 500px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+/* Enhanced fullscreen experience */
+.fullscreen-mode h1 {
+  font-size: 32px !important;
+  background: linear-gradient(135deg, #1e293b, #475569);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Action buttons in fullscreen - maintain normal styling */
+.fullscreen-mode .table-actions button,
+.fullscreen-mode .scholar-table button {
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  border-radius: 4px !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Other buttons in fullscreen */
+.fullscreen-mode button:not(.table-actions button):not(.scholar-table button) {
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  border-radius: 6px !important;
+}
+
+/* Search and filter section in fullscreen */
+.fullscreen-mode input {
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  border-radius: 8px !important;
+  border: 2px solid #e2e8f0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.fullscreen-mode input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Enhanced table in fullscreen - maintain normal sizing */
+.fullscreen-mode .scholar-table {
+  min-width: 3450px !important;
+  width: 3450px !important;
+  table-layout: auto !important;
+  border-collapse: collapse !important;
+}
+
+.fullscreen-mode .scholar-table th {
+  padding: 14px 10px !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+}
+
+.fullscreen-mode .scholar-table td {
+  padding: 12px 8px !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* Specific action button fixes for fullscreen */
+.fullscreen-mode .table-action-btn {
+  width: 26px !important;
+  height: 26px !important;
+  padding: 4px !important;
+  margin: 0 1px !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.fullscreen-mode .btn-view {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  color: white !important;
+}
+
+.fullscreen-mode .btn-edit {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+  color: white !important;
+}
+
+.fullscreen-mode .btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: white !important;
+}
+
+/* Ensure action column visibility in fullscreen */
+.fullscreen-mode .scholar-table th:last-child,
+.fullscreen-mode .scholar-table td:last-child {
+  width: 13vw !important;
+  min-width: 120px !important;
+  text-align: center !important;
+  padding: 8px 4px !important;
+}
+
+/* Fix table scrolling in fullscreen */
+.fullscreen-mode .table-container {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  background: white !important;
+}
+
+/* Clean action column styling */
+.scholar-table th:nth-child(14) {
+  background: #f8fafc !important;
+  border-left: 1px solid #e5e7eb !important;
+}
+
+.scholar-table td:nth-child(14) {
+  background: #fafbfc !important;
+  border-left: 1px solid #e5e7eb !important;
+}
+
+/* Clean action buttons styling */
+.scholar-table .table-actions {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 3px !important;
+  padding: 6px 2px !important;
+  flex-wrap: nowrap !important;
+}
+
+.scholar-table .table-action-btn {
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.scholar-table .table-action-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Fix table container to show sticky column properly */
+.table-container,
+.table-responsive {
+  position: relative !important;
+  overflow-x: auto !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+}
+
+/* Professional action button colors */
+.scholar-table .btn-view {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  color: white !important;
+}
+
+.scholar-table .btn-edit {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+  color: white !important;
+}
+
+.scholar-table .btn-delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: white !important;
+}
+
+/* Ensure icons are properly sized */
+.scholar-table .table-action-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Improve table container for better scrolling */
+.table-container {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.table-responsive {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: 500px !important;
+}
+
+/* Clean table borders */
+.scholar-table {
+  border: 1px solid #e5e7eb !important;
+}
+
+.scholar-table th,
+.scholar-table td {
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.scholar-table tbody tr:hover {
+  background-color: #f9fafb !important;
+}
+
+.scholar-table tbody tr:hover td:nth-child(14) {
+  background-color: #f3f4f6 !important;
+}
+
+
+/* Eligibility Status Pills */
+.status-pill.eligible {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.status-pill.not-eligible {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.status-pill.eligible:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.status-pill.not-eligible:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+}
+
+
+/* ===== BULK SELECTION & ACTIONS STYLING ===== */
+
+/* Disabled checkbox styling for forwarded scholars */
+input[type="checkbox"]:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  background-color: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+input[type="checkbox"]:disabled:hover {
+  transform: none !important;
+}
+
+/* Forwarded scholar row styling */
+tr.forwarded-scholar {
+  background-color: #f9fafb !important;
+  opacity: 0.8;
+}
+
+tr.forwarded-scholar:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* Selected row highlight */
+tr.bg-blue-50 {
+  background-color: #eff6ff !important;
+  border-left: 3px solid #3b82f6;
+}
+
+tr.bg-blue-50:hover {
+  background-color: #dbeafe !important;
+}
+
+/* Floating action bar animation */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Floating action bar styling */
+.fixed.bottom-8 {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Bulk action buttons hover effects */
+.fixed button:hover {
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+.fixed button:active {
+  transform: scale(0.98);
+}
+
+/* Responsive bulk actions bar */
+@media (max-width: 768px) {
+  .fixed.bottom-8>div {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .fixed.bottom-8 .h-10 {
+    display: none;
+  }
+
+  .fixed.bottom-8 button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Smooth transitions for selection */
+tr {
+  transition: background-color 0.2s ease, border-left 0.2s ease;
+}
+
+/* Modal backdrop blur effect */
+.fixed.inset-0.bg-black.bg-opacity-50 {
+  backdrop-filter: blur(4px);
+  transition: backdrop-filter 0.3s ease;
+}
+
+/* Bulk action modal animations */
+.fixed.inset-0>div {
+  animation: modal-appear 0.3s ease-out;
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Ensure floating bar is above everything */
+.z-50 {
+  z-index: 50;
+}
+
+/* Smooth checkbox transitions */
+input[type="checkbox"] {
+  transition: all 0.15s ease-in-out;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* ===== LEFT ALIGNMENT OVERRIDES FOR BETTER READABILITY ===== */
+
+/* Default left alignment for all table headers and cells */
+.scholar-table th,
+.scholar-table td {
+  text-align: left !important;
+}
+
+/* Keep specific columns centered for visual balance */
+.scholar-table th:nth-child(1),
+.scholar-table td:nth-child(1) {
+  text-align: center !important;
+  /* S.No */
+}
+
+.scholar-table th:nth-child(6),
+.scholar-table td:nth-child(6) {
+  text-align: center !important;
+  /* Gender */
+}
+
+.scholar-table th:nth-child(9),
+.scholar-table td:nth-child(9) {
+  text-align: center !important;
+  /* Certificates */
+}
+
+.scholar-table th:nth-child(10),
+.scholar-table td:nth-child(10) {
+  text-align: center !important;
+  /* Marks */
+}
+
+.scholar-table th:nth-child(15),
+.scholar-table td:nth-child(15) {
+  text-align: center !important;
+  /* Actions */
+}
+
+/* Status columns centered for badges */
+.scholar-table th:nth-child(13),
+.scholar-table td:nth-child(13),
+.scholar-table th:nth-child(14),
+.scholar-table td:nth-child(14) {
+  text-align: center !important;
+  /* Query Status and Status */
+}
+
+
+/* ===== COMPREHENSIVE LEFT ALIGNMENT FOR ALL HEADERS ===== */
+.scholar-table th {
+  text-align: left !important;
+}
+
+.scholar-table thead th {
+  text-align: left !important;
+}
+
+
+/* ===== FORCE ACTION BUTTONS LEFT ALIGNMENT ===== */
+.scholar-table tbody td:nth-child(15) {
+  text-align: left !important;
+  padding-left: 10px !important;
+}
+
+.scholar-table tbody td:nth-child(15) .table-actions {
+  justify-content: flex-start !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+
+/* Action Buttons Container for WorkflowScholarAdmin */
+.action-buttons-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  flex-wrap: nowrap;
+}
+
+.action-view-btn,
+.action-timeline-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+}
+
+.action-view-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.action-view-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.action-timeline-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.action-timeline-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.action-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Fullscreen mode - make buttons slightly larger */
+.fullscreen-active .action-buttons-container {
+  gap: 10px;
+  padding: 6px;
+}
+
+.fullscreen-active .action-view-btn,
+.fullscreen-active .action-timeline-btn {
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+}
+
+.fullscreen-active .action-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* Ensure action column has enough width */
+.scholar-table th:last-child,
+.scholar-table td:last-child {
+  min-width: 120px;
+  width: 120px;
+  padding: 12px 8px !important;
+}
+
+.fullscreen-table th:last-child,
+.fullscreen-table td:last-child {
+  min-width: 140px;
+  width: 140px;
+  padding: 12px 16px !important;
+}
+
+
+/* View Scholar Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.modal-content-large {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 1200px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 2px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.modal-close-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  background: #dc2626;
+  transform: rotate(90deg);
+}
+
+.modal-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+.detail-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #3b82f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 2px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-item label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-item span {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.detail-item-full {
+  margin-top: 16px;
+}
+
+.detail-item-full label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.detail-text {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+  padding: 16px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.exam-subsection {
+  margin-top: 20px;
+  padding: 16px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.subsection-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3b82f6;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-footer {
+  padding: 20px 32px;
+  border-top: 2px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #f8fafc;
+}
+
+.btn-secondary {
+  padding: 10px 24px;
+  border: 2px solid #64748b;
+  background: white;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #64748b;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.text-red-600 {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* Scrollbar for modal body */
+.modal-body-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.modal-body-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  border-radius: 4px;
+}
+
+.modal-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+  .modal-content-large {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+  }
+
+  .modal-body-scroll {
+    padding: 20px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+  }
+}
+
+
+/* Timeline Modal Styles */
+.modal-content-timeline {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.timeline-header-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border-radius: 8px;
+  margin-bottom: 32px;
+  border: 2px solid #e2e8f0;
+}
+
+.timeline-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeline-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timeline-info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Timeline Container */
+.timeline-container {
+  position: relative;
+  padding-left: 40px;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 19px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #3b82f6, #10b981, #f59e0b);
+}
+
+/* Timeline Item */
+.timeline-item {
+  position: relative;
+  padding-bottom: 40px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.timeline-item.completed {
+  opacity: 1;
+}
+
+.timeline-item.active {
+  opacity: 1;
+}
+
+.timeline-item.pending {
+  opacity: 0.4;
+}
+
+/* Timeline Marker */
+.timeline-marker {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-marker-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-item.completed .timeline-marker-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  color: white;
+}
+
+.timeline-item.active .timeline-marker-icon {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: #3b82f6;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+}
+
+.timeline-item.pending .timeline-marker-icon {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+}
+
+/* Timeline Content */
+.timeline-content {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.timeline-item.completed .timeline-content {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+}
+
+.timeline-item.active .timeline-content {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.timeline-item.pending .timeline-content {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.timeline-stage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.timeline-stage-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.timeline-status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-completed {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.status-pending {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.status-approved {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.status-rejected {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.timeline-description {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.timeline-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timeline-timestamp {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-timestamp::before {
+  content: '🕒';
+  font-size: 14px;
+}
+
+.timeline-note {
+  font-size: 12px;
+  color: #64748b;
+  padding: 6px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+  width: fit-content;
+}
+
+.timeline-note-error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* Responsive Timeline */
+@media (max-width: 768px) {
+  .modal-content-timeline {
+    max-width: 95%;
+  }
+
+  .timeline-header-info {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-container {
+    padding-left: 30px;
+  }
+
+  .timeline-container::before {
+    left: 14px;
+  }
+
+  .timeline-marker {
+    left: -30px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .timeline-marker-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .timeline-stage {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+
+/* Program Cell Styling for WorkflowScholarAdmin */
+.program-cell {
+  max-width: 100%;
+  white-space: normal !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+  padding: 4px 0;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+/* Ensure SELECT PROGRAM column has proper width */
+.scholar-table th:nth-child(4),
+.scholar-table td:nth-child(4) {
+  min-width: 300px !important;
+  width: 300px !important;
+  max-width: 300px !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  padding: 12px 16px !important;
+}
+
+.fullscreen-table th:nth-child(4),
+.fullscreen-table td:nth-child(4) {
+  min-width: 400px !important;
+  width: 400px !important;
+  max-width: 400px !important;
+}

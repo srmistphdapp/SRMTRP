@@ -1,0 +1,3057 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --container-max: 1440px;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --border-radius: 0.5rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.th .td {
+  text-align: center;
+}
+
+html {
+  font-size: 16px;
+  height: 100%;
+  color: #000000;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+/* Responsive Container */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive Grid */
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: repeat(12, 1fr);
+  width: 100%;
+}
+
+/* Responsive Columns */
+.col-12 {
+  grid-column: span 12;
+}
+
+.col-6 {
+  grid-column: span 6;
+}
+
+.col-4 {
+  grid-column: span 4;
+}
+
+.col-3 {
+  grid-column: span 3;
+}
+
+@media (max-width: 1024px) {
+  .col-lg-12 {
+    grid-column: span 12;
+  }
+
+  .col-lg-6 {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 768px) {
+  .col-md-12 {
+    grid-column: span 12;
+  }
+
+  .col-md-6 {
+    grid-column: span 6;
+  }
+
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-sm-12 {
+    grid-column: span 12;
+  }
+
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+
+  html {
+    font-size: 14px;
+  }
+}
+
+.glassmorphic-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-md);
+  margin: 0;
+  border-radius: var(--border-radius);
+}
+
+/* Scrollable Navigation Panel */
+.nav-container {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #e5e6eb transparent;
+}
+
+/* Custom scrollbar for WebKit browsers */
+.nav-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nav-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav-container::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 3px;
+}
+
+.nav-container::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d5db;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  border: none;
+  border-radius: var(--border-radius);
+  background: transparent;
+  color: #000000;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-button:hover:not(.active) {
+  background-color: #bae6fd;
+  color: #075985;
+}
+
+.tab-button.active {
+  background-color: #38bdf8;
+  color: white;
+  font-weight: 600;
+}
+
+/* PREMIUM NAVIGATION - Light Theme */
+nav {
+  background: transparent !important;
+  border-right: none !important;
+}
+
+nav .nav-container {
+  padding: 0.75rem 1rem;
+}
+
+nav .tab-button {
+  color: #1f2937;
+  padding: 0.875rem 1.125rem;
+  border-radius: 12px;
+  margin: 0.35rem 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+
+nav .tab-button::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+nav .tab-button:hover {
+  background: #f3f4f6;
+  color: #111827;
+  transform: translateX(4px);
+}
+
+nav .tab-button:hover svg {
+  color: #4f46e5;
+  filter: brightness(1.2);
+}
+
+nav .tab-button:hover::before {
+  transform: scaleY(1);
+}
+
+nav .tab-button.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: white !important;
+  font-weight: 600;
+  border-radius: 12px;
+  transform: translateX(6px);
+  margin: 0.35rem 0;
+  padding: 0.875rem 1.125rem;
+}
+
+nav .tab-button.active::before {
+  transform: scaleY(1);
+  background: rgba(255, 255, 255, 0.3);
+  width: 4px;
+}
+
+nav .tab-button.active:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  transform: translateX(8px);
+}
+
+nav .tab-button svg {
+  color: #6366f1;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+  filter: brightness(1.1);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--spacing-sm);
+  overflow-y: auto;
+}
+
+.modal-overlay.flex {
+  display: flex;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-lg);
+  width: 100%;
+  max-width: 60rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  color: #1f2937;
+  margin: var(--spacing-sm);
+  text-align: left !important;
+}
+
+/* Form Elements */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #000000;
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.message-box {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  z-index: 10001;
+  display: block;
+  color: #000000;
+}
+
+/* Campus Selection Buttons - Top Left */
+.campus-selection {
+  position: fixed;
+  top: 4px;
+  left: 8px;
+  z-index: 30;
+}
+
+.campus-filter-btn {
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.campus-filter-btn:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.campus-filter-btn.active {
+  background-color: #2563eb;
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+.campus-buttons-container {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.faculty-row>div {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.overview-faculty-row svg,
+.faculty-row svg {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+
+/* FORCE LEFT ALIGNMENT FOR ALL EXAMINATION TABLE COLUMNS */
+.examination-table th,
+.examination-table td {
+  text-align: left !important;
+}
+
+/* Override specific column alignments */
+.examination-table th:nth-child(1), .examination-table td:nth-child(1),
+.examination-table th:nth-child(2), .examination-table td:nth-child(2),
+.examination-table th:nth-child(3), .examination-table td:nth-child(3),
+.examination-table th:nth-child(4), .examination-table td:nth-child(4),
+.examination-table th:nth-child(5), .examination-table td:nth-child(5),
+.examination-table th:nth-child(6), .examination-table td:nth-child(6),
+.examination-table th:nth-child(7), .examination-table td:nth-child(7),
+.examination-table th:nth-child(8), .examination-table td:nth-child(8),
+.examination-table th:nth-child(9), .examination-table td:nth-child(9),
+.examination-table th:nth-child(10), .examination-table td:nth-child(10),
+.examination-table th:nth-child(11), .examination-table td:nth-child(11),
+.examination-table th:nth-child(12), .examination-table td:nth-child(12),
+.examination-table th:nth-child(13), .examination-table td:nth-child(13) {
+  text-align: left !important;
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--spacing-md) 0;
+  font-size: 0.9375rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left; /* Force left alignment for all table cells */
+  border-bottom: 1px solid #e5e7eb;
+  color: #000000;
+}
+
+.table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #000000;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Global table alignment override for Director Portal - Mixed alignment */
+.director-portal table th,
+.director-portal table td {
+  text-align: left !important; /* Default to left alignment */
+}
+
+/* Center align specific numeric/status/action columns */
+.director-portal table th:first-child,
+.director-portal table td:first-child {
+  text-align: center !important; /* S.No./Rank columns */
+}
+
+/* Examination table specific alignment */
+.director-portal .examination-table th:nth-child(1),  /* Checkbox */
+.director-portal .examination-table td:nth-child(1),
+.director-portal .examination-table th:nth-child(2),  /* S.No */
+.director-portal .examination-table td:nth-child(2),
+.director-portal .examination-table th:nth-child(10), /* Gender */
+.director-portal .examination-table td:nth-child(10),
+.director-portal .examination-table th:nth-child(11), /* Written Marks(100) */
+.director-portal .examination-table td:nth-child(11),
+.director-portal .examination-table th:nth-child(12), /* Written Marks(70) */
+.director-portal .examination-table td:nth-child(12),
+.director-portal .examination-table th:nth-child(13), /* Interview Marks */
+.director-portal .examination-table td:nth-child(13),
+.director-portal .examination-table th:nth-child(14), /* Total Marks */
+.director-portal .examination-table td:nth-child(14),
+.director-portal .examination-table th:nth-child(15), /* Status */
+.director-portal .examination-table td:nth-child(15),
+.director-portal .examination-table th:nth-child(16), /* Actions */
+.director-portal .examination-table td:nth-child(16) {
+  text-align: center !important;
+}
+
+/* Examination table text columns - force left alignment */
+.director-portal .examination-table th:nth-child(3),  /* Registered Name */
+.director-portal .examination-table td:nth-child(3),
+.director-portal .examination-table th:nth-child(4),  /* Application No */
+.director-portal .examination-table td:nth-child(4),
+.director-portal .examination-table th:nth-child(5),  /* Institution */
+.director-portal .examination-table td:nth-child(5),
+.director-portal .examination-table th:nth-child(6),  /* Program */
+.director-portal .examination-table td:nth-child(6),
+.director-portal .examination-table th:nth-child(7),  /* Type */
+.director-portal .examination-table td:nth-child(7),
+.director-portal .examination-table th:nth-child(8),  /* Mobile */
+.director-portal .examination-table td:nth-child(8),
+.director-portal .examination-table th:nth-child(9),  /* Email */
+.director-portal .examination-table td:nth-child(9) {
+  text-align: left !important;
+}
+
+/* Center align numeric data columns (admitted/vacancy counts) */
+.director-portal table td:nth-child(6),  /* Full Time Admitted */
+.director-portal table td:nth-child(7),  /* Full Time Vacancy */
+.director-portal table td:nth-child(8),  /* Part Time Internal Admitted */
+.director-portal table td:nth-child(9),  /* Part Time Internal Vacancy */
+.director-portal table td:nth-child(10), /* Part Time External Admitted */
+.director-portal table td:nth-child(11), /* Part Time External Vacancy */
+.director-portal table td:nth-child(12), /* Part Time Industry Admitted */
+.director-portal table td:nth-child(13), /* Part Time Industry Vacancy */
+.director-portal table td:last-child {   /* Actions column */
+  text-align: center !important;
+}
+
+/* Center align marks and status columns in Result tables */
+.director-portal table th:nth-child(3),  /* Written Marks header */
+.director-portal table th:nth-child(4),  /* Interview Marks header */
+.director-portal table th:nth-child(5),  /* Total Marks header */
+.director-portal table th:nth-child(6),  /* Status header */
+.director-portal table td:nth-child(3),  /* Written Marks data */
+.director-portal table td:nth-child(4),  /* Interview Marks data */
+.director-portal table td:nth-child(5),  /* Total Marks data */
+.director-portal table td:nth-child(6) { /* Status data */
+  text-align: center !important;
+}
+
+/* Center align colspan headers for grouped columns */
+.director-portal table th[colspan] {
+  text-align: center !important;
+}
+
+/* Exception for action buttons - keep them centered but with flex center */
+table td .flex,
+table td .supervisors-actions {
+  display: flex;
+  justify-content: center !important;
+  text-align: left !important;
+
+}
+
+/* Override any center alignment classes in text columns - force left */
+.director-portal table th:nth-child(2), /* Name columns */
+.director-portal table th:nth-child(3), /* Faculty columns (in supervisor table) */
+.director-portal table th:nth-child(4), /* Department columns (in supervisor table) */
+.director-portal table th:nth-child(5), /* Specialization columns (in supervisor table) */
+.director-portal table td:nth-child(2), /* Name data */
+.director-portal table td:nth-child(3), /* Faculty data (in supervisor table) */
+.director-portal table td:nth-child(4), /* Department data (in supervisor table) */
+.director-portal table td:nth-child(5) { /* Specialization data (in supervisor table) */
+  text-align: left !important;
+}
+
+/* Comprehensive left-alignment overrides for all table variations */
+.director-portal .examination-table th,
+.director-portal .examination-table td,
+.director-portal .table th,
+.director-portal .table td,
+.director-portal table thead th,
+.director-portal table tbody td,
+.director-portal table tfoot td {
+  text-align: left !important;
+}
+
+/* Override specific examination table center alignments - EXCEPT specific marks-related columns */
+.examination-table th[style*="text-align: center"]:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)),
+.examination-table td[style*="text-align: center"]:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)),
+.examination-table .text-center:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)) {
+  text-align: left !important;
+}
+
+/* Allow center alignment ONLY for specific marks-related columns (WRITTEN MARKS(100), WRITTEN MARKS(70), INTERVIEW MARKS, TOTAL MARKS, STATUS, ACTIONS) */
+.examination-table th:nth-child(11),
+.examination-table td:nth-child(11),
+.examination-table th:nth-child(12),
+.examination-table td:nth-child(12),
+.examination-table th:nth-child(13),
+.examination-table td:nth-child(13),
+.examination-table th:nth-child(14),
+.examination-table td:nth-child(14),
+.examination-table th:nth-child(15),
+.examination-table td:nth-child(15),
+.examination-table th:nth-child(16),
+.examination-table td:nth-child(16) {
+  text-align: center !important;
+}
+
+/* Override inline styles and specific selectors - EXCEPT specific marks-related columns */
+.director-portal table th[class*="text-center"]:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)),
+.director-portal table td[class*="text-center"]:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)),
+.director-portal table .px-4.py-3.text-center:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)),
+.director-portal table .px-4.py-2.text-center:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)),
+.director-portal table .px-2.py-2.text-center:not(:nth-child(11)):not(:nth-child(12)):not(:nth-child(13)):not(:nth-child(14)):not(:nth-child(15)):not(:nth-child(16)) {
+  text-align: left !important;
+}
+
+/* Ensure ONLY specific marks-related columns stay center-aligned */
+.director-portal .examination-table th:nth-child(11),
+.director-portal .examination-table td:nth-child(11),
+.director-portal .examination-table th:nth-child(12),
+.director-portal .examination-table td:nth-child(12),
+.director-portal .examination-table th:nth-child(13),
+.director-portal .examination-table td:nth-child(13),
+.director-portal .examination-table th:nth-child(14),
+.director-portal .examination-table td:nth-child(14),
+.director-portal .examination-table th:nth-child(15),
+.director-portal .examination-table td:nth-child(15),
+.director-portal .examination-table th:nth-child(16),
+.director-portal .examination-table td:nth-child(16) {
+  text-align: center !important;
+}
+
+/* Explicitly ensure GENDER column (10) is left-aligned */
+.director-portal .examination-table th:nth-child(10),
+.director-portal .examination-table td:nth-child(10) {
+  text-align: left !important;
+}
+
+/* Force left alignment for all nth-child selectors */
+.director-portal table th:nth-child(n),
+.director-portal table td:nth-child(n) {
+  text-align: left !important;
+}
+
+/* Override any remaining center alignments - be more selective */
+.director-portal table th.text-left,
+.director-portal table td.text-left {
+  text-align: center !important;
+}
+
+.director-portal table th.text-center,
+.director-portal table td.text-center {
+  text-align: center !important;
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sticky header for tables */
+.sticky-header thead {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+
+.sticky-header thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb !important;
+  border-bottom: 2px solid #e5e7eb;
+  color: #000000 !important;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .table th {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .table th,
+  .table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.sticky-header thead th:hover {
+  background: linear-gradient(135deg, rgba(226, 232, 240, 0.4), rgba(241, 245, 249, 0.35)) !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Module Headers */
+.glassmorphic-card h3,
+.module-header,
+.card-header,
+.panel-header,
+.section-header,
+.tab-content h3,
+.modal-content h3 {
+  color: #000000 !important;
+}
+
+/* Ensure text in header elements is black */
+header,
+.header {
+  color: #000000 !important;
+}
+
+/* Fix for any white text in cards */
+.glassmorphic-card,
+.card,
+.panel,
+.module {
+  color: #000000 !important;
+}
+
+/* Ensure all text in modals is black */
+.modal-content,
+.modal-overlay {
+  color: #000000 !important;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #bdb9f8;
+  color: white;
+  border-color: #4f46e5;
+}
+
+.btn-primary:hover {
+  background-color: #c8c3fc;
+  border-color: #4338ca;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-outline:hover {
+  background-color: rgba(255, 161, 161, 0.856);
+  color: #000000;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Tailwind-like utility classes */
+.w-full {
+  width: 100%;
+}
+
+.max-w-full {
+  max-width: 100%;
+}
+
+.px-0 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.m-2 {
+  margin: 0.5rem;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.space-x-2>*+* {
+  margin-left: 0.5rem;
+}
+
+.bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.p-1 {
+  padding: 0.25rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.text-white {
+  color: white;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+.font-size{
+  font-size: 200% !important;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+}
+
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.hover\:scale-105:hover {
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.w-4 {
+  width: 1rem;
+}
+
+.h-4 {
+  height: 1rem;
+}
+
+.w-64 {
+  width: 16rem;
+}
+
+.bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.border-r {
+  border-right-width: 1px;
+}
+
+.border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.h-full {
+  height: 100%;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+}
+
+.border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
+.w-10 {
+  width: 2.5rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
+.space-y-1>*+* {
+  margin-top: 0.25rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.w-5 {
+  width: 1.25rem;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.md\:grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lg\:grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-blue-500 {
+  --tw-gradient-from: #3b82f6;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(59, 130, 246, 0));
+}
+
+.to-purple-600 {
+  --tw-gradient-to: #9333ea;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.from-green-500 {
+  --tw-gradient-from: #22c55e;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(34, 197, 94, 0));
+}
+
+.to-teal-600 {
+  --tw-gradient-to: #0d9488;
+}
+
+.from-orange-500 {
+  --tw-gradient-from: #f97316;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(249, 115, 22, 0));
+}
+
+.to-red-600 {
+  --tw-gradient-to: #dc2626;
+}
+
+.from-purple-500 {
+  --tw-gradient-from: #a855f7;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(168, 85, 247, 0));
+}
+
+.to-pink-500 {
+  --tw-gradient-to: #ec4899;
+}
+
+.bg-red-600 {
+  background-color: #dc2626;
+}
+
+.hover\:bg-red-700:hover {
+  background-color: #b91c1c;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.hover\:bg-blue-600:hover {
+  background-color: #2563eb;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.bg-green-500 {
+  background-color: #22c55e;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #16a34a;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.space-x-3>*+* {
+  margin-left: 0.75rem;
+}
+
+.max-w-sm {
+  max-width: 24rem;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* D
+ashboard Specific Styles */
+.dashboard-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card {
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.faculty-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.faculty-table th {
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.faculty-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.faculty-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.faculty-header {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.faculty-header:hover {
+  background-color: #f1f5f9;
+}
+
+.chart-container {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+/* Responsive adjustments for dashboard */
+@media (max-width: 768px) {
+  .faculty-table {
+    font-size: 0.75rem;
+  }
+
+  .faculty-table th,
+  .faculty-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .stat-card {
+    padding: 0.75rem;
+  }
+}
+
+/* Chart.js custom styles */
+.chartjs-render-monitor {
+  animation: chartjs-render-animation 0.8s linear;
+}
+
+@keyframes chartjs-render-animation {
+  from {
+    opacity: 0.99;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fullscreen button for dashboard */
+.fullscreen-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fullscreen-btn:hover {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard grid improvements */
+.dashboard-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.dashboard-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.dashboard-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.dashboard-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.dashboard-grid-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+@media (max-width: 1024px) {
+
+  .dashboard-grid-4,
+  .dashboard-grid-5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+
+  .dashboard-grid-2,
+  .dashboard-grid-3,
+  .dashboard-grid-4,
+  .dashboard-grid-5 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Exact Dashboard Styles to Match HTML */
+.dashboard-overview-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.dashboard-overview-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Chart containers */
+.chart-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Faculty table styling */
+.faculty-expandable {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.faculty-header-row {
+  background: #f9fafb;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.faculty-header-row:hover {
+  background: #f3f4f6;
+}
+
+.department-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.department-table th {
+  background: #f9fafb;
+  padding: 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.department-table th:first-child {
+  text-align: left;
+}
+
+.department-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.department-table td:first-child {
+  text-align: left;
+}
+
+.department-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.department-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsive grid for dashboard */
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-cols-5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+
+  .grid-cols-4,
+  .grid-cols-5,
+  .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .department-table {
+    font-size: 0.75rem;
+  }
+
+  .department-table th,
+  .department-table td {
+    padding: 0.5rem 0.25rem;
+  }
+}
+
+/* Das
+hboard Layout Improvements */
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.faculty-accordion {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.faculty-accordion:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.faculty-header {
+  background: #f8fafc;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.faculty-header:hover {
+  background: #f1f5f9;
+}
+
+.faculty-header.expanded {
+  background: #e0f2fe;
+  border-bottom-color: #0891b2;
+}
+
+.faculty-content {
+  padding: 0;
+  background: white;
+}
+
+.department-table-container {
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.department-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  background: white;
+}
+
+.department-table th {
+  background: #f8fafc;
+  padding: 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e5e7eb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.department-table th:first-child {
+  text-align: left;
+  min-width: 200px;
+}
+
+.department-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+  color: #374151;
+}
+
+.department-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+
+.department-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.department-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Scholar count highlighting */
+.department-table td:last-child {
+  font-weight: 600;
+  color: #059669;
+}
+
+/* Responsive improvements */
+@media (max-width: 1024px) {
+  .dashboard-charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .department-table {
+    font-size: 0.75rem;
+  }
+
+  .department-table th,
+  .department-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .faculty-header {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .department-table th:first-child {
+    min-width: 150px;
+  }
+}
+
+/* Chart container improvements */
+.chart-card {
+  position: relative;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.chart-legend {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Faculty expansion animation */
+.faculty-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.faculty-content.expanded {
+  max-height: 1000px;
+  transition: max-height 0.3s ease-in;
+}
+
+/* Icon rotation animation */
+.expand-icon {
+  transition: transform 0.2s ease;
+}
+
+.expand-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* D
+ashboard No-Scroll Layout */
+.dashboard-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Stats tiles responsive layout */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  max-width: 100%;
+}
+
+/* Ensure exactly 3 tiles per row on larger screens */
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Charts responsive layout */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  max-width: 100%;
+}
+
+/* Ensure exactly 2 charts per row on larger screens */
+@media (min-width: 768px) {
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Prevent horizontal overflow */
+.dashboard-content {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Responsive chart containers */
+.chart-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.chart-container canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .glassmorphic-card {
+    padding: 1rem;
+  }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1023px) and (min-width: 641px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Force
+ exactly 3 tiles per row */
+.stats-tiles-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.stats-tiles-3>* {
+  min-width: 0;
+  /* Prevent overflow */
+  box-sizing: border-box;
+}
+
+/* Ensure charts are visible and properly sized */
+.chart-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.chart-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Debug styles for charts */
+.glassmorphic-card canvas {
+  border: 1px solid #e5e7eb !important;
+  background: white !important;
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 480px) {
+  .stats-tiles-3 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .stats-tiles-3 .stat-card {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .stats-tiles-3 .stat-card p:first-child {
+    font-size: 0.75rem;
+  }
+
+  .stats-tiles-3 .stat-card p:last-child {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) and (min-width: 481px) {
+  .stats-tiles-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* M
+odal Styles for Consistent Design */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+}
+
+.modal-body {
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.form-note {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.view-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.view-item label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.view-item span {
+  font-size: 0.875rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.delete-confirmation {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.warning-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.delete-confirmation h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.delete-confirmation p {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.warning-text {
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+/* View Modal Specific Styles */
+.view-modal {
+  max-width: 32rem;
+}
+
+/* Responsive adjustments for modals */
+@media (max-width: 768px) {
+  .view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+/* Sidebar Layout Management */
+.sidebar-layout-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* PREMIUM SIDEBAR - Light Theme */
+.sidebar-fixed {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fc 100%) !important;
+  border-right: 1px solid #e5e7eb !important;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08), inset -1px 0 0 rgba(0, 0, 0, 0.02);
+}
+
+.sidebar-expanded {
+  width: 280px;
+}
+
+.sidebar-minimized {
+  width: 72px;
+}
+
+.sidebar-hidden {
+  width: 0 !important;
+  transform: translateX(-100%) !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  transition: all 0.3s ease !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Main content area adjustments */
+.main-content-area {
+  flex: 1;
+  transition: all 0.3s ease;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  position: relative;
+}
+
+/* Content area margins - Royal Layout */
+.content-with-sidebar-expanded {
+  margin-left: 280px;
+  width: calc(100vw - 280px);
+  background: linear-gradient(135deg, #f8f9fc 0%, #f0f2f8 100%);
+  padding: 24px;
+}
+
+.content-with-sidebar-minimized {
+  margin-left: 72px;
+  width: calc(100vw - 72px);
+  background: linear-gradient(135deg, #f8f9fc 0%, #f0f2f8 100%);
+  padding: 24px;
+}
+
+.content-with-sidebar-hidden {
+  margin-left: 0 !important;
+  width: 100vw !important;
+  background: linear-gradient(135deg, #f8f9fc 0%, #f0f2f8 100%);
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+/* Hide sidebar when modals are active */
+.sidebar-hidden-modal {
+  width: 0 !important;
+  transform: translateX(-100%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Fullscreen mode overrides */
+.content-fullscreen {
+  margin-left: 0 !important;
+  width: 100vw !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 9999 !important;
+  background: white !important;
+  overflow-y: auto !important;
+}
+
+/* Ensure proper box-sizing */
+.main-content-area,
+.content-with-sidebar-expanded,
+.content-with-sidebar-minimized,
+.content-with-sidebar-hidden {
+  box-sizing: border-box;
+}
+
+/* Fullscreen mode styling */
+.fullscreen-mode {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9998 !important;
+}
+
+.fullscreen-mode .sidebar-layout-container {
+  height: 100vh !important;
+}
+
+/* Prevent horizontal scrolling and ensure fixed layout */
+body {
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ensure content doesn't shift or move */
+.main-content-area > div {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Fixed positioning for all content */
+.main-content-area .p-4 {
+  padding: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sidebar-expanded {
+    width: 175px;
+  }
+  
+  .content-with-sidebar-expanded {
+    margin-left: 175px;
+    width: calc(100vw - 175px);
+  }
+}
+
+@media (max-width: 768px) {
+  .content-with-sidebar-expanded,
+  .content-with-sidebar-minimized {
+    margin-left: 0;
+    width: 100vw;
+  }
+  
+  .sidebar-fixed {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar-fixed.show {
+    transform: translateX(0);
+  }
+}
+
+.fullscreen-mode .content-fullscreen {
+  position: relative !important;
+  height: 100vh !important;
+}
+
+/* Fullscreen styles for ScholarManagement */
+.fullscreen-mode .scholar-main-content {
+  height: calc(100vh - 200px);
+  overflow: auto;
+}
+
+/* Fullscreen styles for QuestionPapers */
+.fullscreen-mode .question-papers-container {
+  height: calc(100vh - 150px);
+  overflow: auto;
+}
+
+/* General fullscreen enhancements */
+.fullscreen-mode h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Fullscreen button styling for all components */
+.fullscreen-mode button[title*="Exit Fullscreen"],
+.fullscreen-mode button[title*="Enter Fullscreen"] {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.fullscreen-mode button[title*="Exit Fullscreen"]:hover,
+.fullscreen-mode button[title*="Enter Fullscreen"]:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen-mode .fullscreen-page-wrapper {
+  height: 100vh;
+  padding: 1rem;
+}
+
+/* Hide scrollbars in fullscreen for cleaner look */
+.fullscreen-mode .scholar-main-content::-webkit-scrollbar,
+.fullscreen-mode .question-papers-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.fullscreen-mode .scholar-main-content::-webkit-scrollbar-track,
+.fullscreen-mode .question-papers-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.fullscreen-mode .scholar-main-content::-webkit-scrollbar-thumb,
+.fullscreen-mode .question-papers-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.fullscreen-mode .scholar-main-content::-webkit-scrollbar-thumb:hover,
+.fullscreen-mode .question-papers-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Responsive adjustments for sidebar layout */
+@media (max-width: 768px) {
+
+  .sidebar-expanded,
+  .sidebar-minimized {
+    width: 0;
+    transform: translateX(-100%);
+  }
+
+  .content-with-sidebar-expanded,
+  .content-with-sidebar-minimized {
+    margin-left: 0;
+    width: 100vw;
+  }
+}
+
+/* Compact Sidebar Header */
+.sidebar-header-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Campus Selection - Inside Sidebar Header - Royal Smooth Design */
+.sidebar-campus-section {
+  display: block;
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.sidebar-campus-section.minimized {
+  display: none;
+}
+
+
+/* Sidebar Logout Section */
+.sidebar-logout-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: auto;
+}
+
+.sidebar-logout-section button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-minimized .sidebar-logout-section button {
+  padding: 0.5rem !important;
+  width: 100%;
+  height: auto;
+}
+
+.sidebar-logout-section button:hover {
+  transform: scale(1.05);
+}
+
+
+/* CRITICAL: Prevent any content from being movable or causing horizontal scroll */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* Ensure all containers respect viewport width */
+.container,
+.dashboard-container,
+.scholar-management-container,
+.examination-container,
+.supervisor-container {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Fix for dashboard charts to prevent overflow */
+.dashboard-content {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.stats-tiles-3,
+.stats-grid,
+.charts-grid,
+.dashboard-charts-grid {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure glassmorphic cards don't overflow */
+.glassmorphic-card {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Fix for tables to prevent horizontal overflow */
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+/* Ensure faculty accordion doesn't cause overflow */
+.faculty-accordion,
+.department-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Professional fixed layout - no movable content */
+.main-content-area {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Ensure sidebar doesn't cause layout shift */
+.sidebar-fixed {
+  position: fixed;
+  will-change: transform;
+}
+
+/* Smooth transitions without layout shift */
+.sidebar-layout-container {
+  position: fixed;
+  overflow: hidden;
+}
+
+
+/* EXACT DASHBOARD STYLING TO MATCH IMAGE */
+
+/* Dashboard header */
+.dashboard-container h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 1.5rem;
+}
+
+/* Stats cards - 3 per row exactly like image */
+.stats-tiles-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  position: relative;
+  border-left: 4px solid;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Stat card colors matching image */
+.stat-card:nth-child(1) { border-left-color: #4169E1; background: #f0f4ff; }
+.stat-card:nth-child(2) { border-left-color: #10b981; background: #f0fdf4; }
+.stat-card:nth-child(3) { border-left-color: #8b5cf6; background: #faf5ff; }
+.stat-card:nth-child(4) { border-left-color: #f59e0b; background: #fffbeb; }
+.stat-card:nth-child(5) { border-left-color: #ef4444; background: #fef2f2; }
+.stat-card:nth-child(6) { border-left-color: #06b6d4; background: #f0fdfa; }
+.stat-card:nth-child(7) { border-left-color: #6366f1; background: #eef2ff; }
+.stat-card:nth-child(8) { border-left-color: #14b8a6; background: #f0fdfa; }
+.stat-card:nth-child(9) { border-left-color: #a855f7; background: #faf5ff; }
+
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #212529;
+  line-height: 1;
+}
+
+/* Chart containers - 2 per row exactly like image */
+.dashboard-charts-grid,
+.grid.grid-cols-1.md\\:grid-cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.glassmorphic-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.glassmorphic-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Chart canvas styling */
+.glassmorphic-card canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+/* Legend styling */
+.glassmorphic-card .space-y-1 {
+  margin-top: 1rem;
+}
+
+.glassmorphic-card .space-y-1 > div {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+/* Faculty accordion styling */
+.faculty-accordion {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.faculty-header {
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.faculty-header:hover {
+  background: #e9ecef;
+}
+
+.department-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.department-table th {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.department-table th:first-child {
+  text-align: left;
+}
+
+.department-table td {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #495057;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.department-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+
+.department-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+/* Download button styling */
+button[class*="bg-green"] {
+  background: #10b981 !important;
+  color: white;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  transition: all 0.2s ease;
+}
+
+button[class*="bg-green"]:hover {
+  background: #059669 !important;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ROYAL PREMIUM CAMPUS SELECTION - Smooth Sliding Button */
+.campus-buttons-container {
+  position: relative;
+  background: rgba(248, 249, 250, 0.5);
+  backdrop-filter: blur(10px);
+  border: 2px solid #e5e7eb;
+  border-radius: 50px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  justify-content: space-between;
+  align-items: stretch;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  width: 100%;
+  min-height: 50px;
+}
+
+.campus-filter-btn {
+  position: relative;
+  flex: 1;
+  padding: 0.7rem 0.5rem;
+  margin: 0;
+  border-radius: 50px !important;
+  border: none !important;
+  outline: none !important;
+  background: none !important;
+  background-color: transparent;
+  background-image: none !important;
+  color: #ffffffbc;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  text-align: center;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  box-shadow: none !important;
+}
+
+.campus-filter-btn:hover:not(.active) {
+  color: #000000 !important;
+  background: rgb(255, 255, 255) !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.campus-filter-btn.active {
+  background: #6366f1 !important;
+  background: -webkit-linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: -moz-linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  font-weight: 700 !important;
+  
+  transform: translateY(-1px);
+  border: none !important;
+  -webkit-background-clip: padding-box !important;
+  background-clip: padding-box !important;
+}
+
+/* PREMIUM HEADER - Light Theme Logo & Title */
+.sidebar-fixed .p-4 {
+  padding: 1.25rem 0.5rem !important;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.sidebar-fixed img[alt="SRM Logo"] {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 0 2px #f3f4f6;
+  border: 2px solid #e5e7eb;
+  background: linear-gradient(135deg, #f9fafb, #ffffff);
+}
+
+.sidebar-fixed .text-xl {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+  letter-spacing: 0.3px;
+}
+
+/* ROYAL LOGOUT BUTTON - Premium Exit */
+.sidebar-logout-section {
+  padding: 1rem 1.25rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+}
+
+.sidebar-logout-section button {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  border-radius: 12px;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35), 0 3px 10px rgba(220, 38, 38, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-logout-section button:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  box-shadow: 0 8px 28px rgba(239, 68, 68, 0.45), 0 4px 14px rgba(220, 38, 38, 0.35);
+  transform: translateY(-2px);
+}
+
+.sidebar-logout-section button svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .stats-tiles-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-tiles-3 {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-charts-grid,
+  .grid.grid-cols-1.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar-expanded {
+    width: 180px;
+  }
+  
+  .content-with-sidebar-expanded {
+    margin-left: 0;
+    width: 100vw;
+  }
+}
+
+
+/* PREMIUM SCROLLBAR - Light Theme */
+.sidebar-fixed::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-fixed::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 10px;
+}
+
+.sidebar-fixed::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.5));
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.sidebar-fixed::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.7), rgba(139, 92, 246, 0.7));
+}
+
+/* PREMIUM TOGGLE BUTTON - Light Theme with Strong Visibility Fix */
+.sidebar-fixed button[title*="Expand"],
+.sidebar-fixed button[title*="Collapse"],
+.sidebar-fixed .p-4 button,
+.sidebar-fixed .border-b button {
+  color: #ffffff ;
+  border: 1px solid #e5e7eb ;
+  transition: all 0.3s ease;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem !important;
+  border-radius: 8px !important;
+  flex-shrink: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+.sidebar-fixed button[title*="Expand"]:hover,
+.sidebar-fixed button[title*="Collapse"]:hover,
+.sidebar-fixed .p-4 button:hover,
+.sidebar-fixed .border-b button:hover {
+  color: #111827 !important;
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* CRITICAL: Ensure toggle button is ALWAYS visible in minimized state */
+.sidebar-minimized button[title*="Expand"],
+.sidebar-minimized button[title*="Collapse"],
+.sidebar-minimized .p-4 button,
+.sidebar-minimized .border-b button {
+  margin: 0.75rem auto !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+}
+
+/* Ensure the header container doesn't hide the button */
+.sidebar-minimized .p-4,
+.sidebar-minimized .border-b {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem 0.5rem !important;
+}
+
+/* Make sure SVG icon inside button is visible */
+.sidebar-fixed button svg,
+.sidebar-minimized button svg {
+  width: 18px !important;
+  height: 18px !important;
+  color: #6b7280 !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* MINIMIZED STATE - Enhanced Visibility */
+.sidebar-minimized {
+  overflow-x: visible !important;
+  overflow-y: auto !important;
+}
+
+.sidebar-minimized .tab-button {
+  justify-content: center !important;
+  padding: 0.875rem !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+}
+
+.sidebar-minimized .tab-button > span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.sidebar-minimized .tab-button svg {
+  color: #1f2937 !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex-shrink: 0 !important;
+  margin: 0 auto !important;
+}
+
+.sidebar-minimized .tab-button:hover {
+  background: #f3f4f6 !important;
+}
+
+.sidebar-minimized .tab-button:hover svg {
+  color: #111827 !important;
+}
+
+.sidebar-minimized .tab-button.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5) !important;
+}
+
+.sidebar-minimized .tab-button.active svg {
+  color: white !important;
+}
+
+/* Force visibility of all interactive elements in minimized state */
+.sidebar-minimized * {
+  max-width: 100% !important;
+}
+
+.sidebar-minimized .flex {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* CRITICAL: Force icon visibility with highest specificity */
+.sidebar-minimized .nav-container .tab-button svg,
+.sidebar-minimized nav .tab-button svg,
+.sidebar-minimized .tab-button span svg,
+.sidebar-minimized button svg {
+  color: #1f2937 !important;
+  background: transparent !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex-shrink: 0 !important;
+  filter: none !important;
+  stroke: currentColor !important;
+  fill: currentColor !important;
+  pointer-events: none !important;
+}
+
+.sidebar-minimized .nav-container .tab-button:hover svg,
+.sidebar-minimized nav .tab-button:hover svg,
+.sidebar-minimized .tab-button:hover span svg {
+  color: #111827 !important;
+}
+
+.sidebar-minimized .nav-container .tab-button.active svg,
+.sidebar-minimized nav .tab-button.active svg,
+.sidebar-minimized .tab-button.active span svg {
+  color: white !important;
+}
+
+/* Ensure icon container span is visible */
+.sidebar-minimized .tab-button > span:first-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Ensure logo is centered in minimized state */
+.sidebar-minimized img[alt="SRM Logo"] {
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* Hide text in minimized state but keep buttons visible */
+.sidebar-minimized .text-xl {
+  display: none !important;
+}
+
+.sidebar-minimized .campus-buttons-container {
+  display: none !important;
+}
+
+/* PREMIUM SUBTLE EFFECTS - Light Theme */
+.sidebar-fixed::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.03), transparent);
+  pointer-events: none;
+}
+
+.sidebar-fixed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.02), transparent);
+  pointer-events: none;
+}
+
+/* ROYAL RESPONSIVE */
+@media (max-width: 1024px) {
+  .sidebar-expanded {
+    width: 240px;
+  }
+  
+  .content-with-sidebar-expanded {
+    margin-left: 240px;
+    width: calc(100vw - 240px);
+  }
+}
+/* ===== LEFT ALIGNMENT OVERRIDES FOR BETTER READABILITY ===== */
+
+/* Default left alignment for all department table cells */
+.department-table th,
+.department-table td {
+  text-align: left !important;
+}
+
+/* Keep last column (counts/numbers) centered */
+.department-table td:last-child {
+  text-align: center !important;
+}
+
+/* Default left alignment for all faculty table cells */
+.faculty-table th,
+.faculty-table td {
+  text-align: left !important;
+}
+
+/* Keep action columns centered */
+.faculty-table td:last-child {
+  text-align: center !important;
+}
+
+/* Additional table alignment overrides for specific components - Mixed alignment */
+.director-portal .supervisors-table th:first-child,
+.director-portal .supervisors-table td:first-child,
+.director-portal .result-table th:first-child,
+.director-portal .result-table td:first-child {
+  text-align: center !important; /* S.No./Rank columns */
+}
+
+/* Ensure text columns remain left-aligned */
+.director-portal .supervisors-table th:nth-child(2),
+.director-portal .supervisors-table th:nth-child(3),
+.director-portal .supervisors-table th:nth-child(4),
+.director-portal .supervisors-table th:nth-child(5),
+.director-portal .supervisors-table td:nth-child(2),
+.director-portal .supervisors-table td:nth-child(3),
+.director-portal .supervisors-table td:nth-child(4),
+.director-portal .supervisors-table td:nth-child(5) {
+  text-align: left !important; /* Name, Faculty, Department, Specialization */
+}
+
+/* Ensure all table headers and cells follow the mixed alignment pattern */
+.director-portal table thead th,
+.director-portal table tbody td,
+.director-portal table tfoot td {
+  /* Alignment handled by specific selectors above */
+}
+
+/* Override any blanket center alignment classes for text content */
+.director-portal .text-center:not(th):not(td) {
+  text-align: center !important; /* Keep non-table center alignments */
+}
+/* Ensure all examination table columns have consistent background colors */
+.director-portal .examination-table thead th {
+  background-color: #f9fafb !important;
+  background: #f9fafb !important;
+}
+
+/* Remove any column-specific background colors that cause inconsistency */
+.director-portal .examination-table thead th.bg-gray-50,
+.director-portal .examination-table thead th[class*="bg-gray"] {
+  background-color: #f9fafb !important;
+  background: #f9fafb !important;
+}
+
+/* Ensure all table headers look identical */
+.director-portal .examination-table thead th:nth-child(n) {
+  background-color: #f9fafb !important;
+  background: #f9fafb !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Faculty column left alignment for Coordinators table */
+.faculty-column-cell {
+  text-align: left !important;
+}
+
+.faculty-column-header {
+  text-align: left !important;
+}
+
+

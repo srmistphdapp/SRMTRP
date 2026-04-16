@@ -1,0 +1,617 @@
+/* ========================================
+   FOET VIEW PAGES - UNIFIED CSS
+   Applied to: Upload, Verified Scholars, Query, Examination
+   Based on FOET Design System & Screenshot Reference
+   ======================================== */
+
+/* ================== PAGE CONTAINER ================== */
+.view-page-wrapper {
+    padding: 1rem;
+    min-height: calc(100vh - 100px);
+    background: #ffffff;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    padding-bottom: 120px;
+}
+
+/* ================== HEADER SECTION ================== */
+.view-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    background: white;
+    gap: 1rem;
+}
+
+.view-page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    text-align: left;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.2;
+    flex: 1;
+}
+
+.view-controls-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ================== SEARCH & CONTROLS ================== */
+.view-search-container {
+    position: relative;
+    min-width: 280px;
+}
+
+.view-search-input {
+    padding: 12px 16px;
+    width: 280px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    outline: none;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    font-size: 14px;
+    height: 44px;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.view-search-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.view-search-input::placeholder {
+    color: #9ca3af;
+}
+
+.view-control-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    width: 44px;
+    height: 44px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.view-control-button:hover {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #94a3b8;
+}
+
+/* ================== TABLE CONTAINER ================== */
+.view-table-container {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    margin: 1rem 0;
+    margin-bottom: 60px;
+}
+
+/* ================== TABLE STYLING ================== */
+.view-table {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    background: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.view-table thead {
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 15;
+}
+
+.view-table th {
+    text-align: left;
+    padding: 14px 16px;
+    color: #374151;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    background: #f8fafc !important;
+    border: none;
+}
+
+.view-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.view-table tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.view-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.view-table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    font-size: 13px;
+    color: #374151;
+}
+
+/* ================== STATUS BADGES ================== */
+.view-status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.view-status-badge.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.view-status-badge.approved,
+.view-status-badge.verified,
+.view-status-badge.accepted {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+}
+
+.view-status-badge.rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}
+
+.view-status-badge.query {
+    background-color: #fed7aa;
+    color: #c2410c;
+    border: 1px solid #fb923c;
+}
+
+.view-status-badge.forwarded {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+/* ================== ACTION BUTTONS IN TABLE ================== */
+.view-table-action-btn {
+    padding: 6px 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    min-width: 40px;
+    height: 40px;
+}
+
+.view-table-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.view-action-view-btn {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+}
+
+.view-action-approve-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.view-action-reject-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+/* ================== MODAL STYLING ================== */
+.view-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    width: 100vw;
+    height: 100vh;
+    padding: 1rem;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.view-modal-content {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 100%;
+    margin: auto;
+}
+
+.view-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
+    background: #f9fafb;
+    border-radius: 1.5rem 1.5rem 0 0;
+    margin: -2rem -2rem 1rem;
+    padding: 1.5rem 2rem;
+}
+
+.view-modal-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+}
+
+.view-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-modal-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.view-modal-body {
+    padding: 1.5rem 0;
+}
+
+.view-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 1rem 0 0;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 1rem;
+}
+
+/* ================== MODAL FORM ELEMENTS ================== */
+.view-form-group {
+    margin-bottom: 20px;
+}
+
+.view-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
+}
+
+.view-form-select,
+.view-form-input,
+.view-form-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    color: #374151;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.view-form-select:focus,
+.view-form-input:focus,
+.view-form-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.view-form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ================== MODAL BUTTONS ================== */
+.view-modal-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    border: 1px solid transparent;
+}
+
+.view-modal-btn-cancel {
+    background: #6b7280;
+    color: white;
+}
+
+.view-modal-btn-cancel:hover {
+    background: #4b5563;
+}
+
+.view-modal-btn-apply {
+    background: #3b82f6;
+    color: white;
+}
+
+.view-modal-btn-apply:hover {
+    background: #2563eb;
+}
+
+.view-modal-btn-clear {
+    background: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.view-modal-btn-clear:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.view-modal-btn-approve {
+    background: #10b981;
+    color: white;
+}
+
+.view-modal-btn-approve:hover {
+    background: #059669;
+}
+
+.view-modal-btn-reject {
+    background: #ef4444;
+    color: white;
+}
+
+.view-modal-btn-reject:hover {
+    background: #dc2626;
+}
+
+/* ================== TIMESTAMP STYLING ================== */
+.view-timestamp {
+    font-family: 'Courier New', monospace;
+    color: #475569;
+    font-size: 12px;
+    background: #f8fafc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* ================== CERTIFICATE LINKS ================== */
+.view-certificate-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-block;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.view-certificate-link:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
+/* ================== NO DATA STATE ================== */
+.view-no-data {
+    text-align: center;
+    padding: 48px;
+    color: #64748b;
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* ================== LOADING STATE ================== */
+.view-loading {
+    text-align: center;
+    padding: 48px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ================== SCROLLBAR STYLING ================== */
+.view-table-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.view-table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.view-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.view-table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ================== RESPONSIVE DESIGN ================== */
+@media (max-width: 1200px) {
+    .view-search-input {
+        width: 200px;
+    }
+
+    .view-table th {
+        padding: 12px 16px;
+        font-size: 10px;
+    }
+
+    .view-table td {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .view-header-section {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .view-controls-section {
+        justify-content: space-between;
+    }
+
+    .view-search-input {
+        width: 100%;
+        min-width: 200px;
+    }
+
+    .view-page-title {
+        font-size: 1.5rem;
+    }
+
+    .view-modal-content {
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+}
+
+/* ================== ANIMATION ================== */
+@keyframes viewSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.view-table tbody tr {
+    animation: viewSlideIn 0.3s ease-out;
+}
+
+/* ================== UTILITY CLASSES ================== */
+.view-text-center {
+    text-align: center !important;
+}
+
+.view-text-left {
+    text-align: left !important;
+}
+
+.view-text-right {
+    text-align: right !important;
+}
+
+.view-font-bold {
+    font-weight: 600 !important;
+}
+
+.view-font-semibold {
+    font-weight: 500 !important;
+}
+
+/* ================== CHECKBOX STYLING ================== */
+.view-table-checkbox {
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer !important;
+    accent-color: #3b82f6 !important;
+    margin: 0 !important;
+}
+
+.view-table-checkbox:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+}
+
+/* ================== SPECIFIC COLUMN ALIGNMENT ================== */
+.view-table th:nth-child(1),
+.view-table td:nth-child(1) {
+    text-align: center;
+}
+
+/* Checkbox or S.No columns */
+.view-table .checkbox-col,
+.view-table .sno-col {
+    width: 50px;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Action columns */
+.view-table .action-col {
+    width: 100px;
+    min-width: 100px;
+    text-align: center;
+}
+
+/* Status columns */
+.view-table .status-col {
+    width: 120px;
+    min-width: 120px;
+    text-align: center;
+}

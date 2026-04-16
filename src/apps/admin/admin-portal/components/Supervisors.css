@@ -1,0 +1,428 @@
+/* Supervisors Component Styles */
+
+/* Action Button Icons Fix */
+.supervisors-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-size: 0 !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+}
+
+.supervisors-action-btn svg,
+.supervisors-action-btn .fa,
+.supervisors-action-btn [class*="fa-"] {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
+  display: block !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Button Colors */
+.supervisors-action-btn.view {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+.supervisors-action-btn.view:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.supervisors-action-btn.edit {
+  background-color: #7c3aed !important;
+  color: white !important;
+}
+
+.supervisors-action-btn.edit:hover {
+  background-color: #6d28d9 !important;
+}
+
+.supervisors-action-btn.assign {
+  background-color: #059669 !important;
+  color: white !important;
+}
+
+.supervisors-action-btn.assign:hover {
+  background-color: #047857 !important;
+}
+
+.supervisors-action-btn.delete {
+  background-color: #dc2626 !important;
+  color: white !important;
+}
+
+.supervisors-action-btn.delete:hover {
+  background-color: #b91c1c !important;
+}
+
+/* Action buttons container */
+.supervisors-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Remove hover transform effects */
+.supervisors-action-btn:hover {
+  transform: none !important;
+}
+
+/* Focus states for accessibility */
+.supervisors-action-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+/* Comprehensive fix for all icon types */
+.supervisors-table .supervisors-actions .supervisors-action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 0 !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.supervisors-table .supervisors-actions .supervisors-action-btn svg,
+.supervisors-table .supervisors-actions .supervisors-action-btn .fa,
+.supervisors-table .supervisors-actions .supervisors-action-btn [class*="fa-"] {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
+  display: block !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Ensure Font Awesome icons are properly styled */
+.supervisors-table .supervisors-actions .supervisors-action-btn .fa::before,
+.supervisors-table .supervisors-actions .supervisors-action-btn [class*="fa-"]::before {
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+/* Override any conflicting styles */
+.supervisors-table td .supervisors-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+/* Ensure proper colors */
+.supervisors-table .supervisors-actions .supervisors-action-btn.view {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+.supervisors-table .supervisors-actions .supervisors-action-btn.edit {
+  background-color: #7c3aed !important;
+  color: white !important;
+}
+
+.supervisors-table .supervisors-actions .supervisors-action-btn.assign {
+  background-color: #059669 !important;
+  color: white !important;
+}
+
+.supervisors-table .supervisors-actions .supervisors-action-btn.delete {
+  background-color: #dc2626 !important;
+  color: white !important;
+}
+
+/* Assignment Modal Styles */
+.assignment-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.assignment-form-field {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafb;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.assignment-form-field:has(.assignment-form-select:not(:disabled)) {
+  background-color: white;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.assignment-form-field:has(#scholarToAssign:not(:disabled)) {
+  background-color: #f0fdf4;
+  border-color: #10b981;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+}
+
+.assignment-form-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #dc2626;
+}
+
+.assignment-form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: white;
+  font-weight: 500;
+}
+
+.assignment-form-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.assignment-form-select:disabled {
+  background-color: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+/* Make the scholar select dropdown more prominent */
+#scholarToAssign {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 2px solid #10b981;
+  background-color: #f0fdf4;
+  font-weight: 600;
+  color: #065f46;
+  min-height: 50px;
+}
+
+#scholarToAssign:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+  background-color: white;
+}
+
+#scholarToAssign:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border-color: #d1d5db;
+  font-weight: normal;
+}
+
+#scholarToAssign option {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  background-color: white;
+  color: #111827;
+}
+
+#scholarToAssign option:first-child {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.assignment-note {
+  background-color: #fefce8;
+  border: 1px solid #fde047;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.assignment-note p {
+  font-size: 0.875rem;
+  color: #a16207;
+  margin: 0;
+}
+
+.assignment-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.assignment-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.assignment-btn-cancel {
+  background-color: #6b7280;
+  color: white;
+}
+
+.assignment-btn-cancel:hover {
+  background-color: #4b5563;
+}
+
+.assignment-btn-assign {
+  background-color: #059669;
+  color: white;
+}
+
+.assignment-btn-assign:hover {
+  background-color: #047857;
+}
+
+/* Assignment Display Styles */
+.assignment-card {
+  background-color: #f9fafb;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.assignment-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.assignment-scholar-info h4 {
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+}
+
+.assignment-scholar-info p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0;
+}
+
+.assignment-faculty-info {
+  font-size: 0.875rem;
+  color: #2563eb;
+  margin-top: 0.25rem;
+}
+
+.assignment-unassign-btn {
+  color: #dc2626;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #fca5a5;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.assignment-unassign-btn:hover {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+/* Sequential Assignment Form Styles */
+.assignment-form-label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+}
+
+.assignment-form-label::before {
+  content: '';
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-right: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+}
+
+.assignment-form-field:nth-child(1) .assignment-form-label::before {
+  content: '1';
+}
+
+.assignment-form-field:nth-child(2) .assignment-form-label::before {
+  content: '2';
+}
+
+.assignment-form-field:nth-child(3) .assignment-form-label::before {
+  content: '3';
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.assignment-form-field:nth-child(3) .assignment-form-label {
+  color: #065f46;
+  font-size: 1.15rem;
+}
+
+.assignment-form-field:has(.assignment-form-select:disabled) {
+  opacity: 0.5;
+}
+
+.assignment-form-field:has(.assignment-form-select:not(:disabled)) {
+  opacity: 1;
+}
+
+.assignment-form-select:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.assignment-form-field {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.assignment-form-field:has(.assignment-form-select:disabled) {
+  opacity: 0.7;
+}
+
+.assignment-form-field:has(.assignment-form-select:not(:disabled)) {
+  opacity: 1;
+}

@@ -1,0 +1,185 @@
+/* Header Component Styles - Director Portal Style */
+.main-header {
+  margin: 0;
+  padding: 0 0 1rem 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: transparent;
+  z-index: 50;
+}
+
+.header-left {
+  display: none;
+}
+
+.search-container {
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .search-container {
+    display: block;
+  }
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  width: 1.25rem;
+  height: 1.25rem;
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 2.5rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 16rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Fullscreen Button Styles */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fullscreen-toggle-btn {
+  color: #6b7280;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0.625rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.fullscreen-toggle-btn:hover {
+  color: #3b82f6;
+  background: #f0f9ff;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.fullscreen-toggle-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.fullscreen-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+
+/* Portal Title and Faculty Badge */
+.portal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.faculty-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 16px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Coordinator Info */
+.coordinator-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  margin-right: 12px;
+  padding: 8px 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.coordinator-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.coordinator-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Show header-left on larger screens */
+@media (min-width: 768px) {
+  .header-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .main-header {
+    justify-content: space-between;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .portal-title {
+    font-size: 1.25rem;
+  }
+  
+  .faculty-badge {
+    font-size: 12px;
+    padding: 6px 14px;
+    margin-left: 8px;
+  }
+  
+  .coordinator-info {
+    display: none;
+  }
+}
+

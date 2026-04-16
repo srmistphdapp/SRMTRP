@@ -1,0 +1,512 @@
+/* Container */
+.minutes-container {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 2rem;
+}
+
+/* Paragraph styling */
+.minutes-container p {
+  text-align: justify;
+  line-height: 1.9;
+}
+
+/* Header layout - Logo on left side */
+.print-header-layout {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  min-height: 85px;
+}
+
+/* SRM Logo - Left side positioning */
+.print-logo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100px;
+  height: 65px;
+  flex-shrink: 0;
+}
+
+.print-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Header text */
+.print-header-text {
+  text-align: center;
+  width: 100%;
+}
+
+/* Title styles */
+.print-header-text h1 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1e40af;
+}
+
+.print-header-text h2 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #dc2626;
+}
+
+.print-header-text h3 {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+/* DRCC title */
+.drcc-title {
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* DRCC subtitle */
+.drcc-subtitle {
+  text-align: center;
+  margin-top: 5px;
+  font-size: 15px;
+}
+
+/* Legend under candidate table (FT/PTI/PTE) */
+.table-legend {
+  text-align: center;
+  width: 100%;
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.table-legend p {
+  margin: 0;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  border: 1px solid black;
+  padding: 6px;
+}
+
+/* Ensure table cells vertically center their contents */
+table th,
+table td {
+  vertical-align: middle;
+}
+
+/* Force horizontal centering of header cells only */
+.minutes-container table th {
+  text-align: center !important;
+}
+
+/* Left align data cells, except first column (S. No.) */
+.minutes-container table td {
+  text-align: left !important;
+}
+
+.minutes-container table td:first-child {
+  text-align: center !important;
+}
+
+.minutes-container table td span {
+  display: block !important;
+  width: 100% !important;
+  text-align: inherit !important;
+}
+
+/* Make DRCC inputs visually invisible (no box, no focus ring) while remaining editable */
+.drcc-table-container input,
+.drcc-table-container textarea {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: transparent !important;
+}
+
+.drcc-table-container input:focus,
+.drcc-table-container textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.drcc-table-container input::-moz-focus-inner {
+  border: 0 !important;
+}
+
+/* Reduce cell spacing for DRCC members table only */
+.drcc-table-container table th {
+  padding: 8px 12px !important;
+}
+
+.drcc-table-container table td {
+  padding: 4px 8px !important;
+}
+
+/* PRINT STYLES — single consolidated block */
+@media print {
+
+  @page {
+    size: A4;
+    margin: 15mm 12mm;
+  }
+
+  /* ── Global resets ────────────────────────────────────────────── */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    font-size: 12pt;
+  }
+
+  /* ── Hide interactive / screen-only elements ─────────────────── */
+  .print-hidden,
+  button,
+  select,
+  svg.lucide,
+  .lucide,
+  .lucide-edit-3 {
+    display: none !important;
+  }
+
+  /* Hide the DRCC Action column (th + td that carry print-hidden) */
+  th.print-hidden,
+  td.print-hidden {
+    display: none !important;
+  }
+
+  /* ── Container ───────────────────────────────────────────────── */
+  .print-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .minutes-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* ── Header / Logo ───────────────────────────────────────────── */
+  .print-header-layout {
+    position: relative !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    min-height: 85px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .print-logo {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100px !important;
+    height: 65px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .print-logo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+  }
+
+  img {
+    max-width: none !important;
+    height: auto !important;
+  }
+
+  .print-header-text h1 {
+    font-size: 18pt !important;
+  }
+
+  .print-header-text h2 {
+    font-size: 16pt !important;
+  }
+
+  .print-header-text h3 {
+    font-size: 15pt !important;
+  }
+
+  /* ── DRCC title box border ───────────────────────────────────── */
+  .border-2 {
+    border-width: 2px !important;
+  }
+
+  .border-red-600 {
+    border-color: #dc2626 !important;
+  }
+
+  /* ── Clean up editable field styles ──────────────────────────── */
+  span[title="Click to edit"],
+  .cursor-pointer {
+    cursor: default !important;
+    background: transparent !important;
+    border-bottom: none !important;
+    text-decoration: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline !important;
+    position: static !important;
+    min-height: auto !important;
+    min-width: auto !important;
+  }
+
+  .inline-flex {
+    display: inline !important;
+  }
+
+  .group:hover,
+  .hover\:bg-gray-100:hover {
+    background: transparent !important;
+  }
+
+  /* ── Tables — full borders, preserved backgrounds ────────────── */
+  table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+    page-break-inside: avoid !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tbody {
+    display: table-row-group !important;
+  }
+
+  tr {
+    display: table-row !important;
+    page-break-inside: avoid !important;
+  }
+
+  table th,
+  table td {
+    display: table-cell !important;
+    border: 1px solid #000 !important;
+    padding: 6px 8px !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    vertical-align: middle !important;
+  }
+
+  /* Preserve gray header background */
+  .bg-gray-50,
+  table th.bg-gray-50 {
+    background-color: #f9fafb !important;
+  }
+
+  .bg-gray-100 {
+    background-color: #f3f4f6 !important;
+  }
+
+  /* ── Paragraphs & content ────────────────────────────────────── */
+  .minutes-container p {
+    text-align: justify !important;
+    line-height: 1.8 !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* Avoid breaking inside paragraphs and major sections */
+  p,
+  .mt-8,
+  .mt-12,
+  .drcc-table-section {
+    page-break-inside: avoid !important;
+  }
+
+  /* ── DRCC members table input fields ─────────────────────────── */
+  .drcc-table-container input {
+    border: 0 !important;
+    outline: none !important;
+    background: transparent !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    width: 100% !important;
+    padding: 4px 6px !important;
+    margin: 0 !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+    color: #000 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    min-height: 24px !important;
+    height: auto !important;
+    position: static !important;
+    z-index: auto !important;
+    overflow: visible !important;
+  }
+
+  .drcc-table-container td {
+    position: static !important;
+    z-index: auto !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 36px !important;
+    padding: 6px 8px !important;
+    vertical-align: middle !important;
+    line-height: 1.5 !important;
+  }
+
+  .drcc-table-container table {
+    page-break-inside: avoid !important;
+  }
+
+  /* Hide placeholder text in print */
+  .drcc-table-container input::placeholder,
+  .drcc-table-container input::-webkit-input-placeholder,
+  .drcc-table-container input::-moz-placeholder,
+  .drcc-table-container input:-ms-input-placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+
+  /* ── Legend ───────────────────────────────────────────────────── */
+  .table-legend {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .table-legend .legend-items {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 2.5rem !important;
+    flex-wrap: wrap !important;
+    clear: both !important;
+    padding-top: 0.25rem !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .table-legend .legend-item {
+    display: inline-block !important;
+    font-weight: 700 !important;
+  }
+
+  .selected-candidates-table {
+    margin-bottom: 2rem !important;
+  }
+
+  /* ── Signature section ───────────────────────────────────────── */
+  .signature-section {
+    margin-top: 3cm !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Remove hover transition effects */
+  .hover\:bg-gray-50:hover,
+  .transition-colors,
+  .transition {
+    transition: none !important;
+  }
+
+  /* ── Decorative elements ─────────────────────────────────────── */
+  hr {
+    display: none !important;
+  }
+
+}
+
+/* end @media print */
+
+/* ────────────────────────────────────────────────────────────────── */
+/* Desktop / screen-only styles for legend                           */
+/* ────────────────────────────────────────────────────────────────── */
+.table-legend .legend-items {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  clear: both;
+  padding-top: 0.25rem;
+  margin-top: 1.25rem;
+}
+
+.selected-candidates-table {
+  margin-bottom: 2.5rem !important;
+}
+
+.table-legend .legend-item {
+  display: inline-block;
+  font-weight: 700;
+}
+
+/* Always-editable input fields for DRCC members table */
+.drcc-table-container input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #000;
+  box-sizing: border-box;
+  min-height: 26px;
+  position: relative;
+  z-index: 1;
+}
+
+.drcc-table-container input:focus {
+  outline: none;
+  border: none;
+  z-index: 2;
+}
+
+.drcc-table-container td {
+  position: relative;
+  z-index: 1;
+}
+
+/* Make DRCC inputs visually invisible (no box, no focus ring) while remaining editable — screen overrides */
+.drcc-table-container input,
+.drcc-table-container textarea {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background: transparent !important;
+}
+
+.drcc-table-container input:focus,
+.drcc-table-container textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.drcc-table-container input::-moz-focus-inner {
+  border: 0 !important;
+}

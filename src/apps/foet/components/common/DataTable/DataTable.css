@@ -1,0 +1,113 @@
+.data-table-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: inherit;
+  min-width: 1200px; /* Base width */
+}
+
+.data-table thead {
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.data-table th {
+  padding: 14px 10px;
+  color: #374151;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.data-table tr:hover {
+  background-color: #f9fafb;
+}
+
+.data-table tr.row-selected {
+  background-color: #eff6ff;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.sort-icon {
+  color: #9ca3af;
+}
+
+.checkbox-col {
+  width: 50px;
+  text-align: center;
+}
+
+.sno-col {
+  width: 60px;
+  text-align: center;
+}
+
+.sticky-col {
+  position: sticky;
+  background: inherit;
+  z-index: 1;
+}
+
+.data-table thead th.sticky-col {
+  background: #f8fafc;
+  z-index: 10;
+}
+
+.no-data {
+  padding: 3rem !important;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.data-table-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  gap: 1rem;
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

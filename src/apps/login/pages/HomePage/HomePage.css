@@ -1,0 +1,237 @@
+/* ISOLATION WRAPPER:
+  Instead of :root, we define variables here so they only exist inside this wrapper.
+  This acts as the "Body" for this page.
+*/
+.home-isolation-wrapper {
+  --primary-blue: #005c97;
+  --secondary-blue: #363795;
+  --gold: #d4af37;
+  --text-light: #ffffff;
+  --text-dark: #333;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+
+  font-family: sans-serif; /* Ensure font is consistent here */
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden; /* Prevent horizontal scrollbars */
+  background-color: #1a1a1a; /* Fallback background */
+}
+
+/* Page Container */
+.home-isolation-wrapper .page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* Banner */
+.home-isolation-wrapper .banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none; /* Allows clicking through if necessary */
+}
+
+.home-isolation-wrapper .banner-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+    animation: zoom-pan 20s infinite alternate;
+}
+
+.home-isolation-wrapper .banner-slide:nth-child(1) {
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://image-static.collegedunia.com/public/college_data/images/campusimage/15857152962.1.JPG');
+}
+
+.home-isolation-wrapper .banner-slide:nth-child(2) {
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop=');
+}
+
+.home-isolation-wrapper .banner-slide:nth-child(3) {
+    background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://trp.srmtrichy.edu.in/wp-content/uploads/2023/01/SRM-TRP-Campus.jpg');
+}
+
+.home-isolation-wrapper .banner-slide.active {
+    opacity: 1;
+}
+
+@keyframes zoom-pan {
+    0% { transform: scale(1.05) translate(0, 0); }
+    100% { transform: scale(1.2) translate(5px, 10px); }
+}
+
+/* Header styling */
+.home-isolation-wrapper header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 40px;
+  background: transparent;
+  position: relative;
+  z-index: 1000;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.home-isolation-wrapper .logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.home-isolation-wrapper .logo {
+  height: 50px;
+  margin-right: 15px;
+}
+
+.home-isolation-wrapper header h1 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin: 0; /* Reset margin */
+}
+
+/* Main content styling */
+.home-isolation-wrapper main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.home-isolation-wrapper .portal-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.home-isolation-wrapper .portal-card {
+    width: 320px;
+    border-radius: 15px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-isolation-wrapper .portal-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.home-isolation-wrapper .card-image-container {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+    background: #f0f0f0;
+}
+
+.home-isolation-wrapper .card-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    transition: transform 0.4s ease;
+}
+
+.home-isolation-wrapper .portal-card:hover .card-image-container img {
+    transform: scale(1.05);
+}
+
+.home-isolation-wrapper .card-content {
+    padding: 20px;
+    background: #ffffff;
+    color: var(--text-dark);
+    text-align: left;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-isolation-wrapper .card-content h3 {
+    font-size: 1.4rem;
+    margin: 0 0 10px 0;
+    color: var(--text-dark);
+}
+
+.home-isolation-wrapper .login-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-blue);
+    color: var(--text-light);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin-top: auto;
+}
+
+.home-isolation-wrapper .login-btn:hover {
+    background: var(--gold);
+    color: var(--text-dark);
+    transform: translateY(-2px);
+}
+
+/* Footer Style */
+.home-isolation-wrapper footer {
+  background: var(--primary-blue);
+  padding: 15px 40px;
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  font-size: 0.8rem;
+}
+
+.home-isolation-wrapper .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.home-isolation-wrapper .footer-legal p {
+    margin: 4px 0;
+}
+
+.home-isolation-wrapper footer a {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+.home-isolation-wrapper footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .home-isolation-wrapper .portal-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .home-isolation-wrapper header {
+        flex-direction: column;
+        text-align: center;
+    }
+}

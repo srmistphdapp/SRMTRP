@@ -1,0 +1,492 @@
+.faculties-container {
+  padding: 24px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.add-department-btn {
+  background-color: #16a34a;
+  color: white;
+  font-weight: 600;
+  padding: 10px 28px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 15px rgba(22, 163, 74, 0.2);
+}
+
+.faculty-search-input {
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1.2px solid #ccc;
+  min-width: 220px;
+}
+
+.faculties-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.summary-row {
+  margin: 6px 0 14px 2px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.faculty-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+  padding: 20px 24px;
+  margin-bottom: 18px;
+}
+
+.faculty-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.faculty-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #15171c;
+}
+
+.faculty-count {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.faculty-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 14px;
+  table-layout: fixed;
+}
+
+.faculty-table th,
+.faculty-table td {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 15px;
+  vertical-align: middle;
+  overflow-wrap: break-word;
+}
+
+.faculty-table td:last-child {
+  text-align: left;
+  white-space: nowrap;
+  width: 150px;
+}
+
+.faculty-table th {
+  color: #50545b;
+  background: #fafbfc;
+  font-weight: 700;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.faculty-table th:last-child {
+  width: 150px;
+}
+
+.faculty-icon {
+  font-size: 16px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.faculty-count {
+  background: #ede9fe;
+  color: #40359d;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 8px;
+  padding: 4px 16px;
+  display: inline-block;
+  min-width: 30px;
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  min-width: fit-content;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 18px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn.view {
+  background-color: #2563eb;
+}
+
+.btn.edit {
+  background-color: #059669;
+}
+
+.btn.delete {
+  background-color: #dc2626;
+}
+
+/* Icon buttons for actions */
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.icon-btn.view {
+  background-color: #3B82F6;
+  color: white;
+}
+
+.icon-btn.edit {
+  background-color: #8B5CF6;
+  color: white;
+}
+
+.icon-btn.delete {
+  background-color: #EF4444;
+  color: white;
+}
+
+.icon-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Modal styles */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  overflow-y: auto;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease-out;
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease-out;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+
+
+.modal-content {
+  background: white;
+  border-radius: 14px;
+  padding: 36px 36px 28px 36px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 38px rgba(10, 36, 99, 0.36);
+  position: relative;
+  animation: modalFadeIn 0.3s ease-out;
+  z-index: 1001;
+  margin: 20px 0;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease-out;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Compact modal for delete confirmation */
+.modal-content.delete-modal {
+  max-width: 480px;
+  width: auto;
+  min-width: 420px;
+  padding: 0;
+}
+
+
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  font-size: 28px;
+  font-weight: 900;
+  color: #23272f;
+  cursor: pointer;
+  border: none;
+  background: none;
+  z-index: 1002;
+  outline: none;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+.modal-box {
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.modal-box-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.modal-dept-name {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.modal-staff-list {
+  margin-top: 8px;
+}
+
+.form-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.form-col-2 {
+  flex: 1 1 50%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1.5px solid #ecedf0;
+  background: #fafbfc;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.staff-inputs label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.professor-inputs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.professor-inputs input {
+  flex: 1 1 40%;
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1.5px solid #ecedf0;
+  background: #fafbfc;
+}
+
+.add-staff-btn {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 8px;
+}
+
+.staff-list {
+  font-size: 15px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+  gap: 12px;
+}
+
+.btn.cancel {
+  background: #353843;
+  color: white;
+}
+
+.btn.cancel:hover {
+  background: #23272f;
+}
+
+.btn.save {
+  background: linear-gradient(90deg, #c026d3 0%, #ec4899 100%);
+  color: white;
+}
+
+.btn.save:hover {
+  background: linear-gradient(90deg, #a21caf 0%, #f472b6 100%);
+}
+
+.btn.delete {
+  background: #dc2626;
+  color: white;
+}
+
+.btn.delete:hover {
+  background: #991b1b;
+}
+/* Ensure icons are properly displayed */
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Action buttons container - duplicate removed */
+
+/* Enhanced hover effects for better UX */
+.icon-btn:hover.view {
+  background-color: #2563eb;
+}
+
+.icon-btn:hover.edit {
+  background-color: #7c3aed;
+}
+
+.icon-btn:hover.delete {
+  background-color: #dc2626;
+}
+
+/* Focus states for accessibility */
+.icon-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+/* ===== LEFT ALIGNMENT OVERRIDES FOR BETTER READABILITY ===== */
+
+/* Ensure all faculty table headers are left-aligned */
+.faculty-table th {
+  text-align: left !important;
+}
+
+/* Keep actions column left-aligned */
+.faculty-table td:last-child {
+  text-align: left !important;
+}

@@ -1,0 +1,111 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.messagebox-modal-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 20px 24px 16px 24px;
+  min-width: 280px;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  border-left: 4px solid #4f46e5;
+}
+
+.messagebox-modal-content.messagebox-error {
+  border-left-color: #dc2626;
+}
+
+.messagebox-modal-content.messagebox-success {
+  border-left-color: #16a34a;
+}
+
+.messagebox-modal-content.messagebox-warning {
+  border-left-color: #ea580c;
+}
+
+.messagebox-modal-content.messagebox-info {
+  border-left-color: #0284c7;
+}
+
+.messagebox-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.messagebox-message {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: center;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.messagebox-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.messagebox-btn {
+  min-width: 70px;
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.messagebox-btn-ok {
+  background: #4f46e5;
+  color: #fff;
+  border: 1px solid #4f46e5;
+}
+
+.messagebox-btn-ok:hover {
+  background: #4338ca;
+  border-color: #4338ca;
+  transform: translateY(-1px);
+}
+
+.messagebox-btn-confirm {
+  background: #22c55e;
+  color: #fff;
+  border: 1px solid #22c55e;
+}
+
+.messagebox-btn-confirm:hover {
+  background: #15803d;
+  border-color: #15803d;
+}
+
+.messagebox-btn-cancel {
+  background: #e5e7eb;
+  color: #222;
+  border: 1px solid #e5e7eb;
+}
+
+.messagebox-btn-cancel:hover {
+  background: #cbd5e1;
+  border-color: #cbd5e1;
+}

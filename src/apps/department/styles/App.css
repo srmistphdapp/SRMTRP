@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Custom styles for the application */
+
+/* Base styles */
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* define app background variable so fullscreen panels can match it */
+  --app-bg: #ffffff;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Headings should use Inter and be slightly bolder for better legibility */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-weight: 700;
+}
+
+/* Custom transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom focus styles */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Custom utility classes */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-full-width {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Custom form elements */
+input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  border-color: transparent;
+  background-color: currentColor;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Custom toast notifications */
+.toast {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: white;
+  background-color: #1f2937;
+  border-left: 4px solid #3b82f6;
+}
+
+.toast.success {
+  border-left-color: #10b981;
+}
+
+.toast.error {
+  border-left-color: #ef4444;
+}
+
+.toast.warning {
+  border-left-color: #f59e0b;
+}
+
+/* Responsive tables */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* allow vertical scrolling so sticky headers work */
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+/* Sticky table headers: works for normal and fullscreen panels */
+.table-responsive table thead th {
+  position: sticky;
+  top: 0;
+  background: #f3f4f6; /* light gray header background */
+  z-index: 10;
+}
+
+/* When in fullscreen, allow headers to stay sticky and increase z-index to float above content */
+.panel-fullscreen:fullscreen .table-responsive table thead th,
+.panel-fullscreen:-webkit-full-screen .table-responsive table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #f3f4f6; /* keep header light gray in fullscreen */
+}
+
+/* Custom tooltips */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.25rem 0.5rem;
+  background-color: #1f2937;
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+  margin-bottom: 0.5rem;
+}
+
+/* CRITICAL: Remove all table borders - must override Tailwind */
+/* BUT exclude Minutes of Meeting tables */
+table:not(.minutes-table), 
+table:not(.minutes-table) thead, 
+table:not(.minutes-table) tbody, 
+table:not(.minutes-table) tfoot, 
+table:not(.minutes-table) tr, 
+table:not(.minutes-table) th, 
+table:not(.minutes-table) td {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+}
+
+/* Table header background - light grey for all tables except Minutes of Meeting */
+table:not(.minutes-table) thead {
+  background-color: #f8fafc !important; /* slate-50 */
+}
+
+table:not(.minutes-table) thead th {
+  background-color: #f8fafc !important; /* slate-50 - light grey */
+}
+
+/* Override Tailwind's divide utilities - except for Minutes of Meeting */
+.divide-y:not(.minutes-table) > *, .divide-y:not(.minutes-table) > * + * {
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+}
+
+.divide-x:not(.minutes-table) > *, .divide-x:not(.minutes-table) > * + * {
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
+}
+
+/* Dark mode overrides */
+.dark [data-tooltip]:hover::before {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+/* Fullscreen styles for main content - when the specific element (#app-main) is fullscreened */
+/* Use vendor-prefixed selectors for compatibility */
+#app-main:fullscreen,
+#app-main:-webkit-full-screen,
+#app-main:-moz-full-screen {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* If the app main is fullscreen, ensure it takes full space */
+#app-main:fullscreen,
+#app-main:-webkit-full-screen,
+#app-main:-moz-full-screen {
+  display: block;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* Generic panel fullscreen behavior: any element with class 'panel-fullscreen' will expand to viewport when fullscreened */
+.panel-fullscreen:fullscreen,
+.panel-fullscreen:-webkit-full-screen,
+.panel-fullscreen:-moz-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important; /* remove extra padding to avoid blank space in fullscreen */
+  /* use a single app background variable so fullscreen matches the normal page background */
+  background: var(--app-bg, #ffffff) !important;
+  z-index: 99999 !important;
+  overflow: auto !important;
+}
+
+/* Give panels the default app background so entering fullscreen preserves the same look */
+.panel-fullscreen {
+  background: var(--app-bg, #ffffff);
+}
+
+/* Removed broad rule that forced all children in fullscreen to max-width:100%.
+   This prevented components that intentionally use `max-w-md` / `max-w-lg`
+   from keeping their width (for example, filter modals). Individual containers
+   like .max-w-6xl are still expanded to fill the viewport as intended. */
+
+/* When a panel is fullscreen, make common max-width wrappers fill the viewport */
+.panel-fullscreen:fullscreen .max-w-9xl,
+.panel-fullscreen:-webkit-full-screen .max-w-9xl,
+.panel-fullscreen:fullscreen .max-w-8xl,
+.panel-fullscreen:-webkit-full-screen .max-w-8xl,
+.panel-fullscreen:fullscreen .max-w-6xl,
+.panel-fullscreen:-webkit-full-screen .max-w-6xl {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Make tables scrollable in fullscreen: allow both X and Y scrolling and limit height */
+.panel-fullscreen:fullscreen .table-responsive,
+.panel-fullscreen:-webkit-full-screen .table-responsive,
+.panel-fullscreen:-moz-full-screen .table-responsive {
+  max-height: calc(100vh - 6rem); /* leave room for header/actions */
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+/* Slightly increase width of modal containers that use `max-w-md` when inside a fullscreen panel.
+   This gives the filter popup a bit more room while still keeping it constrained and centered. */
+.panel-fullscreen:fullscreen .max-w-md,
+.panel-fullscreen:-webkit-full-screen .max-w-md,
+.panel-fullscreen:-moz-full-screen .max-w-md {
+  max-width: 34rem !important; /* slightly wider than default 28rem */
+}
+
+/* Pin the fullscreen button to the upper-right of the viewport when a panel is fullscreen.
+   Buttons should get the class `fullscreen-btn` to be positioned. This keeps layout unchanged
+   when not fullscreen but ensures the control lives at the extreme top-right when fullscreened. */
+/* fullscreen-btn will remain inline near filter controls; avoid forcing fixed positioning here so it stays with the header */
+
+

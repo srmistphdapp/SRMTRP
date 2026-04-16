@@ -1,0 +1,90 @@
+/* Sidebar Container */
+.sidebar {
+  width: 260px;
+  background-color: #e1efff;
+  padding: 30px 0;
+  display: flex;
+  flex-direction: column; /* vertical stacking */
+  height: 100%; /* full container height */
+  overflow-y: auto; /* scroll vertically if overflow */
+  border-right: 1px solid #c9d7e6; /* subtle right border */
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center logo and title */
+  padding-bottom: 36px;
+  border-bottom: 1px solid #c9d7e6; /* bottom border */
+  margin-bottom: 36px; /* spacing below header */
+}
+
+/* Sidebar Logo Image */
+.sidebar-logo {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 14px;
+  object-fit: contain; /* keep logo proportion */
+}
+
+/* Sidebar Title */
+.sidebar-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0a192f;
+  margin: 0;
+}
+
+/* Sidebar Navigation Menu */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* space between menu items */
+  padding: 0 24px; /* horizontal padding */
+}
+
+/* Each Menu Item Button */
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background-color: transparent;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0a192f;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.3s ease;
+}
+
+/* Hover state for menu items */
+.sidebar-menu-item:hover {
+  background: #7fafff;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(127,175,255,0.7);
+}
+
+/* Active menu item */
+.sidebar-menu-item.active {
+  background-color: #3182ce;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(49,130,206,0.8);
+}
+
+/* Icon span inside menu item */
+.sidebar-icon {
+  font-size: 1.4rem;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Label span inside menu item */
+.sidebar-label {
+  flex-grow: 1; /* fill remaining space */
+}
+

@@ -1,0 +1,990 @@
+/* Switched to Tailwind CSS to match the Director portal. */
+.forward-message-text {
+  font-size: 14px;
+  color: #1e40af;
+  line-height: 1.5;
+}
+
+.forward-message-text strong {
+  font-weight: 700;
+}
+
+.admin-forward-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-forward-btn {
+  padding: 8px 16px;
+  border: none;
+  background-color: #6b7280;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.cancel-forward-btn:hover {
+  background-color: #4b5563;
+}
+
+.confirm-forward-btn {
+  padding: 8px 16px;
+  border: none;
+  background-color: #d1d5db;
+  color: white;
+  border-radius: 4px;
+  cursor: not-allowed;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.confirm-forward-btn:not(:disabled) {
+  background-color: #10b981;
+  cursor: pointer;
+}
+
+.confirm-forward-btn:not(:disabled):hover {
+  background-color: #059669;
+}
+
+/* Confirmation Modal Styles - Exact Match to Second Image with !important */
+.publish-confirmation-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
+}
+
+.publish-confirmation-content {
+  background: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  width: 90% !important;
+  max-width: 500px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.publish-confirmation-header {
+  padding: 20px 20px 16px 20px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  position: relative !important;
+  background: #f9fafb !important;
+}
+
+.publish-confirmation-close {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: none !important;
+  border: none !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  color: #6b7280 !important;
+  padding: 4px !important;
+  border-radius: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+.publish-confirmation-close:hover {
+  background-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+.publish-confirmation-title {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+  line-height: 1.4 !important;
+  padding-right: 40px !important;
+}
+
+.publish-confirmation-body {
+  padding: 20px !important;
+  background: white !important;
+}
+
+.admin-info-section {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  padding: 16px !important;
+  margin-bottom: 20px !important;
+}
+
+.admin-info-row {
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  color: #4b5563 !important;
+  margin-bottom: 4px !important;
+}
+
+.admin-info-row:last-child {
+  margin-bottom: 0 !important;
+}
+
+.admin-info-label {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.admin-info-email {
+  color: #2563eb !important;
+}
+
+.consent-section {
+  margin-bottom: 20px !important;
+}
+
+.consent-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+  margin: 0 0 12px 0 !important;
+}
+
+.consent-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 16px 0 !important;
+  font-size: 13px !important;
+  color: #4b5563 !important;
+  line-height: 1.6 !important;
+}
+
+.consent-item {
+  margin-bottom: 6px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  padding-left: 0 !important;
+}
+
+.consent-bullet {
+  color: #059669 !important;
+  margin-right: 8px !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.consent-checkbox-container {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 13px !important;
+  color: #4b5563 !important;
+  margin-top: 12px !important;
+  padding: 8px 0 !important;
+}
+
+.consent-checkbox {
+  margin-right: 8px !important;
+  width: 16px !important;
+  height: 16px !important;
+  accent-color: #2563eb !important;
+}
+
+.consent-checkbox-label {
+  color: #4b5563 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  line-height: 1.5 !important;
+}
+
+.conclusion-section {
+  background-color: #f0f9ff !important;
+  border: 1px solid #bfdbfe !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  margin-bottom: 24px !important;
+  text-align: left !important;
+}
+
+.conclusion-text {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: #1e40af !important;
+  line-height: 1.5 !important;
+}
+
+.conclusion-bold {
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+}
+
+.confirmation-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+  padding-top: 4px !important;
+}
+
+.confirmation-cancel-btn {
+  padding: 8px 20px !important;
+  border: none !important;
+  background-color: #6b7280 !important;
+  color: white !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  min-width: 70px !important;
+}
+
+.confirmation-cancel-btn:hover {
+  background-color: #4b5563 !important;
+}
+
+.confirmation-confirm-btn {
+  padding: 8px 20px !important;
+  border: none !important;
+  background-color: #9ca3af !important;
+  color: white !important;
+  border-radius: 4px !important;
+  cursor: not-allowed !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  opacity: 0.7 !important;
+  min-width: 120px !important;
+}
+
+.confirmation-confirm-btn:not(:disabled) {
+  background-color: #10b981 !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+}
+
+.confirmation-confirm-btn:not(:disabled):hover {
+  background-color: #059669 !important;
+}
+
+/* Confirmation Modal - Override existing styles */
+.confirm-modal {
+  background-color: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  max-width: 500px !important;
+  width: 90% !important;
+  overflow: hidden !important;
+}
+
+.confirm-modal-content {
+  padding: 20px !important;
+  text-align: left !important;
+}
+
+.confirm-modal-content h3 {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #111827 !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.confirm-modal-content p {
+  color: #4b5563 !important;
+  margin: 0 0 20px 0 !important;
+  line-height: 1.5 !important;
+  font-size: 13px !important;
+}
+
+.confirm-modal-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+}
+
+.confirm-btn {
+  background-color: #10b981 !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 20px !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
+  font-size: 13px !important;
+}
+
+.confirm-btn:hover {
+  background-color: #059669 !important;
+}
+
+.cancel-btn {
+  background-color: #6b7280 !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 20px !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
+  font-size: 13px !important;
+}
+
+.cancel-btn:hover {
+  background-color: #4b5563 !important;
+}
+
+/* Success Modal */
+.success-modal {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 400px;
+  width: 90%;
+  overflow: hidden;
+}
+
+.success-modal-content {
+  padding: 24px;
+  text-align: center;
+}
+
+.success-modal-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 16px 0;
+}
+
+.success-modal-content p {
+  color: #6b7280;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.success-modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.ok-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ok-btn:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .search-input {
+    width: 200px;
+  }
+
+  .department-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .department-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .rank-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .rank-table-header,
+  .rank-row {
+    grid-template-columns: 60px 1fr 100px 80px;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .rank-modal-header {
+    padding: 16px;
+  }
+
+  .rank-modal-header h3 {
+    font-size: 16px;
+  }
+
+  .scholar-name {
+    font-size: 14px;
+  }
+
+  .total-marks {
+    font-size: 14px;
+  }
+}
+
+/* Filter Modal Styles */
+.filter-modal {
+  background: white !important;
+  border-radius: 12px !important;
+  width: 100% !important;
+  max-width: 500px !important;
+  /* Increased width to accommodate longer department names */
+  max-height: 90vh !important;
+  /* Increased height to accommodate dropdown */
+  overflow: visible !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  position: relative !important;
+  margin: auto !important;
+}
+
+.filter-modal-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 1.5rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%) !important;
+  /* Light blue gradient background */
+  border-radius: 12px 12px 0 0 !important;
+  /* Rounded top corners only */
+}
+
+.filter-modal-header h3 {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  /* Dark gray text */
+}
+
+.modal-close-btn {
+  padding: 8px !important;
+  border: none !important;
+  background: none !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #6b7280 !important;
+  font-size: 1.5rem !important;
+  width: 32px !important;
+  height: 32px !important;
+  transition: all 0.2s ease !important;
+}
+
+.modal-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  color: #374151 !important;
+}
+
+.filter-modal-body {
+  padding: 1.5rem !important;
+  overflow: visible !important;
+  min-height: 200px !important;
+  /* Ensure enough space for dropdown */
+  background: white !important;
+}
+
+.filter-group {
+  margin-bottom: 2rem !important;
+  /* Increased spacing for dropdown */
+  position: relative !important;
+}
+
+.filter-group:last-child {
+  margin-bottom: 1rem !important;
+  /* Keep some space at bottom */
+}
+
+.filter-group label {
+  display: block !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+}
+
+.filter-select {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  background-color: white !important;
+  transition: border-color 0.2s !important;
+  position: relative !important;
+  z-index: 10001 !important;
+  max-height: 200px !important;
+  /* Limit dropdown height */
+  overflow-y: auto !important;
+  /* Add scroll if too many options */
+}
+
+.filter-select:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Custom styling for select options to ensure they fit */
+.filter-select option {
+  padding: 0.75rem 0.5rem !important;
+  background-color: white !important;
+  color: #374151 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.filter-select option:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.filter-select option:checked {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.filter-modal-footer {
+  display: flex !important;
+  gap: 0.75rem !important;
+  padding: 1.5rem !important;
+  border-top: 1px solid #e5e7eb !important;
+  justify-content: flex-end !important;
+  background: white !important;
+  border-radius: 0 0 12px 12px !important;
+  /* Rounded bottom corners only */
+}
+
+.clear-btn {
+  padding: 0.75rem 1.5rem !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 8px !important;
+  background: white !important;
+  color: #374151 !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+
+.clear-btn:hover {
+  background: #f9fafb !important;
+  border-color: #9ca3af !important;
+}
+
+.apply-btn {
+  padding: 0.75rem 1.5rem !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: #3b82f6 !important;
+  color: white !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s !important;
+}
+
+.apply-btn:hover {
+  background: #2563eb !important;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.no-results p {
+  margin: 0;
+}
+
+/* Add extra bottom space for proper scrolling */
+.results-container {
+  padding-bottom: 120px;
+  /* Extra space at bottom for scrolling */
+  min-height: calc(100vh - 100px);
+  /* Ensure minimum height for scrolling */
+}
+
+/* Ensure results table has proper spacing */
+.results-table-container {
+  margin-bottom: 60px;
+  /* Additional margin after table */
+}
+
+/* Modal Overlay Styling */
+.fixed {
+  position: fixed !important;
+}
+
+.inset-0 {
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+
+.z-50 {
+  z-index: 99999 !important;
+}
+
+.bg-opacity-50 {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Enhanced styles for RankListModal */
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  display: inline-block;
+  white-space: nowrap;
+  text-align: center;
+  min-width: 80px;
+  /* Slight tweak for better text fit */
+}
+
+.status-qualified {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.status-not-qualified {
+  background: linear-gradient(135deg, #fecaca, #fca5a5);
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+
+/* Table Styling */
+.examination-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.examination-table thead th {
+  background-color: #f9fafb;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.examination-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.examination-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.examination-table td {
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+/* Rank Badge Styling */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.rank-badge.top-3 {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 2px solid #fbbf24;
+  box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);
+}
+
+.rank-badge.regular {
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+/* Marks Display */
+.marks-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.marks-item {
+  padding: 8px 12px;
+  background-color: #f0f4f8;
+  border-radius: 6px;
+  text-align: center;
+  width: 70px;
+  border: 1px solid #d1d5db;
+  flex: 0 0 70px;
+}
+
+.marks-item:nth-child(1) {
+  background-color: #fef3c7;
+  border-color: #fcd34d;
+}
+
+.marks-item:nth-child(2) {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.marks-item.total {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border: 1.5px solid #3b82f6;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.15);
+  width: 75px;
+  flex: 0 0 75px;
+}
+
+.marks-label {
+  font-size: 9px;
+  color: #475569;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+
+.marks-value {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.marks-value.total {
+  color: #1e40af;
+  font-size: 17px;
+}
+
+/* Modal
+  Width Fix */
+.rank-list-modal {
+  width: 100% !important;
+}
+
+.rank-list-modal.max-w-4xl {
+  max-width: 56rem !important;
+}
+
+.rank-list-modal.max-w-5xl {
+  max-width: 64rem !important;
+}
+
+/* Ensure proper modal sizing */
+@media (min-width: 768px) {
+  .rank-list-modal {
+    width: 90% !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rank-list-modal {
+    width: auto !important;
+  }
+}
+
+/*
+  Download Excel Button Styling */
+.download-excel-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.download-excel-btn:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: left 0.3s ease;
+}
+
+.download-excel-btn:not(:disabled):hover::before {
+  left: 100%;
+}
+
+.download-excel-btn:not(:disabled) svg {
+  transition: transform 0.3s ease;
+}
+
+.download-excel-btn:not(:disabled):hover svg {
+  transform: translateY(2px);
+}
+
+/* Download Excel Button Styling */
+.download-excel-btn {
+  position: relative;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.download-excel-btn:not(:disabled) {
+  background: linear-gradient(to right, #10b981, #14b8a6) !important;
+  color: white !important;
+}
+
+.download-excel-btn:not(:disabled):hover {
+  background: linear-gradient(to right, #059669, #0d9488) !important;
+  filter: brightness(1.1);
+}
+
+.download-excel-btn:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: left 0.3s ease;
+}
+
+.download-excel-btn:not(:disabled):hover::before {
+  left: 100%;
+}
+
+.download-excel-btn:not(:disabled) svg {
+  transition: transform 0.3s ease;
+}
+
+.download-excel-btn:not(:disabled):hover svg {
+  transform: translateY(2px);
+}
+
+/* Header Action Buttons */
+.header-action-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.download-header-btn {
+  background-color: #10b981;
+  color: white;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.download-header-btn:hover:not(:disabled) {
+  background-color: #059669;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.download-header-btn:disabled {
+  background-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.publish-header-btn {
+  background: linear-gradient(to right, #8b5cf6, #6366f1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
+}
+
+.publish-header-btn:hover:not(:disabled) {
+  background: linear-gradient(to right, #7c3aed, #4f46e5);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+}
+
+.publish-header-btn:disabled {
+  background-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+
+/* Header Publish All Button */
+.header-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.publish-btn-header {
+  background: linear-gradient(to right, #8b5cf6, #6366f1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.2);
+}
+
+.publish-btn-header:hover {
+  background: linear-gradient(to right, #7c3aed, #4f46e5);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+}
+
+/* Scholar Control Button - Examination Module Style */
+.scholar-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scholar-control-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}

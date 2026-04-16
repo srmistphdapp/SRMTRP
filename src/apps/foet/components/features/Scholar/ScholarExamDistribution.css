@@ -1,0 +1,623 @@
+/* Scholar Examination Distribution Styles */
+.examination-page {
+  padding: 2rem;
+  color: #334155;
+  position: relative;
+  min-height: 100vh;
+  background: #ffffff;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding-bottom: 120px;
+}
+
+/* Header Section Styles - Standardized */
+.scholar-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.scholar-page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.scholar-controls-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.scholar-search-container {
+  position: relative;
+  min-width: 280px;
+  display: flex;
+  align-items: center;
+}
+
+.scholar-search-input {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.875rem;
+  color: #374151;
+  width: 100%;
+  height: 44px;
+  border-radius: 0.5rem;
+  outline: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.scholar-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.scholar-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.scholar-control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.scholar-control-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* Action Buttons - Matching Scholar Administration */
+.scholar-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.verify-btn {
+  background-color: #3b82f6 !important;
+}
+
+.verify-btn:hover {
+  background-color: #2563eb !important;
+}
+
+.forward-btn {
+  background-color: #10b981 !important;
+}
+
+.forward-btn:hover {
+  background-color: #059669 !important;
+}
+
+
+
+.examination-table-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.examination-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  table-layout: fixed;
+}
+
+.examination-table-header {
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.examination-table-header th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #495057;
+  border: none;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.examination-table-header th:nth-child(1) {
+  width: 5%;
+  text-align: center;
+}
+
+.examination-table-header th:nth-child(2) {
+  width: 15%;
+  text-align: left;
+}
+
+.examination-table-header th:nth-child(3) {
+  width: 30%;
+  text-align: left;
+}
+
+.examination-table-header th:nth-child(4) {
+  width: 30%;
+  text-align: left;
+}
+
+.examination-table-header th:nth-child(5) {
+  width: 10%;
+  text-align: center;
+}
+
+.examination-table-header th:nth-child(6) {
+  width: 10%;
+  text-align: center;
+}
+
+.examination-table-row {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+.examination-table-row:hover {
+  background: var(--bg-secondary);
+}
+
+.examination-table-row:last-child {
+  border-bottom: none;
+}
+
+.examination-table-cell {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.examination-table-row td:nth-child(1),
+.examination-table-row td:nth-child(5),
+.examination-table-row td:nth-child(6) {
+  text-align: center;
+}
+
+.examination-table-row td:nth-child(2) {
+  text-align: left;
+  font-weight: 500;
+}
+
+.examination-table-row td:nth-child(3) {
+  text-align: left;
+}
+
+.examination-table-row td:nth-child(4) {
+  text-align: left;
+}
+
+.examination-scholar-name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
+.examination-marks {
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.examination-written-marks {
+  color: #16a34a;
+  background-color: #dcfce7;
+}
+
+.examination-viva-marks {
+  color: #b45309;
+  background-color: #fef3c7;
+}
+
+
+
+.examination-no-data {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+/* Modal Styles */
+.examination-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.examination-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.examination-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-secondary);
+}
+
+.examination-modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.examination-modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.examination-modal-close:hover {
+  background: #f0f0f0;
+}
+
+.examination-modal-body {
+  padding: 20px;
+  text-align: left;
+}
+
+.examination-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.examination-modal-text {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.examination-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.examination-btn-ok {
+  background: var(--primary-blue);
+  color: white;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.examination-btn-ok:hover {
+  background: var(--secondary-blue);
+}
+
+/* Filter Modal Specific Styles */
+.examination-filter-group {
+  margin-bottom: 20px;
+}
+
+.examination-filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.examination-filter-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.examination-filter-select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.examination-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 8px 8px;
+}
+
+.examination-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  border: 1px solid transparent;
+}
+
+.examination-btn-clear {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.examination-btn-clear:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.examination-btn-apply {
+  background: #3b82f6;
+  color: white;
+  border: 1px solid #3b82f6;
+}
+
+.examination-btn-apply:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.examination-btn-cancel {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.examination-btn-cancel:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+
+
+/* Ensure examination table has proper spacing */
+.examination-table-container {
+  margin-bottom: 60px;
+  /* Additional margin after table */
+}
+
+/* View Modal Styles - Matching Director Portal Clean Design */
+.view-field {
+  margin-bottom: 1.25rem;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.view-label {
+  margin-bottom: 0;
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.view-value {
+  margin-top: 0;
+  font-size: 0.9375rem;
+  color: #1f2937;
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.view-value:empty::before {
+  content: '-';
+  color: #9ca3af;
+  font-style: normal;
+  font-weight: 400;
+}
+
+/* Modal overlay styling - flat design */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+/* Modal content styling - flat design with proper scroll structure */
+
+
+/* Separate examination view modal */
+.exam-view-modal {
+  position: relative !important;
+  z-index: 10000 !important;
+  margin: auto !important;
+  width: 90% !important;
+  max-width: 1000px !important;
+  max-height: 90vh !important;
+  background: white !important;
+  border-radius: 1.5rem !important;
+  padding: 2rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  border: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+}
+
+/* Modal header - fixed at top */
+.modal-header {
+  position: relative !important;
+  top: 0 !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #d1d5db !important;
+  padding: 1rem 1.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  z-index: 10001 !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Modal body - scrollable content area */
+.modal-body {
+  padding: 1.5rem !important;
+  position: relative !important;
+  z-index: 10000 !important;
+  overflow-y: auto !important;
+  flex: 1 !important;
+  max-height: calc(90vh - 80px) !important;
+}
+
+/* Section headers - flat design */
+.modal-section-header {
+  background-color: #f3f4f6 !important;
+  margin: 0 0 1rem 0 !important;
+  padding: 0.75rem !important;
+  border-bottom: 1px solid #d1d5db !important;
+  border-radius: 0 !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  font-size: 1.125rem !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Responsive view modal */
+@media (max-width: 768px) {
+  .view-field {
+    margin-bottom: 16px;
+  }
+
+  .view-label {
+    font-size: 11px;
+  }
+
+  .view-value {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .scholar-page-title {
+    font-size: 1.5rem;
+  }
+
+  .scholar-header-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .scholar-controls-section {
+    justify-content: center;
+  }
+}

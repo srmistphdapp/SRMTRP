@@ -1,0 +1,26 @@
+{
+  "buildCommand": "node scripts/vercel-build.js",
+  "outputDirectory": "build",
+  "framework": "create-react-app",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_RMP_SUPABASE_URL": "https://sksdhlqbpyemrsrofnmm.supabase.co/",
+    "REACT_APP_RMP_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrc2RobHFicHllbXJzcm9mbm1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMjIyMTMsImV4cCI6MjA4MTU5ODIxM30.PG2ews-vhDtKWmBgnWy3Ss1f_oI5T8rc9sT3GBVMt1I",
+    "REACT_APP_RMP_SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrc2RobHFicHllbXJzcm9mbm1tIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NjAyMjIxMywiZXhwIjoyMDgxNTk4MjEzfQ.6RBMqJsyCaOBpdp9B3S3qeB9g8q3iAKN2Xd-mwtDxP4",
+    "REACT_APP_TRP_SUPABASE_URL": "https://vqnzovyhnuabjltgpjvy.supabase.co",
+    "REACT_APP_TRP_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnpvdnlobnVhYmpsdGdwanZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyMjQ4NzcsImV4cCI6MjA4MTgwMDg3N30.jnNhLBLOdxPIdKv2GJI_iCGHysx0DcoJZMcFbn9UhTA",
+    "REACT_APP_TRP_SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnpvdnlobnVhYmpsdGdwanZ5Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NjIyNDg3NywiZXhwIjoyMDgxODAwODc3fQ.wT1Fydt8DO61x6XSGy-jOxfpO6PjNc9tAWiUjwSXT2w",
+    "CI": "false",
+    "GENERATE_SOURCEMAP": "false",
+    "DISABLE_ESLINT_PLUGIN": "true",
+    "ESLINT_NO_DEV_ERRORS": "true",
+    "TSC_COMPILE_ON_ERROR": "true",
+    "REACT_APP_ESLINT_NO_DEV_ERRORS": "true",
+    "SKIP_PREFLIGHT_CHECK": "true"
+  }
+}

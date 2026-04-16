@@ -1,0 +1,557 @@
+.checklist-page {
+    padding: 24px;
+    position: relative;
+}
+
+.checklist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.actions .btn-secondary {
+    background: #eef2ff;
+    color: #1e40af;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 600;
+}
+
+.fullscreen-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-right: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.fullscreen-mode {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto !important;
+    background: #ffffff !important;
+    z-index: 10000 !important;
+    padding: 20px !important;
+}
+
+/* Modern table styles matching Scholar Administration */
+.checklist-page table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.checklist-page table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.checklist-page table td {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.checklist-page table tbody tr:hover {
+    background-color: #f9fafb;
+    transition: background-color 0.15s ease-in-out;
+}
+
+/* Search and filter controls */
+.checklist-page .flex {
+    display: flex;
+}
+
+.checklist-page .flex-col {
+    flex-direction: column;
+}
+
+.checklist-page .gap-3 {
+    gap: 0.75rem;
+}
+
+.checklist-page .gap-2 {
+    gap: 0.5rem;
+}
+
+.checklist-page .items-center {
+    align-items: center;
+}
+
+.checklist-page .justify-between {
+    justify-content: space-between;
+}
+
+.checklist-page .mb-4 {
+    margin-bottom: 1rem;
+}
+
+/* Input and select styling */
+.checklist-page input[type="text"],
+.checklist-page select {
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.checklist-page input[type="text"]:focus,
+.checklist-page select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.checklist-page .relative {
+    position: relative;
+}
+
+.checklist-page .absolute {
+    position: absolute;
+}
+
+/* Button styling */
+.checklist-page button {
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.checklist-page button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checklist-page button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Status badges */
+.checklist-page .inline-flex {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checklist-page .bg-green-100 {
+    background-color: #dcfce7;
+}
+
+.checklist-page .text-green-800 {
+    color: #166534;
+}
+
+.checklist-page .bg-yellow-100 {
+    background-color: #fef3c7;
+}
+
+.checklist-page .text-yellow-800 {
+    color: #92400e;
+}
+
+/* Pagination */
+.checklist-page .pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.checklist-page .pagination button {
+    min-width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.checklist-page .pagination button:hover:not(:disabled) {
+    background-color: #f9fafb;
+}
+
+.checklist-page .pagination button.active {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+    color: #2563eb;
+    z-index: 10;
+}
+
+/* Notification styling */
+.checklist-page .notification {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #10b981;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 300px;
+    justify-content: center;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Verification form styling */
+.checklist-page .verification-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.checklist-page .verification-form h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.checklist-page .verification-form p {
+    margin-bottom: 1.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.checklist-page .checklist-item {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.checklist-page .checklist-item:hover {
+    background-color: #f9fafb;
+}
+
+.checklist-page .checklist-item input[type="checkbox"] {
+    margin-right: 0.75rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    cursor: pointer;
+}
+
+.checklist-page .checklist-item input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+}
+
+.checklist-page .checklist-item .item-label {
+    font-size: 0.9375rem;
+    color: #111827;
+    flex: 1;
+}
+
+.checklist-page .checklist-item .status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.checklist-page .checklist-item .status-badge.verified {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.checklist-page .checklist-item .status-badge.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Notes textarea */
+.checklist-page .notes-section {
+    margin-top: 1.5rem;
+}
+
+.checklist-page .notes-section h4 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #111827;
+}
+
+.checklist-page .notes-section textarea {
+    width: 100%;
+    height: 5rem;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.checklist-page .notes-section textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.checklist-page .notes-section textarea:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+}
+
+/* Action buttons */
+.checklist-page .action-buttons {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+}
+
+.checklist-page .action-buttons button {
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.checklist-page .action-buttons .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.checklist-page .action-buttons .btn-primary:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.checklist-page .action-buttons .btn-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.checklist-page .action-buttons .btn-success:hover:not(:disabled) {
+    background-color: #059669;
+}
+
+.checklist-page .action-buttons button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .checklist-page {
+        padding: 1rem;
+    }
+
+    .checklist-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .checklist-page .flex {
+        flex-direction: column;
+    }
+
+    .checklist-page .justify-between {
+        justify-content: flex-start;
+    }
+
+    .verification-form {
+        padding: 1rem;
+    }
+
+}
+
+
+/* Faculty vs Department visual differentiation */
+.faculty-section {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eef2ff;
+}
+.faculty-section { position: relative; }
+
+/* Stripe inside the faculty header only (short vertical bar) */
+.faculty-header { position: relative; }
+.faculty-header::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    bottom: 12px;
+    width: 6px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+}
+
+/* Per-faculty colors applied to the header bar */
+.faculty-section.faculty-color-1 .faculty-header::before { background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%); }
+.faculty-section.faculty-color-2 .faculty-header::before { background: linear-gradient(180deg, #86efac 0%, #10b981 100%); }
+.faculty-section.faculty-color-3 .faculty-header::before { background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); }
+.faculty-section.faculty-color-4 .faculty-header::before { background: linear-gradient(180deg, #fed7aa 0%, #f59e0b 100%); }
+.department-item.expanded { background: #f9fafb; }
+.department-item:hover { background: #f8fafc; }
+.department-name { font-size: 15px; font-weight: 600; color: #111827; text-align: left; flex: 1; }
+.department-icon { color: #6b7280; width: 20px; height: 20px; }
+.department-table { padding-left: 8px; }
+
+/* Colored stripe on the left of faculty sections (Results-like) */
+.faculty-section {
+    position: relative;
+}
+
+/* default stripe color (blue) */
+.faculty-section::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+}
+
+/* Per-faculty colors: cycle through these for variety */
+.faculty-section.faculty-color-1::before { background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%); }
+.faculty-section.faculty-color-2::before { background: linear-gradient(180deg, #86efac 0%, #10b981 100%); }
+.faculty-section.faculty-color-3::before { background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); }
+.faculty-section.faculty-color-4::before { background: linear-gradient(180deg, #fed7aa 0%, #f59e0b 100%); }
+
+/* Slight offset for inner content so the stripe doesn't overlap */
+.faculty-section .faculty-header,
+.faculty-section .department-list {
+    margin-left: 0; /* keep alignment; header already has left padding */
+}
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+/* Results-like faculty/department split styling (scoped to checklist) */
+.checklist-page .faculty-section {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    background: white;
+    margin-bottom: 1rem;
+}
+
+.checklist-page .faculty-section.expanded {
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08);
+}
+
+.checklist-page .faculty-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    background-color: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.checklist-page .faculty-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.checklist-page .faculty-icon {
+    width: 1rem;
+    height: 1rem;
+    color: #6b7280;
+    transition: transform 0.18s ease;
+    flex-shrink: 0;
+}
+
+.checklist-page .faculty-icon.rotated { transform: rotate(90deg); color: #374151; }
+
+.checklist-page .faculty-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.checklist-page .department-list {
+    padding: 0.75rem 0.75rem 0.75rem 0.75rem;
+}
+
+.checklist-page .department-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: #f8fafc;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.checklist-page .department-name { font-size: 0.95rem; font-weight: 600; color: #374151; }
+
+.checklist-page .department-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+.checklist-page .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.checklist-page .action-btn.view-btn { color: #2563eb; }
+.checklist-page .action-btn.toggle-btn { color: #6b7280; border-radius: 6px; padding: 6px 10px; background: white; border: 1px solid #e6edf8; }
+
+.checklist-page .department-table { background: white; border-radius: 6px; margin-top: 0.5rem; overflow: hidden; border: 1px solid #e5e7eb; }
+.checklist-page .table-row { display: grid; grid-template-columns: 40px 1fr 140px 180px 140px 120px 80px; align-items: center; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+.checklist-page .table-row:hover { background: #f8fafc; }
+.checklist-page .table-cell { padding: 6px 8px; }
+

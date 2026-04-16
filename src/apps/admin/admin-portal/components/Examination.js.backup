@@ -1,0 +1,1495 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { FaSearch, FaUpload, FaPlus, FaExpand, FaCompress } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import * as XLSX from 'xlsx';
+import { useAppContext } from '../../context/AppContext';
+import './Examination.css';
+import { 
+  fetchExaminationRecords, 
+  addExaminationRecord, 
+  updateExaminationRecord, 
+  updateExaminationMarks,
+  deleteExaminationRecord,
+  uploadExaminationExcel,
+  forwardAllExaminationRecords,
+  forwardExaminationRecord,
+  deleteAllExaminationRecords
+} from '../../../../services/examinationService';
+
+const Examination = ({ onFullscreenChange, onModalStateChange }) => {
+  const { facultiesData } = useAppContext();
+  
+  // Examination data from Supabase
+  const [examinationData, setExaminationData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch examination records from Supabase on component mount
+  useEffect(() => {
+    loadExaminationRecords();
+  }, []);
+
+  const loadExaminationRecords = async () => {
+    console.log('Admin: Starting to load examination records...');
+    setLoading(true);
+    const { data, error } = await fetchExaminationRecords();
+    
+    console.log('Admin: Fetch result:', { 
+      dataCount: data?.length || 0, 
+      hasError: !!error,
+      errorDetails: error 
+    });
+    
+    if (error) {
+      console.error('Admin: Error loading examination records:', error);
+      toast.error(`Failed to load examination records: ${error.message || 'Unknown error'}`);
+      setExaminationData([]);
+    } else {
+      console.log('Admin: Successfully loaded', data?.length || 0, 'examination records');
+      setExaminationData(data || []);
+    }
+    setLoading(false);
+  };
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Modal states
+  const [isAddScholarModalOpen, setIsAddScholarModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  
+  const [editingScholar, setEditingScholar] = useState(null);
+  const [viewingScholar, setViewingScholar] = useState(null);
+  const [selectedFaculty, setSelectedFaculty] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
+
+  // Inline editing states
+  const [editingMarks, setEditingMarks] = useState({});
+  const [editingInterviewMarks, setEditingInterviewMarks] = useState({});
+
+  // Selection states for bulk actions
+  const [selectedScholars, setSelectedScholars] = useState([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
+  const [showBulkForwardModal, setShowBulkForwardModal] = useState(false);
+
+  // Forward All modal state
+  const [showForwardAllModal, setShowForwardAllModal] = useState(false);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+
+  // Comprehensive Form Data State
+  const [formData, setFormData] = useState({
+    applicationNo: '',
+    formName: 'PhD Application Form',
+    name: '',
+    institution: 'SRM Institute of Science and Technology',
+    program: '',
+    programType: '',
+    mobile: '',
+    email: '',
+    dateOfBirth: '',
+    gender: 'Male',
+    graduatedFromIndia: 'Yes',
+    course: '',
+    employeeId: '',
+    designation: '',
+    organizationName: '',
+    organizationAddress: '',
+    differentlyAbled: 'No',
+    natureOfDeformity: '',
+    percentageOfDeformity: '',
+    nationality: 'Indian',
+    aadhaarNo: '',
+    modeOfProfession: 'Academic',
+    areaOfInterest: '',
+    // UG Details
+    ugQualification: '',
+    ugInstitute: '',
+    ugDegree: '',
+    ugSpecialization: '',
+    ugMarkingScheme: 'CGPA',
+    ugCgpa: '',
+    ugMonthYear: '',
+    ugRegistrationNo: '',
+    ugModeOfStudy: 'Full Time',
+    ugPlaceOfInstitution: '',
+    // PG Details
+    pgQualification: '',
+    pgInstitute: '',
+    pgDegree: '',
+    pgSpecialization: '',
+    pgMarkingScheme: 'CGPA',
+    pgCgpa: '',
+    pgMonthYear: '',
+    pgRegistrationNo: '',
+    pgModeOfStudy: 'Full Time',
+    pgPlaceOfInstitution: '',
+    // Other Degree Details
+    otherQualification: '',
+    otherInstitute: '',
+    otherDegree: '',
+    otherSpecialization: '',
+    otherMarkingScheme: '',
+    otherCgpa: '',
+    otherMonthYear: '',
+    otherRegistrationNo: '',
+    otherModeOfStudy: '',
+    otherPlaceOfInstitution: '',
+    // Competitive Exams
+    competitiveExam: 'No',
+    exam1Name: '',
+    exam1RegNo: '',
+    exam1Score: '',
+    exam1MaxScore: '',
+    exam1Year: '',
+    exam1Rank: '',
+    exam1Qualified: '',
+    exam2Name: '',
+    exam2RegNo: '',
+    exam2Score: '',
+    exam2MaxScore: '',
+    exam2Year: '',
+    exam2Rank: '',
+    exam2Qualified: '',
+    exam3Name: '',
+    exam3RegNo: '',
+    exam3Score: '',
+    exam3MaxScore: '',
+    exam3Year: '',
+    exam3Rank: '',
+    exam3Qualified: '',
+    // Misc
+    reasonsForApplying: '',
+    researchInterest: '',
+    userId: '',
+    certificates: 'Available',
+    status: 'pending',
+    faculty: '',
+    department: '',
+    marks: 0,
+    interviewMarks: 0
+  });
+
+  // Handle Form Input Change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Helper to get departments
+  const getDepartmentsForFaculty = (facultyName) => {
+    const faculty = facultiesData.find(f => f.name === facultyName);
+    return faculty ? faculty.departments : [];
+  };
+
+  // Ref for the table scroll container
+  const tableScrollRef = useRef(null);
+
+  useEffect(() => {
+    const tableContainer = tableScrollRef.current;
+    if (tableContainer) {
+      tableContainer.scrollLeft = 0;
+    }
+  }, []);
+
+  // Horizontal scroll logic
+  useEffect(() => {
+    const tableContainer = tableScrollRef.current;
+    if (tableContainer) {
+      const handleWheel = (e) => {
+        if (e.deltaX !== 0) {
+          e.preventDefault();
+          const scrollMultiplier = Math.abs(e.deltaX) < 10 ? 3 : 1.5;
+          const newScrollLeft = tableContainer.scrollLeft + (e.deltaX * scrollMultiplier);
+          const maxScrollLeft = tableContainer.scrollWidth - tableContainer.clientWidth;
+          tableContainer.scrollLeft = Math.max(0, Math.min(newScrollLeft, maxScrollLeft));
+          return;
+        }
+        if (e.shiftKey && e.deltaY !== 0) {
+          e.preventDefault();
+          const scrollMultiplier = 2;
+          const newScrollLeft = tableContainer.scrollLeft + (e.deltaY * scrollMultiplier);
+          const maxScrollLeft = tableContainer.scrollWidth - tableContainer.clientWidth;
+          tableContainer.scrollLeft = Math.max(0, Math.min(newScrollLeft, maxScrollLeft));
+          return;
+        }
+        if (e.deltaY !== 0) {
+          const canScrollVertically = tableContainer.scrollHeight > tableContainer.clientHeight;
+          if (canScrollVertically) return;
+          if (tableContainer.scrollWidth > tableContainer.clientWidth) {
+            e.preventDefault();
+            const scrollMultiplier = 1.5;
+            const newScrollLeft = tableContainer.scrollLeft + (e.deltaY * scrollMultiplier);
+            const maxScrollLeft = tableContainer.scrollWidth - tableContainer.clientWidth;
+            tableContainer.scrollLeft = Math.max(0, Math.min(newScrollLeft, maxScrollLeft));
+          }
+        }
+      };
+      tableContainer.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        tableContainer.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, []);
+
+
+
+  // Handlers
+  
+  // OPEN ADD MODAL
+  const openAddScholarModal = () => {
+    setFormData({
+      applicationNo: '',
+      name: '',
+      faculty: '',
+      program: '',
+      programType: 'Full Time',
+      mobile: '',
+      email: '',
+      gender: 'Male',
+      marks: 0,
+      department: ''
+    });
+    setIsAddScholarModalOpen(true);
+  };
+
+  // OPEN EDIT MODAL
+  const handleEdit = (scholar) => {
+    if (scholar.status?.toLowerCase().includes('forwarded')) {
+      toast.info('Cannot edit forwarded examination records');
+      return;
+    }
+    setEditingScholar(scholar);
+    // Populate form data with only examination table fields
+    setFormData({
+      applicationNo: scholar.application_no || scholar.applicationNo || '',
+      name: scholar.registered_name || scholar.name || '',
+      faculty: scholar.faculty || '',
+      program: scholar.program || '',
+      programType: scholar.program_type || scholar.type || scholar.programType || 'Full Time',
+      mobile: scholar.mobile_number || scholar.mobile || '',
+      email: scholar.email || '',
+      gender: scholar.gender || 'Male',
+      marks: scholar.written_marks || 0,
+      interviewMarks: scholar.interview_marks || 0,
+      department: scholar.department || ''
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // SAVE EDIT
+  const handleEditSave = async (e) => {
+    e.preventDefault();
+    
+    const updates = {
+      application_no: formData.applicationNo,
+      registered_name: formData.name,
+      institution: formData.faculty,
+      program: formData.program || formData.faculty,
+      program_type: formData.programType,
+      type: formData.programType,
+      mobile_number: formData.mobile,
+      email: formData.email,
+      gender: formData.gender,
+      faculty: formData.faculty,
+      department: formData.department,
+      written_marks: parseFloat(formData.marks) || 0,
+      interview_marks: parseFloat(formData.interviewMarks) || 0,
+    };
+
+    const { data, error } = await updateExaminationRecord(editingScholar.id, updates);
+    
+    if (error) {
+      console.error('Error updating examination record:', error);
+      toast.error('Failed to update examination record');
+    } else {
+      toast.success('Examination record updated successfully!');
+      setIsEditModalOpen(false);
+      setEditingScholar(null);
+      loadExaminationRecords(); // Refresh data
+    }
+  };
+
+  // SAVE ADD
+  const handleAddScholar = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name.trim() || !formData.faculty.trim() || !formData.department.trim()) {
+      toast.error('Name, Faculty, and Department are required!');
+      return;
+    }
+
+    const recordData = {
+      application_no: formData.applicationNo.trim() || null,
+      registered_name: formData.name.trim(),
+      institution: formData.faculty,
+      program: formData.program || formData.faculty,
+      program_type: formData.programType,
+      type: formData.programType,
+      mobile_number: formData.mobile,
+      email: formData.email,
+      gender: formData.gender,
+      faculty: formData.faculty,
+      department: formData.department,
+      written_marks: 0, // Initially set to 0
+      interview_marks: 0, // Initially set to 0
+      status: 'pending',
+    };
+
+    const { data, error } = await addExaminationRecord(recordData);
+    
+    if (error) {
+      console.error('Error adding examination record:', error);
+      toast.error('Failed to add examination record');
+    } else {
+      toast.success('Examination record added successfully!');
+      setIsAddScholarModalOpen(false);
+      loadExaminationRecords(); // Refresh data
+    }
+  };
+
+  // Helper handlers for modal closing
+  const handleEditCancel = () => {
+    setIsEditModalOpen(false);
+    setEditingScholar(null);
+  };
+
+  // Inline marks editing functions
+  const handleMarksClick = (scholarId, currentMarks) => {
+    const scholar = examinationData.find(item => item.id === scholarId);
+    if (scholar?.status?.toLowerCase().includes('forwarded')) {
+      toast.info('Cannot edit marks for forwarded records');
+      return;
+    }
+    setEditingMarks({ [scholarId]: currentMarks });
+  };
+
+  const handleMarksChange = (scholarId, value) => {
+    const numValue = parseInt(value) || 0;
+    if (numValue > 70) {
+      toast.error('Written marks cannot exceed 70!');
+      return;
+    }
+    if (numValue >= 0 && numValue <= 70) {
+      setEditingMarks({ [scholarId]: numValue });
+    }
+  };
+
+  const handleMarksSave = async (scholarId) => {
+    const newMarks = editingMarks[scholarId];
+    if (newMarks !== undefined) {
+      const { data, error } = await updateExaminationMarks(scholarId, newMarks);
+      
+      if (error) {
+        console.error('Error updating marks:', error);
+        toast.error('Failed to update marks');
+      } else {
+        toast.success('Marks updated successfully!');
+        setEditingMarks({});
+        loadExaminationRecords(); // Refresh data
+      }
+    }
+  };
+
+  const handleMarksCancel = () => {
+    setEditingMarks({});
+  };
+
+  const handleMarksKeyPress = (e, scholarId) => {
+    if (e.key === 'Enter') {
+      handleMarksSave(scholarId);
+    } else if (e.key === 'Escape') {
+      handleMarksCancel();
+    }
+  };
+
+  // Inline interview marks editing functions
+  const handleInterviewMarksClick = (scholarId, currentMarks) => {
+    const scholar = examinationData.find(item => item.id === scholarId);
+    if (scholar?.status?.toLowerCase().includes('forwarded')) {
+      toast.info('Cannot edit interview marks for forwarded records');
+      return;
+    }
+    
+    // Check if director_interview is 'Forwarded to Director'
+    if (scholar?.director_interview !== 'Forwarded to Director') {
+      toast.info('Interview marks can only be edited when director_interview is "Forwarded to Director"');
+      return;
+    }
+    
+    setEditingInterviewMarks({ [scholarId]: currentMarks });
+  };
+
+  const handleInterviewMarksChange = (scholarId, value) => {
+    const numValue = parseInt(value) || 0;
+    if (numValue >= 0 && numValue <= 100) {
+      setEditingInterviewMarks({ [scholarId]: numValue });
+    }
+  };
+
+  const handleInterviewMarksSave = async (scholarId) => {
+    const newMarks = editingInterviewMarks[scholarId];
+    if (newMarks !== undefined) {
+      const { data, error } = await updateExaminationRecord(scholarId, { interview_marks: newMarks });
+      
+      if (error) {
+        console.error('Error updating interview marks:', error);
+        toast.error('Failed to update interview marks');
+      } else {
+        toast.success('Interview marks updated successfully!');
+        setEditingInterviewMarks({});
+        loadExaminationRecords(); // Refresh data
+      }
+    }
+  };
+
+  const handleInterviewMarksCancel = () => {
+    setEditingInterviewMarks({});
+  };
+
+  const handleInterviewMarksKeyPress = (e, scholarId) => {
+    if (e.key === 'Enter') {
+      handleInterviewMarksSave(scholarId);
+    } else if (e.key === 'Escape') {
+      handleInterviewMarksCancel();
+    }
+  };
+
+  // Forward All functionality
+  const handleForwardAll = () => {
+    const eligible = filteredData.filter(s => s.status === 'pending');
+    if (eligible.length === 0) return toast.info('No pending examination records to forward');
+    setShowForwardAllModal(true);
+  };
+
+  const confirmForwardAll = async () => {
+    const { data, error } = await forwardAllExaminationRecords();
+    
+    if (error) {
+      console.error('Error forwarding examination records:', error);
+      toast.error('Failed to forward examination records');
+    } else {
+      toast.success(`${data?.length || 0} examination records forwarded!`);
+      setShowForwardAllModal(false);
+      loadExaminationRecords(); // Refresh data
+    }
+  };
+
+  // Delete All functionality
+  const handleDeleteAll = () => {
+    if (filteredData.length === 0) {
+      return toast.info('No examination records to delete');
+    }
+    setShowDeleteAllModal(true);
+  };
+
+  const confirmDeleteAll = async () => {
+    const { data, error } = await deleteAllExaminationRecords();
+    
+    if (error) {
+      console.error('Error deleting examination records:', error);
+      toast.error('Failed to delete examination records');
+    } else {
+      toast.success(`${data?.length || 0} examination records deleted successfully!`);
+      setShowDeleteAllModal(false);
+      loadExaminationRecords(); // Refresh data
+    }
+  };
+
+  // Selection handlers for bulk actions
+  const handleSelectScholar = (scholarId) => {
+    // Find the scholar to check if it's forwarded
+    const scholar = filteredData.find(item => item.id === scholarId);
+    if (scholar?.status?.toLowerCase().includes('forwarded')) {
+      toast.info('Cannot select forwarded scholars');
+      return;
+    }
+
+    setSelectedScholars(prev => {
+      if (prev.includes(scholarId)) {
+        const newSelection = prev.filter(id => id !== scholarId);
+        if (newSelection.length === 0) setShowBulkActions(false);
+        return newSelection;
+      } else {
+        setShowBulkActions(true);
+        return [...prev, scholarId];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    // Only select non-forwarded scholars
+    const selectableScholars = filteredData.filter(item => !item.status?.toLowerCase().includes('forwarded'));
+    
+    if (selectedScholars.length === selectableScholars.length && selectableScholars.length > 0) {
+      setSelectedScholars([]);
+      setShowBulkActions(false);
+    } else {
+      setSelectedScholars(selectableScholars.map(item => item.id));
+      if (selectableScholars.length > 0) {
+        setShowBulkActions(true);
+      }
+    }
+  };
+
+  const handleClearSelection = () => {
+    setSelectedScholars([]);
+    setShowBulkActions(false);
+  };
+
+  const handleBulkForward = () => {
+    if (selectedScholars.length === 0) {
+      toast.info('Please select scholars to forward');
+      return;
+    }
+    setShowBulkForwardModal(true);
+  };
+
+  const confirmBulkForward = async () => {
+    try {
+      console.log('Starting bulk forward for scholars:', selectedScholars);
+      
+      const forwardPromises = selectedScholars.map(id => 
+        forwardExaminationRecord(id)
+      );
+      const results = await Promise.all(forwardPromises);
+      
+      console.log('Bulk forward results:', results);
+      
+      // Check for any errors
+      const errors = results.filter(result => result.error);
+      const successes = results.filter(result => !result.error);
+      
+      if (errors.length > 0) {
+        console.error('Forward errors:', errors);
+        const errorMessages = errors.map(err => err.error?.message || 'Unknown error').join(', ');
+        toast.error(`${errors.length} scholars failed to forward. Errors: ${errorMessages}`);
+        
+        if (successes.length > 0) {
+          toast.success(`${successes.length} scholars forwarded successfully!`);
+        }
+      } else {
+        toast.success(`${selectedScholars.length} scholars forwarded successfully!`);
+      }
+      
+      setShowBulkForwardModal(false);
+      handleClearSelection();
+      loadExaminationRecords();
+    } catch (error) {
+      console.error('Exception in bulk forward:', error);
+      toast.error(`Failed to forward scholars: ${error.message}`);
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedScholars.length === 0) {
+      toast.info('Please select scholars to delete');
+      return;
+    }
+    setShowBulkDeleteModal(true);
+  };
+
+  const confirmBulkDelete = async () => {
+    try {
+      const deletions = selectedScholars.map(id => 
+        deleteExaminationRecord(id)
+      );
+      await Promise.all(deletions);
+      toast.success(`${selectedScholars.length} scholars deleted successfully!`);
+      setShowBulkDeleteModal(false);
+      handleClearSelection();
+      loadExaminationRecords();
+    } catch (error) {
+      console.error('Error deleting scholars:', error);
+      toast.error('Failed to delete scholars');
+    }
+  };
+
+  // Handle upload scholar list
+  const handleUploadScholarList = () => {
+    setShowUploadModal(true);
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const fileName = file.name;
+    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+
+    toast.info(`Processing file: ${fileName} (${fileSize} MB)...`);
+
+    const { data, error } = await uploadExaminationExcel(file);
+    
+    if (error) {
+      console.error('Error uploading examination Excel:', error);
+      const errorMessage = error.message || error.hint || 'Failed to upload examination records';
+      toast.error(`Upload failed: ${errorMessage}`);
+    } else {
+      toast.success(`Successfully imported ${data?.length || 0} examination records from ${fileName}!`);
+      setShowUploadModal(false);
+      loadExaminationRecords(); // Refresh data
+    }
+
+    // Reset file input
+    event.target.value = '';
+  };
+
+  const toggleFullscreen = () => {
+    const newFullscreenState = !isFullscreen;
+    setIsFullscreen(newFullscreenState);
+    if (onFullscreenChange) onFullscreenChange(newFullscreenState);
+  };
+
+  // Track modal states and notify parent
+  useEffect(() => {
+    const hasModal = isAddScholarModalOpen || isEditModalOpen || showFilterModal || 
+                    showUploadModal || showForwardAllModal || showDeleteAllModal;
+    if (onModalStateChange) {
+      onModalStateChange(hasModal);
+    }
+  }, [isAddScholarModalOpen, isEditModalOpen, showFilterModal, showUploadModal, showForwardAllModal, showDeleteAllModal, onModalStateChange]);
+
+  // Filtering
+  const filteredData = examinationData.filter(item => {
+    const name = item.registered_name || item.name || '';
+    const appNo = item.application_no || item.applicationNo || '';
+    const email = item.email || '';
+    const mobile = item.mobile_number || item.mobile || '';
+    
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.faculty && item.faculty.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.department && item.department.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      appNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mobile.includes(searchTerm);
+
+    const matchesFaculty = selectedFaculty === '' || item.faculty === selectedFaculty;
+    const matchesStatus = selectedStatus === '' ||
+      (selectedStatus === 'Pending' && item.status === 'pending') ||
+      (selectedStatus === 'Forwarded' && item.status?.toLowerCase().includes('forwarded')) ||
+      (selectedStatus === 'Passed' && (item.marks || 0) >= 60) ||
+      (selectedStatus === 'Failed' && (item.marks || 0) < 60);
+
+    return matchesSearch && matchesFaculty && matchesStatus;
+  });
+
+  // Export current table (filteredData) to Excel
+  const handleDownloadExcel = () => {
+    try {
+      const exportData = filteredData.map((item, idx) => ({
+        'S.No': idx + 1,
+        'Application No': item.applicationNo,
+        'Name': item.name,
+        'Faculty': item.faculty || item.program,
+        'Department': item.department || '',
+        'Program': item.program || '',
+        'Type': item.type || item.programType || '',
+        'Mobile': item.mobile || '',
+        'Email': item.email || '',
+        'Gender': item.gender || '',
+        'Marks': item.marks || 0,
+        'Status': item.status || ''
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Examination');
+      const fileName = `Examination_Records_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+      toast.success('Examination table downloaded successfully!');
+    } catch (error) {
+      console.error('Error exporting examination data:', error);
+      toast.error('Failed to download examination data');
+    }
+  };
+
+  // Examination Form Content (Only fields visible in examination table)
+  const renderScholarForm = (onSubmit, title, onClose) => (
+    <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
+        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+        <button onClick={onClose} type="button" className="text-gray-400 hover:text-gray-600 transition-colors">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <form onSubmit={onSubmit} className="p-6">
+        {/* Examination Table Fields Only */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Examination Record Details</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <div className="form-group">
+              <label className="modal-form-label">Application No *</label>
+              <input 
+                type="text" 
+                name="applicationNo" 
+                value={formData.applicationNo} 
+                onChange={handleInputChange} 
+                required 
+                className="modal-form-input w-full" 
+                placeholder="e.g., APP001"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Registered Name *</label>
+              <input 
+                type="text" 
+                name="name" 
+                value={formData.name} 
+                onChange={handleInputChange} 
+                required 
+                className="modal-form-input w-full" 
+                placeholder="Enter full name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Select Institution (Faculty) *</label>
+              <select name="faculty" value={formData.faculty} onChange={handleInputChange} className="modal-form-select w-full" required>
+                <option value="">Select Faculty</option>
+                {facultiesData.map(faculty => (
+                  <option key={faculty.id} value={faculty.name}>{faculty.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Select Program</label>
+              <input 
+                type="text" 
+                name="program" 
+                value={formData.program} 
+                onChange={handleInputChange} 
+                className="modal-form-input w-full" 
+                placeholder="Enter program name"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Type (Program Type) *</label>
+              <select name="programType" value={formData.programType} onChange={handleInputChange} className="modal-form-select w-full" required>
+                <option value="Full Time">Full Time</option>
+                <option value="Part Time">Part Time</option>
+                <option value="Part Time (Industry)">Part Time (Industry)</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Mobile Number *</label>
+              <input 
+                type="tel" 
+                name="mobile" 
+                value={formData.mobile} 
+                onChange={handleInputChange} 
+                required 
+                className="modal-form-input w-full" 
+                placeholder="Enter mobile number"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Email ID *</label>
+              <input 
+                type="email" 
+                name="email" 
+                value={formData.email} 
+                onChange={handleInputChange} 
+                required 
+                className="modal-form-input w-full" 
+                placeholder="Enter email address"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Gender *</label>
+              <select name="gender" value={formData.gender} onChange={handleInputChange} required className="modal-form-select w-full">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Written Marks (Out of 70)</label>
+              <input 
+                type="number" 
+                name="marks" 
+                value={formData.marks || 0} 
+                onChange={handleInputChange} 
+                min="0" 
+                max="70" 
+                className="modal-form-input w-full" 
+                placeholder="Enter examination marks"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Interview Marks (Read-only - Out of 30)</label>
+              <input 
+                type="number" 
+                name="interviewMarks" 
+                value={formData.interviewMarks || ''} 
+                className="modal-form-input w-full bg-gray-100 cursor-not-allowed" 
+                disabled
+                placeholder="Entered by another person"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="modal-form-label">Department</label>
+              <select name="department" value={formData.department} onChange={handleInputChange} className="modal-form-select w-full">
+                <option value="">Select Department</option>
+                {getDepartmentsForFaculty(formData.faculty).map(dept => (
+                  <option key={dept.id} value={dept.name}>{dept.name}</option>
+                ))}
+              </select>
+            </div>
+
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p className="text-sm text-blue-800">
+            <strong>Note:</strong> This form only edits fields visible in the examination table. 
+            For comprehensive scholar details, use the Scholar Administration module.
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <button type="button" onClick={onClose} className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors font-medium">
+            Cancel
+          </button>
+          <button type="submit" className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium">
+            {title.includes('Edit') ? 'Update Record' : 'Add Record'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+
+
+
+
+
+  return (
+    <div id="examination-container">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        {/* Header with title */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-800 whitespace-nowrap">Examination Records</h1>
+        </div>
+
+        {/* Statistics Tiles - Hidden in fullscreen mode */}
+        {!isFullscreen && (
+          <div className="examination-stats-grid">
+            <div className="examination-stat-card examination-stat-total">
+              <div className="examination-stat-content">
+                <div className="examination-stat-label">Total Records</div>
+                <div className="examination-stat-number">{examinationData.length}</div>
+              </div>
+              <div className="examination-stat-icon examination-stat-icon-blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="examination-stat-card examination-stat-passed">
+              <div className="examination-stat-content">
+                <div className="examination-stat-label">Passed</div>
+                <div className="examination-stat-number">
+                  {examinationData.filter(record => {
+                    // Only count scholars with valid total marks >= 60
+                    const hasValidTotalMarks = record.total_marks !== null && record.total_marks !== undefined;
+                    return hasValidTotalMarks && record.total_marks >= 60;
+                  }).length}
+                </div>
+              </div>
+              <div className="examination-stat-icon examination-stat-icon-green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="examination-stat-card examination-stat-failed">
+              <div className="examination-stat-content">
+                <div className="examination-stat-label">Failed</div>
+                <div className="examination-stat-number">
+                  {examinationData.filter(record => {
+                    // Only count scholars with valid total marks < 60
+                    const hasValidTotalMarks = record.total_marks !== null && record.total_marks !== undefined;
+                    return hasValidTotalMarks && record.total_marks < 60;
+                  }).length}
+                </div>
+              </div>
+              <div className="examination-stat-icon examination-stat-icon-red">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="examination-stat-card examination-stat-rate">
+              <div className="examination-stat-content">
+                <div className="examination-stat-label">Pass Rate</div>
+                <div className="examination-stat-number">
+                  {(() => {
+                    const scholarsWithTotalMarks = examinationData.filter(record => 
+                      record.total_marks !== null && record.total_marks !== undefined
+                    );
+                    const passedScholars = scholarsWithTotalMarks.filter(record => record.total_marks >= 60);
+                    
+                    return scholarsWithTotalMarks.length > 0 
+                      ? `${Math.round((passedScholars.length / scholarsWithTotalMarks.length) * 100)}%`
+                      : '0%';
+                  })()}
+                </div>
+              </div>
+              <div className="examination-stat-icon examination-stat-icon-purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="12" y1="20" x2="12" y2="10"></line>
+                  <line x1="18" y1="20" x2="18" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Controls */}
+        <div className="examination-controls">
+          <div className="examination-controls-left">
+            <div className="flex items-center gap-2">
+              <div className="relative w-48 mt-1">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm h-10 flex items-center"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <FaSearch className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+              <button onClick={() => setShowFilterModal(true)} className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center" title="Filter">
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button onClick={handleUploadScholarList} className="flex items-center gap-1.5 px-3 py-2 bg-purple-600 text-white text-sm rounded hover:bg-purple-700 transition-colors">
+                <FaUpload className="h-4 w-4" />
+                <span>Upload</span>
+              </button>
+              
+              <button onClick={openAddScholarModal} className="flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors">
+                <FaPlus className="h-4 w-4" />
+                <span>Add Record</span>
+              </button>
+              
+              <button onClick={handleForwardAll} className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-sm rounded hover:bg-emerald-700 transition-colors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 2L2 8.5L9 12L12 19L22 2Z" />
+                  <path d="M9 12L22 2" />
+                </svg>
+                <span>Forward All</span>
+              </button>
+
+              <button onClick={handleDownloadExcel} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v12m0 0l-4-4m4 4l4-4M21 21H3" />
+                </svg>
+                Download
+              </button>
+              <button onClick={handleDeleteAll} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete All
+              </button>
+            </div>
+          </div>
+
+          <div className="examination-controls-right">
+            <button onClick={toggleFullscreen} className="fullscreen-btn" title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+              {isFullscreen ? <FaCompress className="w-4 h-4" /> : <FaExpand className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+       {/* Upload Modal */}
+       {showUploadModal && (
+         <div className="modal-overlay" onClick={() => setShowUploadModal(false)}>
+           <div className="modal-content upload-modal-modern" onClick={(e) => e.stopPropagation()}>
+             <div className="upload-modal-header">
+               <div className="upload-header-icon">
+                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                 </svg>
+               </div>
+               <div className="upload-header-text">
+                 <h2>Upload Examination List</h2>
+                 <p>Import examination data from Excel or CSV file</p>
+               </div>
+               <button onClick={() => setShowUploadModal(false)} className="upload-modal-close">
+                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                 </svg>
+               </button>
+             </div>
+
+             <div className="upload-modal-body">
+               <div className="upload-dropzone">
+                 <input
+                   type="file"
+                   accept=".xlsx,.xls,.csv"
+                   onChange={handleFileUpload}
+                   className="upload-file-input"
+                   id="examination-file-upload"
+                 />
+                 <label htmlFor="examination-file-upload" className="upload-dropzone-label">
+                   <div className="upload-dropzone-icon">
+                     <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                     </svg>
+                   </div>
+                   <div className="upload-dropzone-text">
+                     <h3>Drop your file here or click to browse</h3>
+                     <p>Supports Excel (.xlsx, .xls) and CSV (.csv) files</p>
+                   </div>
+                   <div className="upload-dropzone-button">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                     </svg>
+                     <span>Select File</span>
+                   </div>
+                 </label>
+               </div>
+
+               <div className="upload-info-section">
+                 <div className="upload-info-card">
+                   <div className="upload-info-icon success">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                     </svg>
+                   </div>
+                   <div className="upload-info-content">
+                     <h4>Supported Columns</h4>
+                     <ul>
+                       <li>Name, Application No, Email, Mobile</li>
+                       <li>Select Program, Department, Faculty</li>
+                       <li>Program Type, Gender, Marks</li>
+                       <li>Status (Pending/Verified/Forwarded)</li>
+                     </ul>
+                   </div>
+                 </div>
+
+                 <div className="upload-info-card">
+                   <div className="upload-info-icon info">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                     </svg>
+                   </div>
+                   <div className="upload-info-content">
+                     <h4>File Requirements</h4>
+                     <ul>
+                       <li>Maximum file size: 10 MB</li>
+                       <li>First row should contain column headers</li>
+                       <li>Missing fields will default to 'N/A'</li>
+                       <li>Duplicate entries will be flagged</li>
+                     </ul>
+                   </div>
+                 </div>
+
+                 <div className="upload-info-card">
+                   <div className="upload-info-icon warning">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                     </svg>
+                   </div>
+                   <div className="upload-info-content">
+                     <h4>Important Notes</h4>
+                     <ul>
+                       <li>Program format: "Ph.d. - Subject (ph.d. - Type - Faculty)"</li>
+                       <li>All existing data will be preserved</li>
+                       <li>New records will be added to the list</li>
+                       <li>Review data after upload for accuracy</li>
+                     </ul>
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+             <div className="upload-modal-footer">
+               <button onClick={() => setShowUploadModal(false)} className="upload-cancel-btn">
+                 Cancel
+               </button>
+               <button className="upload-help-btn">
+                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                 </svg>
+                 Need Help?
+               </button>
+             </div>
+           </div>
+         </div>
+       )}
+
+        {/* Table */}
+        <div className="examination-table-container examination-table-scroll" ref={tableScrollRef}>
+          <table className="examination-table w-full divide-y divide-gray-200 min-w-full">
+            <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                  <input
+                    type="checkbox"
+                    checked={(() => {
+                      const selectableScholars = filteredData.filter(item => !item.status?.toLowerCase().includes('forwarded'));
+                      return selectedScholars.length === selectableScholars.length && selectableScholars.length > 0;
+                    })()}
+                    onChange={handleSelectAll}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
+                  />
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-12">S.NO</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">REGISTERED NAME</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">APPLICATION NO</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[250px]">SELECT INSTITUTION</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[250px]">SELECT PROGRAM</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">TYPE</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">MOBILE NUMBER</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">EMAIL ID</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">GENDER</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">WRITTEN MARKS</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">INTERVIEW MARKS</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL MARKS</th>
+                <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50" style={{minWidth: '140px', width: '140px'}}>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
+                  <tr key={item.id} className={`hover:bg-gray-50 transition-colors ${selectedScholars.includes(item.id) ? 'bg-blue-50' : ''}`}>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm">
+                      <input
+                        type="checkbox"
+                        checked={selectedScholars.includes(item.id)}
+                        onChange={() => handleSelectScholar(item.id)}
+                        disabled={item.status?.toLowerCase().includes('forwarded')}
+                        className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 ${
+                          item.status?.toLowerCase().includes('forwarded') 
+                            ? 'cursor-not-allowed opacity-50' 
+                            : 'cursor-pointer'
+                        }`}
+                        title={item.status?.toLowerCase().includes('forwarded') ? 'Cannot select forwarded scholar' : ''}
+                      />
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm font-medium text-gray-900">{index + 1}</td>
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900 min-w-[200px] whitespace-normal">{item.registered_name || item.name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">{item.application_no || item.applicationNo}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900 min-w-[250px] whitespace-normal">{item.faculty}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900 min-w-[250px] whitespace-normal">{item.program || item.faculty}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{item.program_type || item.type || item.programType}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{item.mobile_number || item.mobile}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900 min-w-[200px] whitespace-normal break-all">{item.email}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-900">{item.gender}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm">
+                      {editingMarks[item.id] !== undefined ? (
+                        <div className="flex items-center justify-center space-x-1">
+                          <input
+                            type="number" min="0" max="100" value={editingMarks[item.id]}
+                            onChange={(e) => handleMarksChange(item.id, e.target.value)}
+                            onKeyDown={(e) => handleMarksKeyPress(e, item.id)}
+                            onBlur={() => handleMarksSave(item.id)}
+                            className="w-16 px-2 py-1 text-center border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            autoFocus
+                          />
+                          <button onClick={() => handleMarksSave(item.id)} className="text-green-600 hover:text-green-800">✓</button>
+                          <button onClick={handleMarksCancel} className="text-red-600 hover:text-red-800">✕</button>
+                        </div>
+                      ) : (
+                        <span className={`marks-badge cursor-pointer hover:bg-opacity-80 ${(item.written_marks || 0) >= 42 ? 'marks-passed' : 'marks-failed'}`} onClick={() => handleMarksClick(item.id, item.written_marks || 0)}>
+                          {item.written_marks || 0}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm">
+                      {item.director_interview === 'Forwarded to Director' ? (
+                        editingInterviewMarks[item.id] !== undefined ? (
+                          <div className="flex items-center justify-center space-x-1">
+                            <input
+                              type="number" min="0" max="30" value={editingInterviewMarks[item.id]}
+                              onChange={(e) => handleInterviewMarksChange(item.id, e.target.value)}
+                              onKeyDown={(e) => handleInterviewMarksKeyPress(e, item.id)}
+                              onBlur={() => handleInterviewMarksSave(item.id)}
+                              className="w-16 px-2 py-1 text-center border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              autoFocus
+                            />
+                            <button onClick={() => handleInterviewMarksSave(item.id)} className="text-green-600 hover:text-green-800">✓</button>
+                            <button onClick={handleInterviewMarksCancel} className="text-red-600 hover:text-red-800">✕</button>
+                          </div>
+                        ) : (
+                          <span 
+                            className={`marks-badge cursor-pointer hover:bg-opacity-80 ${item.interview_marks !== null && item.interview_marks !== undefined && item.interview_marks > 0 ? ((item.interview_marks >= 18) ? 'marks-passed' : 'marks-failed') : 'bg-gray-100 text-gray-500'}`} 
+                            onClick={() => handleInterviewMarksClick(item.id, item.interview_marks || 0)}
+                          >
+                            {item.interview_marks !== null && item.interview_marks !== undefined && item.interview_marks > 0 ? item.interview_marks : '-'}
+                          </span>
+                        )
+                      ) : (
+                        <span className="marks-badge bg-gray-200 text-gray-400" title="Interview marks only available when forwarded to director">
+                          {item.director_interview ? 'N/A' : 'Pending'}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm">
+                      {(() => {
+                        // Only show total marks if:
+                        // 1. director_interview is 'Forwarded to Director'
+                        // 2. Both written_marks and interview_marks are filled
+                        const hasWrittenMarks = item.written_marks !== null && item.written_marks !== undefined && item.written_marks > 0;
+                        const hasInterviewMarks = item.interview_marks !== null && item.interview_marks !== undefined && item.interview_marks > 0;
+                        const isForwardedToDirector = item.director_interview === 'Forwarded to Director';
+                        
+                        if (isForwardedToDirector && hasWrittenMarks && hasInterviewMarks && item.total_marks !== null && item.total_marks !== undefined) {
+                          return (
+                            <span className={`marks-badge ${item.total_marks >= 60 ? 'marks-passed' : 'marks-failed'}`}>
+                              {item.total_marks}
+                            </span>
+                          );
+                        } else {
+                          return (
+                            <span className="marks-badge bg-gray-100 text-gray-500" title="Total marks available when interview is completed">
+                              -
+                            </span>
+                          );
+                        }
+                      })()}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm">
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${item.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          item.status?.toLowerCase().includes('forwarded') ? 'bg-green-100 text-green-800' : ''
+                        }`}>
+                        {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 whitespace-nowrap text-center text-sm bg-white" style={{minWidth: '140px', width: '140px'}}>
+                      <div className="examination-actions">
+                        <button onClick={() => { setViewingScholar(item); setIsViewModalOpen(true); }} className="examination-action-btn view" title="View Details">
+                          <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                          </svg>
+                        </button>
+                        <button onClick={() => handleEdit(item)} className="examination-action-btn edit" title="Edit Details">
+                          <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                          </svg>
+                        </button>
+
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="14" className="px-4 py-8 text-center">
+                    <div className="empty-state">
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No Examination Records Found</h3>
+                      <p className="text-gray-500">{loading ? 'Loading...' : 'No records match your criteria.'}</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* View Examination Record Modal */}
+      {isViewModalOpen && viewingScholar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setIsViewModalOpen(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
+              <h2 className="text-2xl font-bold text-gray-900">Examination Record Details</h2>
+              <button onClick={() => setIsViewModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="p-6">
+              {/* Basic Information */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Basic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="view-field">
+                    <label className="view-label">Application No:</label>
+                    <p className="view-value">{viewingScholar.application_no || viewingScholar.applicationNo || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Registered Name:</label>
+                    <p className="view-value">{viewingScholar.registered_name || viewingScholar.name || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Email:</label>
+                    <p className="view-value">{viewingScholar.email || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Mobile Number:</label>
+                    <p className="view-value">{viewingScholar.mobile_number || viewingScholar.mobile || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Gender:</label>
+                    <p className="view-value">{viewingScholar.gender || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Date of Birth:</label>
+                    <p className="view-value">{viewingScholar.date_of_birth || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Academic Information */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Academic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="view-field">
+                    <label className="view-label">Faculty:</label>
+                    <p className="view-value">{viewingScholar.faculty || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Department:</label>
+                    <p className="view-value">{viewingScholar.department || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Program:</label>
+                    <p className="view-value">{viewingScholar.program || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Program Type:</label>
+                    <p className="view-value">{viewingScholar.program_type || viewingScholar.type || 'N/A'}</p>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label">Institution:</label>
+                    <p className="view-value">{viewingScholar.institution || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Examination Details - T}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">Examination Results</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full-lg">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left tex-b">
+                        s
+                        
+                        <th className="px-6 py">
+                          Interview Marks
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                        
+                        >
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm border-b">
+                          <span className={`font-bold ${(viewingScholar.written_marks || 0) >= 42 ? 'text-green-60`}>
+                       70
+                          </span>
+                        </td>
+                        <td cl
+                          <span className={`fon
+                       
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm border-b">
+                          <span className={`font-bold ${(() => {
+                            const hasWrittenMarks = viewingScholar.written_marks !== null && viewingScholar.written_;
+                        ;
+                            const isForwardedToDirector = viewingScholar.director_interview === 'Forwarded to Director';
+                            
+                            if ( {
+                              return (viewingScholar.total_marks);
+                         
+                           
+                          }
+                          })()}`}>
+                            {(() => {
+                              const hasWrittenMarks = viewingScho> 0;
+                              const hasIntervi
+                              const isForwardedToDirector = viewingScholar.direc
+                              
+                              if (isForwardedToDirector && hasWrittenMarks && hasInterviewMarks && viewingScholar.total {
+                          00`;
+                              } else {
+                             n';
+                        }
+                        
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* y */}
+">
+                  <div className="view-field">
+                    <label className="view-label">Status:</label>
+                    <p className={`view-value font-bold ${(() => {
+                      const hasWrittenMarks = viewingScholar.written_marks !== null && viewingScholar.written_marks !== undefined && viewingScholar.written_marks > 0;
+                      const hasInterviewMarks = viewingScholar.interview_marks !== null && viewingScholar.interview_marks !== undefined && viewingScholar.interview_marks > 0;
+                      const isForwardedToDirector = viewingScholar.director_interview === 'Forwarded to Director';
+                      
+                      if (isForwardedToDirector && hasWrittenMarks && hasInterviewMarks && viewingScholar.total_marks !== null && viewingScholar.total_marks !== undefined) {
+                        return (viewingScholar.total_marks >= 60 ? 'text-green-600' : 'text-red-600');
+                      } else {
+                        return 'text-gray-500';
+                      }
+                    })()}`}>
+                      {(() => {
+                        const hasWrittenMarks = viewingScholar.written_marks !== null && viewingScholar.written_marks !== undefined && viewingScholar.written_marks > 0;
+                        const hasInterviewMarks = viewingScholar.interview_marks !== null && viewingScholar.interview_marks !== undefined && viewingScholar.interview_marks > 0;
+                        const isForwardedToDirector = viewingScholar.director_interview === 'Forwarded to Director';
+                        
+                        if (isForwardedToDirector && hasWrittenMarks && hasInterviewMarks && viewingScholar.total_marks !== null && viewingScholar.total_marks !== undefined) {
+                          return (viewingScholar.total_marks >= 60 ? 'PASSED' : 'FAILED');
+                        } else {
+                          return 'PENDING';
+                        }
+                      })()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                          return (viewingScholar.total_marks >= 60 ? 'PASSED' : 'FAILED');
+                        } else {
+                          return 'PENDING';
+                        }
+                      }
+                      })()}
+                    </p>

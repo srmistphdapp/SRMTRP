@@ -1,0 +1,568 @@
+/* Part Time Split Component Styles */
+.ptsplit-container {
+  padding: 1rem;
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+@media (min-width: 640px) {
+  .ptsplit-container {
+    padding: 2rem;
+  }
+}
+
+.ptsplit-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.fullscreen-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.ptsplit-charts-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.chart-block {
+  flex: 1 1 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  max-width: 33%;
+  padding: 0.5rem;
+}
+
+.donut-chart-container {
+  width: 100%;
+  max-width: 260px;
+  height: 240px;
+  margin: 0 auto 1rem;
+  position: relative;
+}
+
+.donut-chart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.donut-label {
+  text-align: center;
+  color: #000000;
+  margin-bottom: 12px;
+}
+
+.split-legend {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: #000000;
+  width: 100%;
+  max-width: 300px;
+  padding: 0 0.5rem;
+}
+
+.split-legend div {
+  display: flex;
+  align-items: center;
+}
+
+.legend-dot.red { background: #ef4444; }
+.legend-dot.blue { background: #3b82f6; }
+.legend-dot.yellow { background: #eab308; }
+.legend-dot.green { background: #22d3ee; }
+
+.ptsplit-summary-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.summary-block {
+  flex: 1;
+  background: #f3f6fd;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  gap: 18px;
+  min-width: 200px;
+}
+
+.internal-block { background: #e0e7ff; }
+.external-block { background: #d1fae5; }
+.industry-block { background: #fef9c3; }
+
+.summary-title {
+  color: #494949;
+  width: 70px;
+}
+
+.summary-value {
+  font-size: 32px;
+  color: #222b45;
+  margin-left: 16px;
+}
+
+.summary-icon {
+  font-size: 28px;
+  margin-left: auto;
+  margin-right: 30px;
+  opacity: 0.75;
+}
+
+.ptsplit-dist {
+  margin-top: 35px;
+}
+
+.dist-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #000000;
+}
+
+.dist-desc {
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #000000;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+}
+
+.table-headers {
+  margin-bottom: 0;
+}
+
+.header-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 90px 90px;
+  gap: 16px;
+  align-items: center;
+  justify-items: center;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-bottom: 2px solid #d1d5db;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  color: #374151;
+}
+
+.header-faculty {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  justify-self: start !important;
+}
+
+/* Removed header-counts wrapper - badges are now direct children of grid */
+
+.header-label {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  justify-self: center;
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-label.internal { 
+  background: #dbeafe; 
+  color: #1e40af; 
+}
+
+.header-label.external { 
+  background: #dcfce7; 
+  color: #166534; 
+}
+
+.header-label.industry { 
+  background: #fef3c7; 
+  color: #92400e; 
+}
+
+.header-label.total { 
+  background: #f3f4f6; 
+  color: #374151; 
+}
+
+.faculty-accordion {
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.faculty-item {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.faculty-item:last-child {
+  border-bottom: none;
+}
+
+.faculty-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: center;
+  justify-items: start;
+  padding: 16px 20px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.faculty-header:hover {
+  background: #f3f4f6;
+}
+
+.faculty-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: start !important;
+}
+
+.expand-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.dist-dot {
+  font-size: 21px;
+  margin-right: 8px;
+}
+
+.dist-faculty-label {
+  font-weight: 600;
+  color: #000000;
+  font-size: 16px;
+}
+
+/* Removed faculty-counts wrapper - badges are now direct children of grid */
+
+.count-badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  justify-self: center !important;
+  align-self: center !important;
+  min-width: 32px;
+  max-width: 80px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.count-badge.internal { 
+  background: #dbeafe; 
+  color: #1e40af; 
+}
+
+.count-badge.external { 
+  background: #dcfce7; 
+  color: #166534; 
+}
+
+.count-badge.industry { 
+  background: #fef3c7; 
+  color: #92400e; 
+}
+
+.count-badge.total { 
+  background: #f3f4f6; 
+  color: #374151;
+  font-weight: 700;
+  justify-self: center;
+  align-self: center;
+}
+
+.count-badge.small {
+  font-size: 11px;
+  padding: 4px 8px;
+  min-width: 28px;
+  max-width: 80px;
+  justify-self: center;
+  align-self: center;
+}
+
+.department-list {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.department-item {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 90px 90px;
+  gap: 16px;
+  align-items: center;
+  justify-items: center;
+  padding: 12px 20px;
+  padding-left: 60px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.department-item:last-child {
+  border-bottom: none;
+}
+
+.department-name {
+  color: #6b7280;
+  font-size: 14px;
+  justify-self: start !important;
+}
+
+/* Ensure perfect alignment for department count badges */
+.department-item .count-badge {
+  grid-column-start: auto;
+  grid-column-end: auto;
+  justify-self: center !important;
+  align-self: center !important;
+}
+
+/* Specific positioning for each count column in departments */
+.department-item .count-badge:nth-of-type(2) {
+  grid-column: 2;
+}
+
+.department-item .count-badge:nth-of-type(3) {
+  grid-column: 3;
+}
+
+.department-item .count-badge:nth-of-type(4) {
+  grid-column: 4;
+}
+
+.department-item .count-badge:nth-of-type(5) {
+  grid-column: 5;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Fullscreen Mode */
+.fullscreen-mode {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 20px !important;
+  z-index: 9999 !important;
+  background: #ffffff !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .ptsplit-charts-row {
+    gap: 32px;
+  }
+  
+  .chart-block {
+    min-width: 250px;
+  }
+  
+  .donut-chart-container {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ptsplit-container {
+    padding: 16px;
+  }
+  
+  .ptsplit-title {
+    font-size: 24px;
+  }
+  
+  .ptsplit-charts-row {
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .ptsplit-summary-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .summary-block {
+    min-width: auto;
+  }
+  
+  .header-row {
+    grid-template-columns: 1fr 70px 70px 70px 70px;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+  
+  .header-label {
+    font-size: 11px;
+    padding: 4px 8px;
+    min-width: 50px;
+  }
+  
+  .faculty-header {
+    grid-template-columns: 1fr 70px 70px 70px 70px;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  
+  .department-item {
+    grid-template-columns: 1fr 70px 70px 70px 70px;
+    gap: 12px;
+    padding: 10px 16px 10px 40px;
+  }
+  
+  .count-badge {
+    min-width: 28px;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ptsplit-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .donut-chart-container {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .split-legend {
+    font-size: 12px;
+  }
+  
+  .summary-value {
+    font-size: 24px;
+  }
+  
+  .summary-icon {
+    font-size: 20px;
+  }
+  
+  .header-row {
+    grid-template-columns: 1fr 55px 55px 55px 55px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  
+  .header-faculty {
+    font-size: 13px;
+  }
+  
+  .header-label {
+    font-size: 10px;
+    padding: 3px 6px;
+    min-width: 40px;
+  }
+  
+  .faculty-header {
+    grid-template-columns: 1fr 55px 55px 55px 55px;
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .faculty-info {
+    gap: 8px;
+  }
+  
+  .dist-faculty-label {
+    font-size: 14px;
+  }
+  
+  .department-item {
+    grid-template-columns: 1fr 55px 55px 55px 55px;
+    gap: 8px;
+    padding: 10px 12px 10px 32px;
+  }
+  
+  .department-name {
+    font-size: 13px;
+  }
+  
+  .count-badge {
+    font-size: 10px;
+    padding: 3px 6px;
+    min-width: 24px;
+  }
+}

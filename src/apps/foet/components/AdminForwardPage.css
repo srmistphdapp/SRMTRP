@@ -1,0 +1,715 @@
+/* Import ScholarManagement styles to maintain consistency */
+@import './ScholarManagement.css';
+
+/* Override column widths for AdminForwardPage (16 columns) */
+.admin-forward-page .scholars-table {
+  min-width: 2800px;
+  table-layout: fixed;
+}
+
+/* Ensure center alignment for specific columns in AdminForwardPage */
+.admin-forward-page .scholars-table thead th:nth-child(12),
+/* Department Review */
+.admin-forward-page .scholars-table thead th:nth-child(15),
+/* Status */
+.admin-forward-page .scholars-table thead th:nth-child(16)
+
+/* Actions */
+  {
+  text-align: center !important;
+}
+
+/* Compact Actions column for AdminForwardPage */
+.admin-forward-page .scholars-table th:nth-child(16),
+.admin-forward-page .scholars-table td:nth-child(16) {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  padding: 8px 5px !important;
+}
+
+/* 1st Column: Checkbox */
+.admin-forward-page .scholars-table th:nth-child(1),
+.admin-forward-page .scholars-table td:nth-child(1) {
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  text-align: center;
+  vertical-align: middle;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.admin-forward-page .scholars-table th:nth-child(1) {
+  z-index: 20;
+}
+
+/* 2nd Column: S.No */
+.admin-forward-page .scholars-table th:nth-child(2),
+.admin-forward-page .scholars-table td:nth-child(2) {
+  width: 70px;
+  min-width: 70px;
+  max-width: 70px;
+  text-align: center;
+  vertical-align: middle;
+  position: sticky;
+  left: 50px;
+  z-index: 10;
+}
+
+.admin-forward-page .scholars-table th:nth-child(2) {
+  z-index: 20;
+}
+
+/* 3rd Column: Registered Name */
+.admin-forward-page .scholars-table th:nth-child(3),
+.admin-forward-page .scholars-table td:nth-child(3) {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: normal;
+  word-wrap: break-word;
+  position: sticky;
+  left: 120px;
+  z-index: 10;
+}
+
+.admin-forward-page .scholars-table th:nth-child(3) {
+  z-index: 20;
+}
+
+/* 4th Column: Application No */
+.admin-forward-page .scholars-table th:nth-child(4),
+.admin-forward-page .scholars-table td:nth-child(4) {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  text-align: left;
+  vertical-align: middle;
+  position: sticky;
+  left: 250px;
+  z-index: 10;
+}
+
+.admin-forward-page .scholars-table th:nth-child(4) {
+  z-index: 20;
+}
+
+/* 5th Column: Select Institution */
+.admin-forward-page .scholars-table th:nth-child(5),
+.admin-forward-page .scholars-table td:nth-child(5) {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* 6th Column: Select Program */
+.admin-forward-page .scholars-table th:nth-child(6),
+.admin-forward-page .scholars-table td:nth-child(6) {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* 7th Column: Type */
+.admin-forward-page .scholars-table th:nth-child(7),
+.admin-forward-page .scholars-table td:nth-child(7) {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  text-align: center;
+  vertical-align: middle;
+  display: table-cell !important;
+  visibility: visible !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  padding: 12px 10px !important;
+}
+
+/* 8th Column: Mobile Number */
+.admin-forward-page .scholars-table th:nth-child(8),
+.admin-forward-page .scholars-table td:nth-child(8) {
+  width: 130px;
+  min-width: 130px;
+  max-width: 130px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* 9th Column: Email ID */
+.admin-forward-page .scholars-table th:nth-child(9),
+.admin-forward-page .scholars-table td:nth-child(9) {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* 10th Column: Gender */
+.admin-forward-page .scholars-table th:nth-child(10),
+.admin-forward-page .scholars-table td:nth-child(10) {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 11th Column: Certificates */
+.admin-forward-page .scholars-table th:nth-child(11),
+.admin-forward-page .scholars-table td:nth-child(11) {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 12th Column: Department Review */
+.admin-forward-page .scholars-table th:nth-child(12),
+.admin-forward-page .scholars-table td:nth-child(12) {
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 13th Column: Reject Reason */
+.admin-forward-page .scholars-table th:nth-child(13),
+.admin-forward-page .scholars-table td:nth-child(13) {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  text-align: left;
+  vertical-align: middle;
+  padding: 8px 6px !important;
+}
+
+/* 14th Column: Queries */
+.admin-forward-page .scholars-table th:nth-child(14),
+.admin-forward-page .scholars-table td:nth-child(14) {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  text-align: left;
+  vertical-align: middle;
+  padding: 8px 6px !important;
+}
+
+/* 15th Column: Status */
+.admin-forward-page .scholars-table th:nth-child(15),
+.admin-forward-page .scholars-table td:nth-child(15) {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 16th Column: Actions */
+.admin-forward-page .scholars-table th:nth-child(16),
+.admin-forward-page .scholars-table td:nth-child(16) {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Reason Column Styling */
+.admin-forward-page .reason-column {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow: visible !important;
+  line-height: 1.4 !important;
+  max-height: none !important;
+  vertical-align: middle !important;
+}
+
+.admin-forward-page .reason-text {
+  display: block !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  line-height: 1.3 !important;
+  text-align: left !important;
+  font-size: 11px !important;
+  color: #dc2626 !important;
+  font-weight: 500 !important;
+  max-width: 110px !important;
+}
+
+.admin-forward-page .no-reason {
+  text-align: left !important;
+  display: block !important;
+  color: #9ca3af !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+}
+
+/* Department Review Badge Styling */
+.admin-forward-page .department-review-badge {
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  min-width: 70px !important;
+}
+
+.admin-forward-page .department-review-badge.accepted {
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+  color: #065f46 !important;
+  border: 1px solid #6ee7b7 !important;
+}
+
+.admin-forward-page .department-review-badge.rejected {
+  background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+  color: #991b1b !important;
+  border: 1px solid #f87171 !important;
+}
+
+.admin-forward-page .department-review-badge.pending {
+  background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+  color: #92400e !important;
+  border: 1px solid #fbbf24 !important;
+}
+
+.admin-forward-page .department-review-badge.in-progress {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe) !important;
+  color: #3730a3 !important;
+  border: 1px solid #a5b4fc !important;
+}
+
+/* Ensure action buttons are centered */
+.admin-forward-page .table-action-btn {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fullscreen Mode */
+.admin-forward-page.fullscreen-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: white;
+  overflow: auto;
+  padding: 20px;
+}
+
+.admin-forward-page.fullscreen-mode .scholar-header-section {
+  margin-bottom: 20px;
+}
+
+.admin-forward-page.fullscreen-mode .scholar-table-container {
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 3200px) {
+  .admin-forward-page .scholar-table-container {
+    overflow-x: scroll;
+  }
+}
+
+@media (max-width: 1600px) {
+  .admin-forward-page .scholars-table {
+    font-size: 11px;
+  }
+
+  .admin-forward-page .scholars-table th {
+    font-size: 10px;
+    padding: 10px 8px;
+  }
+
+  .admin-forward-page .scholars-table td {
+    font-size: 11px;
+    padding: 10px 8px;
+  }
+}
+
+/* Modal Overlay Fix - Ensure modals cover entire viewport */
+.admin-forward-page .modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+/* Ensure modal content is properly centered and sized */
+.admin-forward-page .modal-overlay>div {
+  position: relative !important;
+  z-index: 10000 !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  width: 100% !important;
+  margin: auto !important;
+}
+
+/* Fix for view modal specifically - flat design */
+.admin-forward-page .modal-overlay .bg-white {
+  background: white !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid #d1d5db !important;
+  overflow-y: auto !important;
+}
+
+/* Additional modal content positioning - flat design */
+.admin-forward-page .modal-content {
+  position: relative !important;
+  z-index: 10000 !important;
+  margin: auto !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  background: white !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* Ensure filter modal is properly sized - flat design */
+.admin-forward-page .filter-modal {
+  max-width: 600px !important;
+  width: 90% !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid #d1d5db !important;
+  background: white !important;
+}
+
+/* Filter Modal Header */
+.admin-forward-page .filter-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.admin-forward-page .filter-modal .modal-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.admin-forward-page .filter-modal .modal-close-button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.admin-forward-page .filter-modal .modal-close-button:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Filter Modal Body */
+.admin-forward-page .filter-modal .modal-body {
+  padding: 28px;
+}
+
+.admin-forward-page .filter-modal .filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.admin-forward-page .filter-modal .filter-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.admin-forward-page .filter-modal .filter-select {
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  color: #374151;
+  transition: all 0.2s;
+}
+
+.admin-forward-page .filter-modal .filter-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Filter Modal Footer */
+.admin-forward-page .filter-modal .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 28px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.admin-forward-page .filter-modal .clear-button,
+.admin-forward-page .filter-modal .apply-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+  font-size: 14px;
+}
+
+.admin-forward-page .filter-modal .clear-button {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.admin-forward-page .filter-modal .clear-button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.admin-forward-page .filter-modal .apply-button {
+  background: #3b82f6;
+  color: white;
+}
+
+.admin-forward-page .filter-modal .apply-button:hover {
+  background: #2563eb;
+}
+
+/* Ensure confirm modal is properly sized - flat design */
+.admin-forward-page .modal-content.max-w-md {
+  max-width: 380px !important;
+  width: 80% !important;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  border: none !important;
+}
+
+/* Flat section headers styling */
+.admin-forward-page .modal-overlay h3.bg-gray-100 {
+  background-color: #f3f4f6 !important;
+  margin: 0 0 1rem 0 !important;
+  padding: 0.75rem !important;
+  border-bottom: 1px solid #d1d5db !important;
+  border-radius: 0 !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+/* Remove any rounded corners from exam sections */
+.admin-forward-page .modal-overlay .bg-gray-50 {
+  background-color: #f9fafb !important;
+  border-radius: 0 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Ensure all modal elements have flat design */
+.admin-forward-page .modal-overlay * {
+  border-radius: 0 !important;
+}
+
+/* Exception for buttons that might need slight rounding */
+.admin-forward-page .modal-overlay button {
+  border-radius: 2px !important;
+}
+
+
+/* Examination Modal Styles for Filter */
+.admin-forward-page .examination-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.admin-forward-page .examination-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-forward-page .examination-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: var(--bg-secondary);
+}
+
+.admin-forward-page .examination-modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.admin-forward-page .examination-modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.admin-forward-page .examination-modal-close:hover {
+  background: #f0f0f0;
+}
+
+.admin-forward-page .examination-modal-body {
+  padding: 20px;
+  text-align: left;
+}
+
+.admin-forward-page .examination-filter-group {
+  margin-bottom: 20px;
+}
+
+.admin-forward-page .examination-filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.admin-forward-page .examination-filter-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.admin-forward-page .examination-filter-select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.admin-forward-page .examination-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 8px 8px;
+}
+
+.admin-forward-page .examination-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  border: 1px solid transparent;
+}
+
+.admin-forward-page .examination-btn-clear {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.admin-forward-page .examination-btn-clear:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.admin-forward-page .examination-btn-apply {
+  background: #3b82f6;
+  color: white;
+}
+
+.admin-forward-page .examination-btn-apply:hover {
+  background: #2563eb;
+}

@@ -1,0 +1,9 @@
+/* Import both RMP and TRP styles */
+@import '../RmpLoginPage/RmpLoginPage.css';
+@import '../TrichyLoginPage/TrichyLoginPage.css';
+
+/* Additional unified styles if needed */
+.campus-selector {
+  margin-bottom: 1rem;
+}
+

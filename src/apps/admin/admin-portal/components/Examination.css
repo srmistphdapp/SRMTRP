@@ -1,0 +1,1598 @@
+.fullscreen-btn:hover {
+  background-color: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Fullscreen mode adjustments - handled by parent container */
+.fullscreen-mode #examination-container {
+  padding: 20px;
+  height: 100vh;
+}
+
+.fullscreen-mode .bg-white.rounded-lg.shadow-md {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.fullscreen-mode .examination-table-container {
+  flex: 1;
+  margin-top: 20px;
+}
+
+/* Header styling in fullscreen */
+.fullscreen-mode h1 {
+  font-size: 28px;
+}
+
+.fullscreen-mode .fullscreen-btn {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.fullscreen-mode .fullscreen-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+/* Responsive fullscreen button */
+@media (max-width: 640px) {
+  .fullscreen-btn span {
+    display: none;
+  }
+
+  .fullscreen-btn {
+    padding: 8px;
+    min-width: 40px;
+    justify-content: center;
+  }
+}
+
+/* Modified: Table container now extends to fit the screen */
+.examination-table-container {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  z-index: 1;
+  overscroll-behavior: contain;
+}
+
+/* Responsive design for different screen sizes - Updated to fill space */
+@media (min-height: 800px) {
+  .examination-table-container {
+    flex: 1;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+}
+
+@media (min-height: 900px) {
+  .examination-table-container {
+    flex: 1;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+}
+
+@media (min-height: 1000px) {
+  .examination-table-container {
+    flex: 1;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+  }
+}
+
+/* Fullscreen optimizations */
+.fullscreen-mode .examination-table-container {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+}
+
+/* Remove unnecessary margins and padding */
+#examination-container .bg-white.rounded-lg.shadow-md {
+  margin: 0;
+}
+
+/* Optimize header spacing */
+#examination-container .bg-white.rounded-lg.shadow-md>div:first-child {
+  margin-bottom: 16px;
+}
+
+#examination-container .bg-white.rounded-lg.shadow-md>div:nth-child(2) {
+  margin-bottom: 16px;
+}
+
+/* Floating Fullscreen Button Styling */
+.fullscreen-btn-floating {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.fullscreen-btn-floating:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.fullscreen-btn-floating:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Fullscreen mode adjustments for floating button */
+.fullscreen-mode .fullscreen-btn-floating {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.fullscreen-mode .fullscreen-btn-floating:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+/* Responsive controls layout */
+@media (max-width: 768px) {
+  .examination-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .examination-controls-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .examination-controls-right {
+    align-self: flex-end;
+  }
+
+  .fullscreen-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .examination-controls-left .flex.flex-wrap.gap-2 {
+    justify-content: center;
+  }
+
+  .examination-controls-left .flex.flex-wrap.gap-2 button span {
+    display: none;
+  }
+
+  .examination-controls-left .flex.flex-wrap.gap-2 button {
+    padding: 8px;
+    min-width: 40px;
+    justify-content: center;
+  }
+}
+
+/* Responsive floating button */
+@media (max-width: 640px) {
+  .fullscreen-btn-floating {
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+  }
+}
+
+/* Additional fix for sidebar overlap prevention */
+.examination-table {
+  position: relative;
+  z-index: 1;
+  /* removed isolation: isolate - it blocks sticky positioning */
+}
+
+/* Responsive design for different screen sizes */
+@media (min-width: 1200px) {
+  .examination-table-container {
+    height: calc(100vh - 220px);
+    max-height: none;
+  }
+
+  .examination-fullscreen .examination-table-container {
+    height: calc(100vh - 180px);
+    max-height: none;
+  }
+}
+
+@media (max-width: 1199px) {
+  #examination-container {
+    padding: 12px;
+  }
+
+  .examination-table-container {
+    height: calc(100vh - 280px);
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  #examination-container {
+    max-width: 100vw !important;
+    margin-left: 0 !important;
+    padding: 8px;
+  }
+
+  .examination-table-container {
+    height: calc(100vh - 320px);
+    min-height: 300px;
+  }
+
+  .examination-fullscreen {
+    padding: 10px;
+  }
+
+  .examination-fullscreen .examination-table-container {
+    height: calc(100vh - 160px);
+  }
+}
+
+/* Force proper layering - removed isolation: isolate as it blocks sticky positioning */
+
+/* ENHANCED EXAMINATION TABLE SCROLLING - ISOLATED BEHAVIOR */
+
+/* Add scroll indicators for better UX */
+.examination-table-scroll {
+  position: relative;
+}
+
+.examination-table-scroll::before {
+
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.examination-table-scroll:hover::before {
+  opacity: 1;
+}
+
+/* Prevent body scroll when scrolling table */
+.examination-table-scroll:hover {
+  overscroll-behavior: contain;
+}
+
+/* Enhanced table styling for better scrolling experience */
+.examination-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 1470px;
+  table-layout: fixed;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Ensure sticky header works perfectly with scrolling */
+.examination-table thead th {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  /* Ensure header stays on top during scroll */
+  backdrop-filter: blur(8px);
+  background-color: rgba(249, 250, 251, 0.95);
+}
+
+/* Visual feedback for scrollable content */
+.examination-table-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(to top, rgba(226, 232, 240, 0.6), transparent);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.examination-table-container::before {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.examination-table-container:hover::before {
+  opacity: 1;
+}
+
+/* Smooth scrolling for all table elements */
+.examination-table,
+.examination-table * {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced container isolation */
+.examination-table-container {
+  /* removed isolation: isolate - it blocks sticky positioning */
+  /* Prevent scroll chaining */
+  overscroll-behavior: contain;
+  /* Better performance */
+  will-change: scroll-position;
+}
+
+/* Mobile touch scrolling improvements */
+@media (max-width: 768px) {
+  .examination-table-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .examination-table-scroll::before {
+    content: '↔ Swipe to scroll';
+    font-size: 9px;
+  }
+}
+
+/* Fullscreen mode enhancements */
+.fullscreen-mode .examination-table-scroll {
+  height: 100%;
+}
+
+/* Ensure proper layering and isolation */
+.examination-table-scroll {
+  /* removed transform: translateZ(0) - it blocks sticky positioning */
+  /* removed contain: layout style paint - it blocks sticky positioning */
+  /* Prevent scroll propagation */
+  overscroll-behavior: contain;
+}
+
+/* Additional scrollbar styling for better visibility */
+.examination-table-container::-webkit-scrollbar,
+.examination-table-scroll::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+.examination-table-container::-webkit-scrollbar-track,
+.examination-table-scroll::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin: 2px;
+}
+
+.examination-table-container::-webkit-scrollbar-thumb,
+.examination-table-scroll::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid #f8fafc;
+  min-height: 30px;
+  min-width: 30px;
+}
+
+.examination-table-container::-webkit-scrollbar-thumb:hover,
+.examination-table-scroll::-webkit-scrollbar-thumb:hover {
+  cursor: grab;
+}
+
+.examination-table-container::-webkit-scrollbar-corner,
+.examination-table-scroll::-webkit-scrollbar-corner {
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+
+
+/* Ensure table content doesn't interfere with page layout */
+.examination-table tbody tr {
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
+}
+
+.examination-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Final isolation rules */
+.examination-table-container,
+.examination-table-scroll {
+  /* Prevent scroll events from bubbling up */
+  overscroll-behavior: contain;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Touch scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ENHANCED RESPONSIVE LAYOUT - FINAL IMPLEMENTATION */
+/* Container adjustments for different states */
+#examination-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#examination-container .bg-white.rounded-lg.shadow-md {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Enhanced fullscreen experience */
+.fullscreen-mode {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.fullscreen-mode .bg-white.rounded-lg.shadow-md {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fullscreen-mode h1 {
+  font-size: 32px;
+  background: linear-gradient(135deg, #1e293b, #475569);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Table container responsive heights */
+.examination-table-container {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Button section responsive */
+.fullscreen-mode .flex.flex-wrap.gap-2 {
+  gap: 12px;
+}
+
+.fullscreen-mode .flex.flex-wrap.gap-2 button {
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.fullscreen-mode .flex.flex-wrap.gap-2 button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Search and filter section in fullscreen */
+.fullscreen-mode .flex.items-center.gap-2 {
+  gap: 16px;
+}
+
+.fullscreen-mode .relative input {
+  padding: 12px 16px 12px 40px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-mode .relative input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Enhanced table in fullscreen */
+.fullscreen-mode .examination-table-container {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.fullscreen-mode .examination-table th {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  font-size: 13px;
+  padding: 16px;
+}
+
+.fullscreen-mode .examination-table td {
+  padding: 16px;
+  font-size: 14px;
+}
+
+/* Responsive adjustments for larger screens */
+@media (min-width: 1024px) {
+  #examination-container {
+    padding: 20px;
+  }
+}
+
+/* Ultra-wide screen optimizations */
+@media (min-width: 1600px) {
+  .fullscreen-mode .examination-table-container {
+    flex: 1;
+  }
+
+  .fullscreen-mode h1 {
+    font-size: 36px;
+  }
+
+  .fullscreen-mode .bg-white.rounded-lg.shadow-md {
+    padding: 32px;
+  }
+}
+
+/* Smooth transitions for all responsive changes */
+#examination-container,
+.examination-table-container,
+.bg-white.rounded-lg.shadow-md {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Remove debug borders */
+.examination-table-container {
+  border: 1px solid #e5e7eb !important;
+}
+
+.examination-table-scroll {
+  border: none !important;
+}
+
+/* Enhanced visual hierarchy in fullscreen */
+.fullscreen-mode .flex.items-center.justify-between.mb-4 {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.fullscreen-mode .flex.flex-col.gap-4.mb-6 {
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+/* ENSURE ACTION COLUMN VISIBILITY */
+/* Action column - accessible through horizontal scroll */
+.examination-table th:nth-child(7),
+.examination-table td:nth-child(7) {
+  text-align: center;
+  vertical-align: middle;
+  min-width: 120px !important;
+  width: 120px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+.examination-table thead th:nth-child(7) {
+  background: #f9fafb;
+  text-align: center;
+}
+
+/* Table container with horizontal scroll for action column access */
+.examination-table-container {
+  position: relative;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  width: 100%;
+}
+
+/* Responsive adjustments for action column */
+@media (max-width: 1200px) {
+
+  .examination-table th:nth-child(7),
+  .examination-table td:nth-child(7) {
+    min-width: 120px;
+    width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .examination-table th:nth-child(7),
+  .examination-table td:nth-child(7) {
+    min-width: 100px;
+    width: 100px;
+  }
+
+  .table-actions {
+    gap: 2px !important;
+  }
+
+  .table-action-btn {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* Ensure action buttons are always clickable */
+.table-actions {
+  position: relative;
+  z-index: 11;
+}
+
+/* Better column distribution for smaller screens */
+@media (max-width: 1024px) {
+
+  .examination-table th:nth-child(4),
+  .examination-table td:nth-child(4),
+  .examination-table th:nth-child(5),
+  .examination-table td:nth-child(5) {
+    width: 14%;
+    min-width: 90px;
+  }
+
+  .examination-table th:nth-child(2),
+  .examination-table td:nth-child(2) {
+    width: 14%;
+    min-width: 80px;
+  }
+}
+
+/* CRITICAL FIX FOR HORIZONTAL SCROLLING */
+.examination-table-container {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  position: relative;
+}
+
+.examination-table-scroll {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  width: 100% !important;
+  position: relative;
+  /* Ensure full scroll range */
+  max-width: none !important;
+}
+
+/* Ensure table can scroll horizontally with proper width */
+.examination-table {
+  width: 100% !important;
+  min-width: 2200px !important;
+  table-layout: fixed !important;
+  margin: 0 !important;
+}
+
+/* Optimized column widths for better spacing and alignment */
+/* 1. Checkbox - STICKY */
+.examination-table th:nth-child(1),
+.examination-table td:nth-child(1) {
+  width: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 20 !important;
+  background: inherit !important;
+}
+
+/* 2. S.NO - STICKY */
+.examination-table th:nth-child(2),
+.examination-table td:nth-child(2) {
+  width: 55px !important;
+  min-width: 55px !important;
+  max-width: 55px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+  position: sticky !important;
+  left: 40px !important;
+  z-index: 20 !important;
+  background: inherit !important;
+}
+
+/* 3. REGISTERED NAME - STICKY */
+.examination-table th:nth-child(3),
+.examination-table td:nth-child(3) {
+  width: 160px !important;
+  min-width: 160px !important;
+  max-width: 160px !important;
+  padding: 12px 8px !important;
+  position: sticky !important;
+  left: 95px !important;
+  z-index: 20 !important;
+  background: inherit !important;
+}
+
+/* 4. APPLICATION NO - STICKY */
+.examination-table th:nth-child(4),
+.examination-table td:nth-child(4) {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  padding: 12px 8px !important;
+  position: sticky !important;
+  left: 255px !important;
+  z-index: 20 !important;
+  background: inherit !important;
+}
+
+/* 5. SELECT INSTITUTION - STICKY (last sticky column with shadow) */
+.examination-table th:nth-child(5),
+.examination-table td:nth-child(5) {
+  width: 180px !important;
+  min-width: 180px !important;
+  max-width: 180px !important;
+  padding: 12px 8px !important;
+  position: sticky !important;
+  left: 395px !important;
+  z-index: 20 !important;
+  background: inherit !important;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.15);
+}
+
+/* Sticky header cells need higher z-index and explicit background */
+.examination-table thead th:nth-child(1),
+.examination-table thead th:nth-child(2),
+.examination-table thead th:nth-child(3),
+.examination-table thead th:nth-child(4),
+.examination-table thead th:nth-child(5) {
+  z-index: 25 !important;
+  background: #f9fafb !important;
+}
+
+/* Body sticky cells — white background */
+.examination-table tbody td:nth-child(1),
+.examination-table tbody td:nth-child(2),
+.examination-table tbody td:nth-child(3),
+.examination-table tbody td:nth-child(4),
+.examination-table tbody td:nth-child(5) {
+  background: #ffffff !important;
+}
+
+/* Ensure sticky cells maintain background on row hover */
+.examination-table tbody tr:hover td:nth-child(1),
+.examination-table tbody tr:hover td:nth-child(2),
+.examination-table tbody tr:hover td:nth-child(3),
+.examination-table tbody tr:hover td:nth-child(4),
+.examination-table tbody tr:hover td:nth-child(5) {
+  background: #f9fafb !important;
+}
+
+.examination-table th:nth-child(6),
+.examination-table td:nth-child(6) {
+  width: 180px !important;
+  min-width: 180px !important;
+  padding: 12px 12px !important;
+}
+
+.examination-table th:nth-child(7),
+.examination-table td:nth-child(7) {
+  width: 250px !important;
+  min-width: 250px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(8),
+.examination-table td:nth-child(8) {
+  width: 120px !important;
+  min-width: 120px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(9),
+.examination-table td:nth-child(9) {
+  width: 400px !important;
+  min-width: 400px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(10),
+.examination-table td:nth-child(10) {
+  width: 80px !important;
+  min-width: 80px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(11),
+.examination-table td:nth-child(11) {
+  width: 100px !important;
+  min-width: 100px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(12),
+.examination-table td:nth-child(12) {
+  width: 100px !important;
+  min-width: 100px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(13),
+.examination-table td:nth-child(13) {
+  width: 100px !important;
+  min-width: 100px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(14),
+.examination-table td:nth-child(14) {
+  width: 100px !important;
+  min-width: 100px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+.examination-table th:nth-child(15),
+.examination-table td:nth-child(15) {
+  width: 140px !important;
+  min-width: 140px !important;
+  text-align: center !important;
+  padding: 12px 6px !important;
+}
+
+
+/* Ensure all parent containers allow horizontal scroll */
+.examination-table-container,
+.examination-table-scroll {
+  contain: none !important;
+}
+
+/* Enhanced horizontal and vertical scrolling support */
+.examination-table-scroll {
+  /* Enable focus for keyboard navigation */
+  outline: none;
+  /* Smooth scrolling behavior - auto for better responsiveness */
+  scroll-behavior: auto;
+  /* Better touch scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
+  /* Allow both horizontal and vertical scroll chaining when needed */
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  /* removed transform: translateZ(0) - it blocks sticky positioning */
+  will-change: scroll-position;
+  /* Ensure both horizontal and vertical touchpad gestures work */
+  touch-action: pan-x pan-y;
+  /* Better scrolling performance */
+  scroll-snap-type: none;
+}
+
+.examination-table-scroll:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* Removed visual indicator that was causing overlay issues */
+
+/* Scrollbar styling for better visibility */
+.examination-table-scroll::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.examination-table-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+}
+
+.examination-table-scroll::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid #f1f5f9;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.examination-table-scroll::-webkit-scrollbar-thumb:hover {
+  cursor: grab;
+}
+
+.examination-table-scroll::-webkit-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.examination-table-scroll::-webkit-scrollbar-corner {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+/* Removed scroll hint text that was causing overlay issues */
+
+/* Mobile touch scrolling improvements */
+@media (max-width: 768px) {
+  .examination-table-scroll {
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .examination-table th,
+  .examination-table td {
+    scroll-snap-align: start;
+  }
+}
+
+/* Add extra space to ensure Actions column is fully accessible */
+.examination-table {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Ensure scroll container allows full width and bidirectional scrolling */
+.examination-table-scroll {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  box-sizing: border-box !important;
+  /* Ensure scroll starts from the beginning */
+  scroll-padding-left: 0 !important;
+}
+
+/* Modal inputs - match director tall inputs */
+.modal-form-input,
+.modal-form-select {
+  padding: 12px 16px;
+  height: 50px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-form-input:focus,
+.modal-form-select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Fixed vertical constraints removed to allow fitting the entire screen - Expanded */
+.examination-table-container {
+  flex: 1;
+  min-height: 0;
+  height: calc(100vh - 150px) !important;
+  max-height: none !important;
+  overflow: auto;
+  position: relative;
+  /* isolation: isolate REMOVED — it breaks sticky positioning */
+  overscroll-behavior: contain;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Specific fix for 90% zoom and smaller screens - Expanded */
+@media screen and (max-height: 900px) {
+  .examination-table-container {
+    height: calc(100vh - 100px) !important;
+    min-height: 500px !important;
+  }
+}
+
+@media screen and (max-height: 800px) {
+  .examination-table-container {
+    height: calc(100vh - 80px) !important;
+    min-height: 450px !important;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .examination-table-container {
+    height: calc(100vh - 60px) !important;
+    min-height: 400px !important;
+  }
+}
+
+/* Ensure table rows are always visible with proper scrolling */
+.examination-table tbody {
+  min-height: 200px;
+}
+
+/* Better row spacing for visibility */
+.examination-table tbody tr {
+  min-height: 48px;
+}
+
+.examination-table tbody td {
+  padding: 12px 8px !important;
+  vertical-align: middle;
+}
+
+/* Responsive fallbacks similar to director */
+@media (max-width: 1024px) {
+  .examination-table {
+    min-width: 1600px !important;
+    width: 1600px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .examination-table {
+    min-width: 1400px !important;
+    width: 1400px !important;
+  }
+
+  .examination-table th,
+  .examination-table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+}
+
+
+/* Examination Statistics Tiles - Modern UI */
+.examination-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.examination-stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.examination-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.examination-stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.examination-stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.examination-stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.examination-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Total Records - Blue */
+.examination-stat-total .examination-stat-number {
+  color: #1f2937;
+}
+
+.examination-stat-icon-blue {
+  background: #dbeafe;
+  color: #3b82f6;
+}
+
+/* Passed - Green */
+.examination-stat-passed {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.examination-stat-passed .examination-stat-number {
+  color: #16a34a;
+}
+
+.examination-stat-icon-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* Failed - Red */
+.examination-stat-failed {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.examination-stat-failed .examination-stat-number {
+  color: #dc2626;
+}
+
+.examination-stat-icon-red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Pass Rate - Purple */
+.examination-stat-rate {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.examination-stat-rate .examination-stat-number {
+  color: #9333ea;
+}
+
+.examination-stat-icon-purple {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .examination-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .examination-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .examination-stat-number {
+    font-size: 28px;
+  }
+
+  .examination-stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+
+/* Make table longer - Expanded height for better visibility */
+.examination-table-container {
+  height: auto !important;
+  min-height: 700px !important;
+  max-height: calc(100vh - 150px) !important;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+}
+
+@media (min-height: 700px) {
+  .examination-table-container {
+    min-height: 750px !important;
+    max-height: calc(100vh - 130px) !important;
+  }
+}
+
+@media (min-height: 800px) {
+  .examination-table-container {
+    min-height: 800px !important;
+    max-height: calc(100vh - 110px) !important;
+  }
+}
+
+@media (min-height: 900px) {
+  .examination-table-container {
+    min-height: 850px !important;
+    max-height: calc(100vh - 90px) !important;
+  }
+}
+
+@media (min-height: 1000px) {
+  .examination-table-container {
+    min-height: 900px !important;
+    max-height: calc(100vh - 70px) !important;
+  }
+}
+
+/* Fullscreen mode - Maximize table height with expanded dimensions */
+.fullscreen-mode .examination-table-container {
+  height: auto !important;
+  min-height: calc(100vh - 120px) !important;
+  max-height: calc(100vh - 60px) !important;
+}
+
+/* Adjust for different screen sizes in fullscreen */
+@media (min-height: 700px) {
+  .fullscreen-mode .examination-table-container {
+    min-height: calc(100vh - 100px) !important;
+    max-height: calc(100vh - 40px) !important;
+  }
+}
+
+@media (min-height: 800px) {
+  .fullscreen-mode .examination-table-container {
+    min-height: calc(100vh - 80px) !important;
+    max-height: calc(100vh - 20px) !important;
+  }
+}
+
+@media (min-height: 900px) {
+  .fullscreen-mode .examination-table-container {
+    min-height: calc(100vh - 60px) !important;
+    max-height: calc(100vh - 10px) !important;
+  }
+}
+
+@media (min-height: 1000px) {
+  .fullscreen-mode .examination-table-container {
+    min-height: calc(100vh - 40px) !important;
+    max-height: calc(100vh - 5px) !important;
+  }
+}
+
+
+/* Remove white container background and styling - */
+/* Remove white container background and styling - ENHANCED */
+#examination-container .bg-white.rounded-lg.shadow-md {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Adjust padding for main container - MINIMAL SPACING */
+#examination-container {
+  padding: 12px !important;
+  background: transparent !important;
+  margin: 0 !important;
+  gap: 12px !important;
+}
+
+/* Keep individual elements styled with minimal spacing */
+.examination-stats-grid {
+  margin-bottom: 12px !important;
+  margin-top: 0 !important;
+}
+
+.examination-controls {
+  margin-bottom: 12px !important;
+  margin-top: 0 !important;
+}
+
+/* Keep table container with its own background - NO EXTRA MARGINS */
+.examination-table-container {
+  background: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Reduce tile number size */
+.examination-stat-number {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+}
+
+/* COMPREHENSIVE SCROLLING FIX - ENSURE ALL SCHOLARS ARE VISIBLE */
+
+/* Main table container - CRITICAL SCROLLING FIX */
+.examination-table-container {
+  background: white !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb !important;
+
+  /* CRITICAL: Enable proper scrolling */
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+
+  /* CRITICAL: Proper height calculation */
+  height: calc(100vh - 200px) !important;
+  max-height: calc(100vh - 150px) !important;
+  min-height: 400px !important;
+
+  /* CRITICAL: Ensure content is fully contained */
+  flex: 1 !important;
+  width: 100% !important;
+  position: relative !important;
+
+  /* CRITICAL: Better scroll behavior */
+  scroll-behavior: smooth !important;
+  overscroll-behavior: contain !important;
+
+  /* CRITICAL: Ensure last rows are visible */
+  padding-bottom: 40px !important;
+  box-sizing: border-box !important;
+
+  /* Remove conflicting properties */
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* CRITICAL: Ensure table body shows all rows */
+.examination-table tbody {
+  display: table-row-group !important;
+  vertical-align: middle !important;
+}
+
+/* CRITICAL: Extra padding for last row visibility */
+.examination-table tbody tr:last-child td {
+  padding-bottom: 30px !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+/* CRITICAL: Ensure table takes full width and allows scrolling */
+.examination-table {
+  width: max-content !important;
+  min-width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: auto !important;
+  margin-bottom: 20px !important;
+}
+
+/* CRITICAL: Enhanced scrollbar for better visibility */
+.examination-table-container::-webkit-scrollbar {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.examination-table-container::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+  border-radius: 8px !important;
+  border: 2px solid #e2e8f0 !important;
+}
+
+.examination-table-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1 !important;
+  border-radius: 8px !important;
+  border: 2px solid #f1f5f9 !important;
+  min-height: 40px !important;
+  min-width: 40px !important;
+}
+
+.examination-table-container::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8 !important;
+  cursor: grab !important;
+}
+
+.examination-table-container::-webkit-scrollbar-corner {
+  background: #f1f5f9 !important;
+  border-radius: 8px !important;
+}
+
+/* CRITICAL: Responsive height adjustments */
+@media screen and (max-height: 1080px) {
+  .examination-table-container {
+    height: calc(100vh - 180px) !important;
+    max-height: calc(100vh - 130px) !important;
+  }
+}
+
+@media screen and (max-height: 900px) {
+  .examination-table-container {
+    height: calc(100vh - 160px) !important;
+    max-height: calc(100vh - 110px) !important;
+    min-height: 350px !important;
+  }
+}
+
+@media screen and (max-height: 800px) {
+  .examination-table-container {
+    height: calc(100vh - 140px) !important;
+    max-height: calc(100vh - 90px) !important;
+    min-height: 300px !important;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .examination-table-container {
+    height: calc(100vh - 120px) !important;
+    max-height: calc(100vh - 70px) !important;
+    min-height: 250px !important;
+  }
+}
+
+/* CRITICAL: Fullscreen mode optimizations */
+.fullscreen-mode .examination-table-container {
+  height: calc(100vh - 100px) !important;
+  max-height: calc(100vh - 50px) !important;
+  min-height: calc(100vh - 120px) !important;
+  padding-bottom: 50px !important;
+}
+
+/* CRITICAL: Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .examination-table-container {
+    height: calc(100vh - 220px) !important;
+    max-height: calc(100vh - 170px) !important;
+    min-height: 300px !important;
+    padding-bottom: 50px !important;
+  }
+
+  .examination-table tbody tr:last-child td {
+    padding-bottom: 40px !important;
+  }
+}
+
+/* CRITICAL: Ensure no content is cut off */
+.examination-table-container::after {
+  content: '' !important;
+  display: block !important;
+  height: 30px !important;
+  width: 100% !important;
+  flex-shrink: 0 !important;
+  clear: both !important;
+}
+
+/* CRITICAL: Remove any conflicting overflow settings */
+#examination-container {
+  overflow: visible !important;
+}
+
+#examination-container .bg-white.rounded-lg.shadow-md {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* FINAL OVERRIDE - ENSURE LAST SCHOLARS ARE VISIBLE */
+/* This override ensures all previous conflicting styles are overridden */
+
+.examination-table-container {
+  /* CRITICAL: Override all previous height settings */
+  height: calc(100vh - 200px) !important;
+  max-height: calc(100vh - 150px) !important;
+  min-height: 400px !important;
+
+  /* CRITICAL: Enable scrolling */
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+
+  /* CRITICAL: Ensure proper spacing for last rows */
+  padding-bottom: 40px !important;
+
+  /* CRITICAL: Remove any conflicting properties */
+  contain: none !important;
+  isolation: auto !important;
+
+  /* CRITICAL: Ensure proper positioning */
+  position: relative !important;
+  flex: 1 !important;
+  width: 100% !important;
+
+  /* CRITICAL: Better scroll behavior */
+  scroll-behavior: smooth !important;
+  overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
+}
+
+/* CRITICAL: Ensure table body is properly displayed */
+.examination-table tbody {
+  display: table-row-group !important;
+  vertical-align: middle !important;
+}
+
+/* CRITICAL: Ensure last row has extra padding */
+.examination-table tbody tr:last-child td {
+  padding-bottom: 30px !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+/* CRITICAL: Add space after table */
+.examination-table-container::after {
+  content: '' !important;
+  display: block !important;
+  height: 30px !important;
+  width: 100% !important;
+  flex-shrink: 0 !important;
+  clear: both !important;
+}
+
+/* CRITICAL: Responsive adjustments */
+@media screen and (max-height: 900px) {
+  .examination-table-container {
+    height: calc(100vh - 180px) !important;
+    max-height: calc(100vh - 130px) !important;
+  }
+}
+
+@media screen and (max-height: 800px) {
+  .examination-table-container {
+    height: calc(100vh - 160px) !important;
+    max-height: calc(100vh - 110px) !important;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .examination-table-container {
+    height: calc(100vh - 140px) !important;
+    max-height: calc(100vh - 90px) !important;
+    min-height: 300px !important;
+  }
+}
+
+/* CRITICAL: Fullscreen mode */
+.fullscreen-mode .examination-table-container {
+  height: calc(100vh - 120px) !important;
+  max-height: calc(100vh - 70px) !important;
+  padding-bottom: 50px !important;
+}
+
+/* CRITICAL: Mobile adjustments */
+@media (max-width: 768px) {
+  .examination-table-container {
+    height: calc(100vh - 240px) !important;
+    max-height: calc(100vh - 190px) !important;
+    padding-bottom: 50px !important;
+  }
+}

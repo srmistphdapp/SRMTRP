@@ -71,9 +71,9 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
     // Apply active filters
     if (activeFilters.type !== 'All Types') {
       scholars = scholars.filter(s => {
-        const programUpper = (s.program || '').toUpperCase();
-        if (activeFilters.type === 'Full Time') return programUpper.includes('FT');
-        if (activeFilters.type === 'Part Time') return programUpper.includes('PT');
+        const scholarType = (s.type || s.program_type || '').toLowerCase();
+        if (activeFilters.type === 'Full Time') return scholarType.includes('full time') || scholarType === 'ft';
+        if (activeFilters.type === 'Part Time') return scholarType.includes('part time') || scholarType === 'pt';
         return true;
       });
     }
@@ -90,10 +90,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
     }
 
     if (activeFilters.department !== 'All Departments') {
-      scholars = scholars.filter(s => {
-        const deptFromProgram = (s.program || '').split('(')[0].trim();
-        return deptFromProgram === activeFilters.department;
-      });
+      scholars = scholars.filter(s => (s.department || '') === activeFilters.department);
     }
 
     // Apply search
@@ -102,8 +99,9 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
       scholars = scholars.filter(s =>
         (s.registered_name || '').toLowerCase().includes(searchLower) ||
         (s.application_no || '').toLowerCase().includes(searchLower) ||
-        (s.faculty || '').toLowerCase().includes(searchLower) ||
-        (s.program || '').toLowerCase().includes(searchLower)
+        (s.institution || s.faculty || '').toLowerCase().includes(searchLower) ||
+        (s.department || '').toLowerCase().includes(searchLower) ||
+        (s.type || '').toLowerCase().includes(searchLower)
       );
     }
 
@@ -157,7 +155,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
   const getUniqueDepartments = () => {
     const depts = new Set(['All Departments']);
     adminScholarsData.forEach(s => {
-      const dept = (s.program || '').split('(')[0].trim();
+      const dept = (s.department || '').trim();
       if (dept) depts.add(dept);
     });
     return Array.from(depts).sort();
@@ -199,10 +197,10 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
         'Registered Name': scholar.registered_name || '-',
         'Application No': scholar.application_no || '-',
         'Have You Graduated From India?': scholar.graduated_from_india || 'Yes',
-        'Course': scholar.course || scholar.program || '-',
-        'Select Institution': scholar.faculty || '-',
-        'Select Program': cleanProgramName(scholar.program) || scholar.program || '-',
-        'Type': scholar.program_type || extractProgramType(scholar.program) || '-',
+        'Course': scholar.course || '-',
+        'Select Institution': scholar.institution || scholar.faculty || '-',
+        'Department': scholar.department || '-',
+        'Type': scholar.type || scholar.program_type || '-',
         'Certificates (Link)': scholar.certificates || '-',
         '1 - Employee Id': scholar.employee_id || '-',
         '1 - Designation': scholar.designation || '-',
@@ -562,9 +560,9 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                     <td className="text-center">{index + 1}</td>
                     <td>{scholar.registered_name}</td>
                     <td>{scholar.application_no}</td>
-                    <td>{scholar.faculty}</td>
-                    <td>{cleanProgramName(scholar.program) || scholar.program}</td>
-                    <td>{scholar.program_type || extractProgramType(scholar.program) || '-'}</td>
+                    <td>{scholar.institution || scholar.faculty}</td>
+                    <td>{scholar.department || '-'}</td>
+                    <td>{scholar.type || scholar.program_type || '-'}</td>
                     <td>{scholar.mobile_number}</td>
                     <td>{scholar.email}</td>
                     <td>{scholar.gender}</td>
@@ -695,19 +693,19 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Course:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || selectedScholar.program || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Select Institution:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.faculty || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.institution || selectedScholar.faculty || '-'}</span>
                   </div>
                   <div className="view-field">
-                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Select Program:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{cleanProgramName(selectedScholar.program) || selectedScholar.faculty || '-'}</span>
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Department:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.department || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Type:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || extractProgramType(selectedScholar.program) || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.type || selectedScholar.program_type || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Certificates Drive Link:</label>
@@ -902,7 +900,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Department:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.department || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Type:</label>

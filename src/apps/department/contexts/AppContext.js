@@ -168,8 +168,8 @@ export const AppProvider = ({ children }) => {
             gender: scholar.gender || 'N/A',
             faculty: scholar.institution || '-',
             institution: scholar.institution || '-',
-            program: scholar.program || scholar.specialization || 'N/A',
-            specialization: scholar.department || scholar.specialization || scholar.program || 'N/A',
+            program: scholar.department || scholar.specialization || 'N/A',
+            specialization: scholar.department || scholar.specialization || 'N/A',
             certificatesLink: scholar.certificates || scholar.certificates_link || scholar.certificate_link || scholar.certificate || scholar.documents_link || scholar.document_link || scholar.docs_link || scholar.drive_link || '#',
             type: scholar.type || 'Full Time', // Add type field for mode display
             verificationStatus: verificationStatus,

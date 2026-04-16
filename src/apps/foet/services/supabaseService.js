@@ -467,7 +467,7 @@ export const fetchFacultyExaminationRecords = async (assignedFaculty) => {
     // Get scholar applications to join with examination records
     const { data: scholarData, error: scholarError } = await supabase
       .from('scholar_applications')
-      .select('id, registered_name, application_no, faculty, program');
+      .select('id, registered_name, application_no, faculty, institution, department, type');
 
     if (scholarError) {
       console.error('Error fetching scholar applications:', scholarError);
@@ -568,22 +568,17 @@ export const fetchFacultyExaminationRecords = async (assignedFaculty) => {
         );
       };
 
-      // Extract department from program or use department field directly
-      let department = examRecord.department || '-';
-      if (!department || department === '-') {
-        // Try to extract from program field
-        const programField = examRecord.program || scholar.program || '';
-        department = extractDepartment(programField);
-      }
+      // Use department field directly — no program parsing needed
+      let department = examRecord.department || scholar.department || '-';
 
       return {
         ...examRecord,
-        // Use scholar name from multiple sources with priority order
         scholar_name: scholarName,
         registered_name: scholarName,
         scholar_faculty: scholar.faculty || examRecord.faculty || 'N/A',
-        program: examRecord.program || scholar.program || examRecord.faculty || 'N/A', // Use examination_records program first, then fallback to scholar
-        department: department, // Properly extracted department
+        institution: examRecord.institution || scholar.institution || 'N/A',
+        department: department,
+        type: examRecord.type || examRecord.program_type || scholar.type || 'N/A',
         // Preserve original written_marks and faculty_written values for pending detection
         written_marks: examRecord.written_marks,
         faculty_written: examRecord.faculty_written,

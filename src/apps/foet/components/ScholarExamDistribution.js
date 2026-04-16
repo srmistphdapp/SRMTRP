@@ -266,19 +266,17 @@ const ScholarExamDistribution = () => {
       return program; // Return original if no pattern matches
     };
 
-    // Debug: Log the program field and extracted department for the first few records
+    // Debug: Log the department field for the first few records
     if (index < 3) {
-      const extractedDept = extractDepartmentFromProgram(record.program);
-      console.log(`Record ${index + 1} program:`, record.program, '-> Department:', extractedDept);
+      console.log(`Record ${index + 1} department:`, record.department, 'type:', record.type);
     }
 
     return {
-      // Table display fields
       id: record.id || index + 1,
       scholarName: record.registered_name || record.examiner_name || 'N/A',
       applicationNo: record.application_no || 'N/A',
-      department: extractDepartmentFromProgram(record.program),
-      type: record.type || 'N/A',
+      department: record.department || 'N/A',
+      type: record.type || record.program_type || 'N/A',
       writtenMarks: record.written_marks || 0,
       vivaMarks: record.interview_marks || 0,
       // Check if marks are pending (null/undefined in database)
@@ -292,8 +290,8 @@ const ScholarExamDistribution = () => {
       registered_name: record.registered_name || '-',
       application_no: record.application_no || '-',
       institution: record.institution || '-',
-      program: record.program || '-',
-      program_type: record.program_type || '-',
+      department: record.department || '-',
+      type: record.type || record.program_type || '-',
       mobile_number: record.mobile_number || '-',
       email: record.email || '-',
       date_of_birth: record.date_of_birth || '-',
@@ -879,7 +877,7 @@ const ScholarExamDistribution = () => {
                   </div>
                   <div className="view-field">
                     <label className="view-label">Course:</label>
-                    <span className="view-value">{selectedScholar.course || selectedScholar.program || '-'}</span>
+                    <span className="view-value">{selectedScholar.course || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label">Select Institution:</label>

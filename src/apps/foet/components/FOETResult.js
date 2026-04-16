@@ -149,8 +149,8 @@ export default function FOETResult() {
         result_dir_type: typeof record.result_dir,
         hasResultDir: !!record.result_dir,
         includesPublished: record.result_dir ? record.result_dir.includes('Published') : false,
-        program: record.program,
-        department: extractDepartmentFromProgram(record.program)
+        department: record.department,
+        department: record.department
       });
     });
 
@@ -166,7 +166,7 @@ export default function FOETResult() {
       // Check if this department has any published results in examination_records
       const hasPublishedResults = examinationsData.some(record => {
         // Extract department from program field (same as director)
-        const recordDepartment = extractDepartmentFromProgram(record.program);
+        const recordDepartment = record.department;
         
         // Department matching (same as director)
         const departmentMatch = recordDepartment === dept.department_name;
@@ -179,7 +179,7 @@ export default function FOETResult() {
         console.log(`🔍 DETAILED CHECK - Record ${record.id}:`, {
           registered_name: record.registered_name,
           application_no: record.application_no,
-          program: record.program,
+          department: record.department,
           recordDepartment: recordDepartment,
           deptName: dept.department_name,
           result_dir: record.result_dir,
@@ -269,7 +269,7 @@ export default function FOETResult() {
     
     const deptNames = facultyDepartments.map(d => d.name);
     const totalScholars = examinationsData.filter(record => {
-      const recordDepartment = extractDepartmentFromProgram(record.program);
+      const recordDepartment = record.department;
       
       // Check if department matches
       const departmentMatch = deptNames.some(deptName => 
@@ -335,7 +335,7 @@ export default function FOETResult() {
     
     // Check if any scholar from this department has NULL or empty dept_result
     return examinationsData.some(record => {
-      const recordDepartment = extractDepartmentFromProgram(record.program);
+      const recordDepartment = record.department;
       const departmentMatch = recordDepartment === departmentName ||
                              recordDepartment.toLowerCase().includes(departmentName.toLowerCase()) ||
                              departmentName.toLowerCase().includes(recordDepartment.toLowerCase());
@@ -361,7 +361,7 @@ export default function FOETResult() {
     
     // Get all scholars from this department that have published results (result_dir contains "Published")
     const departmentScholars = examinationsData.filter(record => {
-      const recordDepartment = extractDepartmentFromProgram(record.program);
+      const recordDepartment = record.department;
       const departmentMatch = recordDepartment === departmentName;
       const isPublished = record.result_dir && record.result_dir.includes('Published');
       return departmentMatch && isPublished;
@@ -408,7 +408,7 @@ export default function FOETResult() {
     // DIRECTOR'S EXACT LOGIC: Filter by department and type, then check if published
     const filtered = examinationsData.filter(record => {
       // Extract department from program field (same as director)
-      const recordDepartment = extractDepartmentFromProgram(record.program);
+      const recordDepartment = record.department;
       
       // Department matching (same as director)
       const departmentMatch = recordDepartment === departmentName;
@@ -433,7 +433,7 @@ export default function FOETResult() {
       const isPublished = record.result_dir && record.result_dir.includes('Published');
       
       console.log(`🔍 DIRECTOR LOGIC - Record ${record.id} (${record.registered_name}):`, {
-        program: record.program,
+        department: record.department,
         recordDepartment: recordDepartment,
         departmentName: departmentName,
         type: record.type,
@@ -478,14 +478,14 @@ export default function FOETResult() {
         }
         
         console.log(`=== TRANSFORMING RECORD ${record.id} ===`);
-        console.log('Original record program:', record.program);
+        console.log('Original record department:', record.department);
         
         const scholarObj = {
           id: record.id,
           'Registered Name': record.registered_name || 'N/A',
           'Application Number': record.application_no || 'N/A',
           'Mode of Study': mode,
-          Specialization: extractDepartmentFromProgram(record.program) || record.department || 'N/A',
+          Specialization: record.department || record.department || 'N/A',
           writtenMarks,
           vivaMarks,
           totalMarks,
@@ -493,7 +493,7 @@ export default function FOETResult() {
           originalType: record.type,
           type: record.type,
           // Store the program field for Part Time type display
-          program: record.program || 'N/A',
+          department: record.department || 'N/A',
           // Also include the raw field names for compatibility
           registered_name: record.registered_name || 'N/A',
           application_no: record.application_no || 'N/A',
@@ -503,7 +503,7 @@ export default function FOETResult() {
           status: isCompletelyAbsent ? 'Absent' : (parseFloat(totalMarks) >= 50 ? 'Qualified' : 'Not Qualified')
         };
         
-        console.log('Transformed scholar object program field:', scholarObj.program);
+        console.log('Transformed scholar object department field:', scholarObj.department);
         return scholarObj;
       })
       .sort((a, b) => {
@@ -527,7 +527,7 @@ export default function FOETResult() {
     // DEBUG: Show all available departments from examination records
     if (examinationsData && examinationsData.length > 0) {
       const availableDepartments = [...new Set(examinationsData.map(record => {
-        const dept = extractDepartmentFromProgram(record.program);
+        const dept = record.department;
         return dept;
       }).filter(Boolean))];
       
@@ -547,7 +547,7 @@ export default function FOETResult() {
     console.log('Raw rows:', rows);
     if (rows.length > 0) {
       console.log('First scholar raw data:', rows[0]);
-      console.log('Program field in first scholar:', rows[0].program);
+      console.log('Department field in first scholar:', rows[0].department);
       console.log('All fields in first scholar:', Object.keys(rows[0]));
     }
 
@@ -561,7 +561,7 @@ export default function FOETResult() {
       // FIXED: Show the actual specific part-time type from the database
       partTimeDetails: scholar.originalType || scholar.type || scholarType,
       // Add the program field for Type column display
-      program: scholar.program || 'N/A',
+      department: scholar.department || 'N/A',
       writtenMarks: scholar.writtenMarks === 'Ab' ? 'Ab' : (typeof scholar.writtenMarks === 'number' ? scholar.writtenMarks : Math.round(scholar.written_marks || 0)),
       vivaMarks: scholar.vivaMarks === 'Ab' ? 'Ab' : (typeof scholar.vivaMarks === 'number' ? scholar.vivaMarks : Math.round(scholar.interview_marks || 0)),
       totalMarks: scholar.totalMarks === 'Absent' ? 'Absent' : (typeof scholar.totalMarks === 'number' ? scholar.totalMarks : Math.round(scholar.total_marks || 0)),
@@ -575,7 +575,7 @@ export default function FOETResult() {
       console.log('partTimeDetails:', transformedRows[0].partTimeDetails);
       console.log('originalType:', transformedRows[0].originalType);
       console.log('type:', transformedRows[0].type);
-      console.log('program in transformed row:', transformedRows[0].program);
+      console.log('department in transformed row:', transformedRows[0].department);
     }
     console.log('Raw scholar data sample:', rows[0]);
     setModal({ deptName, scholarType, rows: transformedRows });
@@ -646,7 +646,7 @@ export default function FOETResult() {
             'Rank': index + 1,
             'Name': scholar['Registered Name'] || scholar.registered_name || 'N/A',
             'Application Number': scholar['Application Number'] || scholar.application_no || 'N/A',
-            'Type': scholar.program || scholar['Mode of Study'] || type,
+            'Type': scholar.type || scholar.program_type || type,
           };
           rowData = {
             ...rowData,
@@ -681,7 +681,7 @@ export default function FOETResult() {
       const searchTerm = search.toLowerCase().trim();
       // Use examination records data instead of static data
       return examinationsData.some(record => {
-        const recordDepartment = extractDepartmentFromProgram(record.program);
+        const recordDepartment = record.department;
         const departmentMatch = recordDepartment.toLowerCase().includes(dept.name.toLowerCase());
         const nameMatch = record.registered_name?.toLowerCase().includes(searchTerm);
         const appNoMatch = record.application_no?.toLowerCase().includes(searchTerm);
@@ -877,7 +877,7 @@ export default function FOETResult() {
                         {modal.scholarType === 'Part Time' && (
                           <td className="px-4 py-4 text-center border-b border-gray-100">
                             <div className="text-gray-700">
-                              {row.program || 'N/A'}
+                              {row.department || 'N/A'}
                             </div>
                           </td>
                         )}

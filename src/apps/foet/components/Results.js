@@ -143,7 +143,7 @@ const Results = () => {
       const normalizedDeptName = normalizeName(dept.department_name);
       return examinationsData.some(record => {
         // Use department field if available, fallback to extraction
-        const recordDept = normalizeName(record.department && record.department !== '-' ? record.department : extractDepartmentFromProgram(record.program));
+        const recordDept = normalizeName(record.department && record.department !== '-' ? record.department : record.department);
 
         // Flexible department match
         const isDepartmentMatch = recordDept === normalizedDeptName ||
@@ -205,7 +205,7 @@ const Results = () => {
 
     const deptNames = facultyDepartments.map(d => normalizeName(d.name));
     return examinationsData.filter(record => {
-      const recordDepartment = normalizeName(record.department && record.department !== '-' ? record.department : extractDepartmentFromProgram(record.program));
+      const recordDepartment = normalizeName(record.department && record.department !== '-' ? record.department : record.department);
       const departmentMatch = deptNames.some(deptName =>
         recordDepartment.includes(deptName) ||
         deptName.includes(recordDepartment)
@@ -308,7 +308,7 @@ const Results = () => {
         viva: scholar.vivaMarks === 'Ab' ? 'Ab' : (typeof scholar.vivaMarks === 'number' ? scholar.vivaMarks : Math.round(scholar.interview_marks || 0)),
         total: scholar.totalMarks === 'Absent' ? 'Absent' : (typeof scholar.totalMarks === 'number' ? scholar.totalMarks : Math.round(scholar.total_marks || 0)),
         qualified: scholar.status === 'Qualified' || (scholar.totalMarks !== 'Absent' && scholar.status !== 'Absent' && (parseFloat(scholar.totalMarks || scholar.total_marks || 0) >= 60)),
-        program: scholar.program || 'N/A'
+        department: scholar.department || 'N/A'
       })),
       searchActive: false
     };
@@ -331,7 +331,7 @@ const Results = () => {
         viva: scholar.vivaMarks === 'Ab' ? 'Ab' : (typeof scholar.vivaMarks === 'number' ? scholar.vivaMarks : Math.round(scholar.interview_marks || 0)),
         total: scholar.totalMarks === 'Absent' ? 'Absent' : (typeof scholar.totalMarks === 'number' ? scholar.totalMarks : Math.round(scholar.total_marks || 0)),
         qualified: scholar.status === 'Qualified' || (scholar.totalMarks !== 'Absent' && scholar.status !== 'Absent' && (parseFloat(scholar.totalMarks || scholar.total_marks || 0) >= 60)),
-        program: scholar.program || 'N/A'
+        department: scholar.department || 'N/A'
       })),
       searchActive: false
     };
@@ -496,7 +496,7 @@ const Results = () => {
         'Application Number': scholar['Application Number'] || scholar.application_no || 'N/A',
         'Registered Name': scholar['Registered Name'] || scholar.registered_name || 'N/A',
         'Department': scholar.Specialization,
-        'Type': scholar.program || scholar['Mode of Study'] || 'Full Time',
+        'Type': scholar.type || scholar.program_type || 'Full Time',
         'Written Marks': scholar.writtenMarks === 'Ab' ? 'Ab' : (typeof scholar.writtenMarks === 'number' ? scholar.writtenMarks : Math.round(scholar.written_marks || 0)),
         'Interview Marks': scholar.vivaMarks === 'Ab' ? 'Ab' : (typeof scholar.vivaMarks === 'number' ? scholar.vivaMarks : Math.round(scholar.interview_marks || 0)),
         'Total Marks': scholar.totalMarks === 'Absent' ? 'Absent' : (typeof scholar.totalMarks === 'number' ? scholar.totalMarks : Math.round(scholar.total_marks || 0)),
@@ -510,7 +510,7 @@ const Results = () => {
         'Application Number': scholar['Application Number'] || scholar.application_no || 'N/A',
         'Registered Name': scholar['Registered Name'] || scholar.registered_name || 'N/A',
         'Department': scholar.Specialization,
-        'Type': scholar.program || scholar['Mode of Study'] || 'Part Time',
+        'Type': scholar.type || scholar.program_type || 'Part Time',
         'Written Marks': scholar.writtenMarks === 'Ab' ? 'Ab' : (typeof scholar.writtenMarks === 'number' ? scholar.writtenMarks : Math.round(scholar.written_marks || 0)),
         'Interview Marks': scholar.vivaMarks === 'Ab' ? 'Ab' : (typeof scholar.vivaMarks === 'number' ? scholar.vivaMarks : Math.round(scholar.interview_marks || 0)),
         'Total Marks': scholar.totalMarks === 'Absent' ? 'Absent' : (typeof scholar.totalMarks === 'number' ? scholar.totalMarks : Math.round(scholar.total_marks || 0)),
@@ -571,7 +571,7 @@ const Results = () => {
     // Get all scholars from this department that have published results (result_dir contains "Published")
     const departmentScholars = examinationsData.filter(record => {
       // Use department field if available, fallback to extraction
-      const recordDept = normalizeName(record.department && record.department !== '-' ? record.department : extractDepartmentFromProgram(record.program));
+      const recordDept = normalizeName(record.department && record.department !== '-' ? record.department : record.department);
 
       // Flexible department match
       const departmentMatch = recordDept === normalizedDeptName ||
@@ -610,7 +610,7 @@ const Results = () => {
     // DIRECTOR'S EXACT LOGIC: Filter by department and type, then check if published
     const filtered = examinationsData.filter(record => {
       // Use department field if available, fallback to extraction
-      const recordDept = normalizeName(record.department && record.department !== '-' ? record.department : extractDepartmentFromProgram(record.program));
+      const recordDept = normalizeName(record.department && record.department !== '-' ? record.department : record.department);
 
       // Department matching - flexible
       const departmentMatch = recordDept === normalizedDeptName ||
@@ -668,7 +668,7 @@ const Results = () => {
           'Registered Name': record.registered_name || 'N/A',
           'Application Number': record.application_no || 'N/A',
           'Mode of Study': mode,
-          Specialization: extractDepartmentFromProgram(record.program) || record.department || 'N/A',
+          Specialization: record.department || record.department || 'N/A',
           writtenMarks,
           vivaMarks,
           totalMarks,
@@ -676,7 +676,7 @@ const Results = () => {
           originalType: record.type,
           type: record.type,
           // Store the program field for Part Time type display
-          program: record.program || 'N/A',
+          department: record.department || 'N/A',
           // Also include the raw field names for compatibility
           registered_name: record.registered_name || 'N/A',
           application_no: record.application_no || 'N/A',

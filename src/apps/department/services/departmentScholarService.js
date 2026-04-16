@@ -1289,13 +1289,13 @@ export const fetchExaminationRecordsForInterview = async (departmentName, instit
 
     // DIAGNOSTIC: Show ALL unique values
     const uniqueInstitutions = [...new Set(allRecords.map(r => r.institution).filter(Boolean))];
-    const uniquePrograms = [...new Set(allRecords.map(r => r.program).filter(Boolean))];
     const uniqueDepartments = [...new Set(allRecords.map(r => r.department).filter(Boolean))];
+    const uniqueTypes = [...new Set(allRecords.map(r => r.type).filter(Boolean))];
 
     console.log(`📋 ===== DATABASE DIAGNOSTIC =====`);
     console.log(`📋 Unique INSTITUTIONS (${uniqueInstitutions.length}):`, uniqueInstitutions);
     console.log(`📋 Unique DEPARTMENTS (${uniqueDepartments.length}):`, uniqueDepartments);
-    console.log(`📋 Unique PROGRAMS (first 15):`, uniquePrograms.slice(0, 15));
+    console.log(`📋 Unique TYPES:`, uniqueTypes);
     console.log(`📋 ===== USER REQUEST =====`);
     console.log(`📋 Looking for - Institution: "${institution}"`);
     console.log(`📋 Looking for - Department: "${departmentName}"`);

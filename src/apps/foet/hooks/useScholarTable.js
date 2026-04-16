@@ -61,9 +61,9 @@ export const useScholarTable = ({
 
       scholars = scholars.filter(s => {
         if (filterKey === 'type') {
-          const programUpper = (s.program || '').toUpperCase();
-          if (filterValue === 'Full Time') return programUpper.includes('FT');
-          if (filterValue === 'Part Time') return programUpper.includes('PT');
+          const scholarType = (s.type || s.program_type || '').toLowerCase();
+          if (filterValue === 'Full Time') return scholarType.includes('full time') || scholarType === 'ft';
+          if (filterValue === 'Part Time') return scholarType.includes('part time') || scholarType === 'pt';
           return true;
         }
         
@@ -72,8 +72,7 @@ export const useScholarTable = ({
         }
 
         if (filterKey === 'department') {
-          const deptFromProgram = (s.program || '').split('(')[0].trim();
-          return deptFromProgram === filterValue;
+          return (s.department || '').trim() === filterValue;
         }
 
         // Add other filters as needed
@@ -88,7 +87,9 @@ export const useScholarTable = ({
         (s.registered_name || '').toLowerCase().includes(searchLower) ||
         (s.application_no || '').toLowerCase().includes(searchLower) ||
         (s.faculty || '').toLowerCase().includes(searchLower) ||
-        (s.program || '').toLowerCase().includes(searchLower)
+        (s.institution || '').toLowerCase().includes(searchLower) ||
+        (s.department || '').toLowerCase().includes(searchLower) ||
+        (s.type || '').toLowerCase().includes(searchLower)
       );
     }
 
@@ -170,13 +171,12 @@ export const useScholarTable = ({
       const excelData = dataToDownload.map((scholar) => ({
         'Registered Name': scholar.registered_name || '-',
         'Application No': scholar.application_no || '-',
-        'Type': scholar.program_type || extractProgramType(scholar.program) || '-',
-        'Institution': scholar.faculty || '-',
-        'Program': cleanProgramName(scholar.program) || scholar.program || '-',
+        'Type': scholar.type || scholar.program_type || '-',
+        'Institution': scholar.institution || scholar.faculty || '-',
+        'Department': scholar.department || '-',
         'Email ID': scholar.email || '-',
         'Mobile Number': scholar.mobile_number || '-',
         'Status': scholar.computedStatus || '-'
-        // ... can add more fields as needed or pass fields as param
       }));
 
       const ws = XLSX.utils.json_to_sheet(excelData);

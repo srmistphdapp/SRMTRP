@@ -13,21 +13,21 @@ const DEPARTMENT_MAPPING = {
   // Faculty of Engineering & Technology (11 departments)
   'Biomedical Engineering': 'BME',
   'Biotechnology': 'ENGBIO',
-  'Chemistry': 'ENGCHEM', 
+  'Chemistry': 'ENGCHEM',
   'Civil Engineering': 'CIVIL',
   'Computer Science and Engineering': 'CSE',
   'Computer Science And Engineering': 'CSE',
   'Computer Science Engineering': 'CSE',
   'Electrical and Electronics Engineering': 'EEE',
   'Electronics and Communication Engineering': 'ECE',
-  'English': 'ENGENG', 
-  'Mathematics': 'ENGMATH', 
+  'English': 'ENGENG',
+  'Mathematics': 'ENGMATH',
   'Mechanical Engineering': 'MECH',
-  'Physics': 'ENGPHYS', 
-  
+  'Physics': 'ENGPHYS',
+
   // Faculty of Management (1 department)
   'Management Studies': 'MBA',
-  
+
   // Faculty of Medical and Health Sciences (10 departments)
   'Department of Basic Medical Sciences': 'BMS',
   'Basic Medical Sciences': 'BMS',
@@ -49,14 +49,14 @@ const DEPARTMENT_MAPPING = {
   'Prosthodontics': 'PROSTH',
   'Department of Public Health Dentistry': 'PHD',
   'Public Health Dentistry': 'PHD',
-  
+
   // Faculty of Science & Humanities (8 departments)
-  'Biotechnology': 'BIO', 
+  'Biotechnology': 'BIO',
   'Commerce': 'COMM',
   'Computer Science': 'CS',
   'English & Foreign Languages': 'EFL',
   'Fashion Designing': 'FASHION',
-  'Mathematics': 'MATH', 
+  'Mathematics': 'MATH',
   'Tamil': 'TAMIL',
   'Visual Communication': 'VISCOM',
   'Visual Communications': 'VISCOM'
@@ -69,7 +69,7 @@ const facultyColors = {
 
 export default function FOETResult() {
   const { departmentsData, scholarsData, examinationsData, isLoadingSupabase, assignedFaculty, coordinatorInfo, coordinatorName } = useAppContext();
-  
+
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY EARLY RETURNS
   const [modal, setModal] = useState(null);
   const [search, setSearch] = useState('');
@@ -90,134 +90,37 @@ export default function FOETResult() {
 
   // Helper function to extract department name from program string
   const extractDepartmentFromProgram = (program) => {
-    console.log('🔧 Extracting department from program:', program);
-    
-    if (!program || program === 'N/A') {
-      console.log('❌ No valid program provided');
-      return '';
-    }
-    
-    // If it's a faculty name like "Faculty of Engineering & Technology", extract the main part
+    if (!program || program === 'N/A') return '';
+
     if (program.includes('Faculty of')) {
       const match = program.match(/Faculty of (.+)/i);
-      if (match) {
-        const department = match[1].trim();
-        console.log('✅ Extracted department from faculty:', department);
-        return department;
-      }
+      if (match) return match[1].trim();
     }
-    
-    // Extract department name from program string like "Ph.d. - Biomedical Engineering (ph.d. - Pti - E And T)"
-    // Look for the pattern after "Ph.d. - " and before " ("
+
     const match = program.match(/Ph\.d\.\s*-\s*([^(]+)/i);
-    if (match) {
-      const department = match[1].trim();
-      console.log('✅ Extracted department (main pattern):', department);
-      return department;
-    }
-    
-    // Try alternative patterns
-    // Look for patterns like "Biomedical Engineering" directly
+    if (match) return match[1].trim();
+
     const altMatch = program.match(/([A-Za-z\s]+Engineering|[A-Za-z\s]+Science|[A-Za-z\s]+Technology|[A-Za-z\s]+Management)/i);
-    if (altMatch) {
-      const department = altMatch[1].trim();
-      console.log('✅ Extracted department (alt pattern):', department);
-      return department;
-    }
-    
-    // Fallback: return the program as is
-    console.log('⚠️ Using program as department (fallback):', program);
+    if (altMatch) return altMatch[1].trim();
+
     return program;
   };
 
-  // Create faculty object from Supabase departments data - USING DIRECTOR'S EXACT LOGIC
+  // Create faculty object from Supabase departments data
   const getPublishedDepartments = () => {
     if (!departmentsData || !examinationsData || examinationsData.length === 0) {
       return [];
     }
 
-    console.log('=== GETTING PUBLISHED DEPARTMENTS - DIRECTOR LOGIC ===');
-    console.log('Assigned Faculty:', assignedFaculty);
-    console.log('Total departments:', departmentsData.length);
-    console.log('Total examination records:', examinationsData.length);
-
-    // DEBUG: Log all result_dir values to see what we have
-    console.log('\n=== ALL RESULT_DIR VALUES ===');
-    examinationsData.forEach((record, index) => {
-      console.log(`Record ${record.id} (${record.registered_name}):`, {
-        result_dir: record.result_dir,
-        result_dir_type: typeof record.result_dir,
-        hasResultDir: !!record.result_dir,
-        includesPublished: record.result_dir ? record.result_dir.includes('Published') : false,
-        department: record.department,
-        department: record.department
-      });
-    });
-
-    // DIRECTOR'S LOGIC: Group departments by faculty, then check for published results
-    // First, get all departments for this faculty
     const facultyDepartments = departmentsData.filter(d => d.faculty === assignedFaculty);
-    console.log(`Faculty departments for ${assignedFaculty}:`, facultyDepartments.map(d => d.department_name));
 
-    // Then, check which departments have published results
-    const publishedDepartments = facultyDepartments.filter(dept => {
-      console.log(`\n=== CHECKING DEPARTMENT: ${dept.department_name} ===`);
-      
-      // Check if this department has any published results in examination_records
-      const hasPublishedResults = examinationsData.some(record => {
-        // Extract department from program field (same as director)
-        const recordDepartment = record.department;
-        
-        // Department matching (same as director)
-        const departmentMatch = recordDepartment === dept.department_name;
-        
-        // Published status check (same as director) - just check if result_dir contains "Published"
+    return facultyDepartments.filter(dept => {
+      return examinationsData.some(record => {
+        const departmentMatch = record.department === dept.department_name;
         const isPublished = record.result_dir && record.result_dir.includes('Published');
-        
-        const matches = departmentMatch && isPublished;
-        
-        console.log(`🔍 DETAILED CHECK - Record ${record.id}:`, {
-          registered_name: record.registered_name,
-          application_no: record.application_no,
-          department: record.department,
-          recordDepartment: recordDepartment,
-          deptName: dept.department_name,
-          result_dir: record.result_dir,
-          result_dir_type: typeof record.result_dir,
-          result_dir_value: record.result_dir,
-          departmentMatch: departmentMatch,
-          isPublished: isPublished,
-          hasResultDir: !!record.result_dir,
-          includesPublished: record.result_dir ? record.result_dir.includes('Published') : false,
-          matches: matches
-        });
-        
-        if (matches) {
-          console.log(`✅ DIRECTOR LOGIC - Found published result for ${dept.department_name}:`, {
-            recordDepartment,
-            result_dir: record.result_dir,
-            registered_name: record.registered_name,
-            faculty: record.faculty
-          });
-        }
-        
-        return matches;
+        return departmentMatch && isPublished;
       });
-      
-      console.log(`DIRECTOR LOGIC - Department ${dept.department_name}:`, {
-        hasPublishedResults,
-        included: hasPublishedResults
-      });
-      
-      return hasPublishedResults;
     });
-
-    console.log(`DIRECTOR LOGIC - Found ${publishedDepartments.length} departments with published results for ${assignedFaculty}`);
-    publishedDepartments.forEach(dept => {
-      console.log(`- ${dept.department_name}`);
-    });
-
-    return publishedDepartments;
   };
 
   const filteredPublishedDepartments = getPublishedDepartments();
@@ -230,15 +133,6 @@ export default function FOETResult() {
       name: dept.department_name
     })) || []
   };
-
-  // Debug logging
-  console.log('FOETResult Component Debug:');
-  console.log('Assigned Faculty:', assignedFaculty);
-  console.log('All Departments Data:', departmentsData);
-  console.log('All Departments Count:', departmentsData?.length || 0);
-  console.log('Published Departments:', filteredPublishedDepartments);
-  console.log('Published Departments Count:', filteredPublishedDepartments?.length || 0);
-  console.log('Faculty Object (FOETResult):', faculty);
 
   // NOW we can have early returns after all hooks
   if (isLoadingSupabase) {
@@ -266,42 +160,42 @@ export default function FOETResult() {
     if (!examinationsData || examinationsData.length === 0) {
       return 0;
     }
-    
+
     const deptNames = facultyDepartments.map(d => d.name);
     const totalScholars = examinationsData.filter(record => {
       const recordDepartment = record.department;
-      
+
       // Check if department matches
-      const departmentMatch = deptNames.some(deptName => 
+      const departmentMatch = deptNames.some(deptName =>
         recordDepartment.toLowerCase().includes(deptName.toLowerCase()) ||
         deptName.toLowerCase().includes(recordDepartment.toLowerCase())
       );
-      
+
       // Check if result_dir contains "Published to" (more flexible matching)
-      const isPublished = record.result_dir && 
-                         (record.result_dir.includes('Published to Engineering') ||
-                          record.result_dir.includes('Published to Management') ||
-                          record.result_dir.includes('Published to Science') ||
-                          record.result_dir.includes('Published to Medical') ||
-                          record.result_dir.includes('Publish to Engineering') ||
-                          record.result_dir.includes('Publish to Management') ||
-                          record.result_dir.includes('Publish to Science') ||
-                          record.result_dir.includes('Publish to Medical') ||
-                          record.result_dir.toLowerCase().includes('publish'));
-      
+      const isPublished = record.result_dir &&
+        (record.result_dir.includes('Published to Engineering') ||
+          record.result_dir.includes('Published to Management') ||
+          record.result_dir.includes('Published to Science') ||
+          record.result_dir.includes('Published to Medical') ||
+          record.result_dir.includes('Publish to Engineering') ||
+          record.result_dir.includes('Publish to Management') ||
+          record.result_dir.includes('Publish to Science') ||
+          record.result_dir.includes('Publish to Medical') ||
+          record.result_dir.toLowerCase().includes('publish'));
+
       // Check if total_marks has actual marks OR if scholar has any marks (including partial absence)
-      const hasTotalMarks = (record.total_marks && 
-                           record.total_marks !== null && 
-                           record.total_marks !== '' && 
-                           parseFloat(record.total_marks) > 0) ||
-                           (record.total_marks === 'Absent') ||
-                           (record.written_marks === 'Ab' || record.interview_marks === 'Ab') ||
-                           (record.written_marks && parseFloat(record.written_marks) > 0) ||
-                           (record.interview_marks && parseFloat(record.interview_marks) > 0);
-      
+      const hasTotalMarks = (record.total_marks &&
+        record.total_marks !== null &&
+        record.total_marks !== '' &&
+        parseFloat(record.total_marks) > 0) ||
+        (record.total_marks === 'Absent') ||
+        (record.written_marks === 'Ab' || record.interview_marks === 'Ab') ||
+        (record.written_marks && parseFloat(record.written_marks) > 0) ||
+        (record.interview_marks && parseFloat(record.interview_marks) > 0);
+
       return departmentMatch && isPublished && hasTotalMarks;
     }).length;
-    
+
     return totalScholars;
   };
 
@@ -332,17 +226,17 @@ export default function FOETResult() {
   // Helper function to check if department has unpublished scholars (NULL or empty dept_result)
   const hasUnpublishedScholars = (departmentName) => {
     if (!examinationsData || examinationsData.length === 0) return false;
-    
+
     // Check if any scholar from this department has NULL or empty dept_result
     return examinationsData.some(record => {
       const recordDepartment = record.department;
       const departmentMatch = recordDepartment === departmentName ||
-                             recordDepartment.toLowerCase().includes(departmentName.toLowerCase()) ||
-                             departmentName.toLowerCase().includes(recordDepartment.toLowerCase());
-      
+        recordDepartment.toLowerCase().includes(departmentName.toLowerCase()) ||
+        departmentName.toLowerCase().includes(recordDepartment.toLowerCase());
+
       // Check if dept_result is NULL, empty, or undefined
       const hasNoDeptResult = !record.dept_result || record.dept_result === '' || record.dept_result === null;
-      
+
       return departmentMatch && hasNoDeptResult;
     });
   };
@@ -350,151 +244,78 @@ export default function FOETResult() {
   // Helper function to check if department is already published
   const isDepartmentPublished = (departmentName) => {
     if (!examinationsData || examinationsData.length === 0) return false;
-    
+
     const deptShortForm = DEPARTMENT_MAPPING[departmentName] || departmentName;
     const publishValue = `Published_To_${deptShortForm}`;
-    
-    console.log(`🔍 Checking if ${departmentName} is published:`, {
-      deptShortForm,
-      publishValue
-    });
-    
-    // Get all scholars from this department that have published results (result_dir contains "Published")
+
     const departmentScholars = examinationsData.filter(record => {
-      const recordDepartment = record.department;
-      const departmentMatch = recordDepartment === departmentName;
+      const departmentMatch = record.department === departmentName;
       const isPublished = record.result_dir && record.result_dir.includes('Published');
       return departmentMatch && isPublished;
     });
-    
-    if (departmentScholars.length === 0) {
-      console.log(`❌ No published scholars found for ${departmentName}`);
-      return false;
-    }
-    
-    console.log(`📊 Found ${departmentScholars.length} published scholars for ${departmentName}`);
-    
-    // Check if ALL published scholars have been forwarded to department (have dept_result)
-    const scholarsWithDeptResult = departmentScholars.filter(record => 
+
+    if (departmentScholars.length === 0) return false;
+
+    const scholarsWithDeptResult = departmentScholars.filter(record =>
       record.dept_result === publishValue
     );
-    
-    const allScholarsForwarded = scholarsWithDeptResult.length === departmentScholars.length;
-    
-    console.log(`📋 Department ${departmentName} status:`, {
-      totalPublishedScholars: departmentScholars.length,
-      scholarsForwardedToDept: scholarsWithDeptResult.length,
-      allScholarsForwarded: allScholarsForwarded,
-      publishValue: publishValue
-    });
-    
-    // Department is considered published if ALL published scholars have been forwarded to department
-    return allScholarsForwarded;
+
+    return scholarsWithDeptResult.length === departmentScholars.length;
   };
 
-
-
-  // Get scholars for a specific department and mode - USING DIRECTOR'S EXACT LOGIC
+  // Get scholars for a specific department and mode
   const getScholarsForDepartment = (departmentName, mode) => {
-    console.log(`=== Getting scholars for department: ${departmentName}, mode: ${mode} ===`);
-    console.log('Available examination records:', examinationsData?.length || 0);
-    console.log('Assigned Faculty:', assignedFaculty);
-    
-    if (!examinationsData || examinationsData.length === 0) {
-      console.log('No examination records available');
-      return [];
-    }
-    
-    // DIRECTOR'S EXACT LOGIC: Filter by department and type, then check if published
+    if (!examinationsData || examinationsData.length === 0) return [];
+
     const filtered = examinationsData.filter(record => {
-      // Extract department from program field (same as director)
-      const recordDepartment = record.department;
-      
-      // Department matching (same as director)
-      const departmentMatch = recordDepartment === departmentName;
-      
-      // Type matching - Use program_type field directly from examination_records table
-      // program_type can be: 'Full Time', 'Part Time Internal', 'Part Time External', 'Part Time External (Industry)'
+      const departmentMatch = record.department === departmentName;
+
       const programType = record.program_type || record.type || '';
-      
       let typeMatch = false;
       if (mode === 'Full Time') {
-        // Match only Full Time
         typeMatch = programType === 'Full Time';
       } else if (mode === 'Part Time') {
-        // Match all Part Time variations
-        typeMatch = programType === 'Part Time Internal' || 
-                   programType === 'Part Time External' || 
-                   programType === 'Part Time External (Industry)' ||
-                   programType === 'Part Time';
+        typeMatch = programType === 'Part Time Internal' ||
+          programType === 'Part Time External' ||
+          programType === 'Part Time External (Industry)' ||
+          programType === 'Part Time';
       }
-      
-      // Published status check - DIRECTOR USES result_dir field with "Published" keyword
+
       const isPublished = record.result_dir && record.result_dir.includes('Published');
-      
-      console.log(`🔍 DIRECTOR LOGIC - Record ${record.id} (${record.registered_name}):`, {
-        department: record.department,
-        recordDepartment: recordDepartment,
-        departmentName: departmentName,
-        type: record.type,
-        program_type: record.program_type,
-        programType: programType,
-        mode: mode,
-        result_dir: record.result_dir,
-        departmentMatch: departmentMatch,
-        typeMatch: typeMatch,
-        isPublished: isPublished,
-        passesFilter: departmentMatch && typeMatch && isPublished
-      });
-      
       return departmentMatch && typeMatch && isPublished;
     });
-    
-    console.log(`✅ DIRECTOR LOGIC - Found ${filtered.length} published scholars for ${departmentName} (${mode})`);
-    console.log('Filtered records:', filtered);
-    
-    // Transform and sort by total marks (same as director portal)
+
     const transformed = filtered
-      .map((record, index) => {
-        // Handle absent scholars - check if marks are 'Ab' or 'Absent' (including partial absence)
-        const isCompletelyAbsent = record.total_marks === 'Absent' || 
-                                  (record.written_marks === 'Ab' && record.interview_marks === 'Ab');
-        const isPartiallyAbsent = (record.written_marks === 'Ab' && record.interview_marks !== 'Ab') ||
-                                 (record.written_marks !== 'Ab' && record.interview_marks === 'Ab');
-        
+      .map((record) => {
+        const isCompletelyAbsent = record.total_marks === 'Absent' ||
+          (record.written_marks === 'Ab' && record.interview_marks === 'Ab');
+
         const writtenMarks = record.written_marks === 'Ab' ? 'Ab' : Math.round(parseFloat(record.written_marks) || 0);
         const vivaMarks = record.interview_marks === 'Ab' ? 'Ab' : Math.round(parseFloat(record.interview_marks) || 0);
-        
+
         let totalMarks;
         if (isCompletelyAbsent) {
           totalMarks = 'Absent';
         } else if (record.total_marks && record.total_marks !== 'Absent') {
           totalMarks = Math.round(parseFloat(record.total_marks));
         } else {
-          // Calculate total for partial absence cases
           const writtenScore = record.written_marks === 'Ab' ? 0 : (parseFloat(record.written_marks) || 0);
           const vivaScore = record.interview_marks === 'Ab' ? 0 : (parseFloat(record.interview_marks) || 0);
           totalMarks = Math.round(writtenScore + vivaScore);
         }
-        
-        console.log(`=== TRANSFORMING RECORD ${record.id} ===`);
-        console.log('Original record department:', record.department);
-        
-        const scholarObj = {
+
+        return {
           id: record.id,
           'Registered Name': record.registered_name || 'N/A',
           'Application Number': record.application_no || 'N/A',
           'Mode of Study': mode,
-          Specialization: record.department || record.department || 'N/A',
+          Specialization: record.department || 'N/A',
           writtenMarks,
           vivaMarks,
           totalMarks,
-          // FIXED: Store the original type from database for display
           originalType: record.type,
           type: record.type,
-          // Store the program field for Part Time type display
           department: record.department || 'N/A',
-          // Also include the raw field names for compatibility
           registered_name: record.registered_name || 'N/A',
           application_no: record.application_no || 'N/A',
           written_marks: writtenMarks,
@@ -502,65 +323,29 @@ export default function FOETResult() {
           total_marks: totalMarks,
           status: isCompletelyAbsent ? 'Absent' : (parseFloat(totalMarks) >= 50 ? 'Qualified' : 'Not Qualified')
         };
-        
-        console.log('Transformed scholar object department field:', scholarObj.department);
-        return scholarObj;
       })
       .sort((a, b) => {
-        // Sort completely absent scholars to the bottom, then by total marks
         if (a.totalMarks === 'Absent' && b.totalMarks !== 'Absent') return 1;
         if (a.totalMarks !== 'Absent' && b.totalMarks === 'Absent') return -1;
         if (a.totalMarks === 'Absent' && b.totalMarks === 'Absent') return 0;
         return parseFloat(b.totalMarks) - parseFloat(a.totalMarks);
       })
       .map((scholar, index) => ({ ...scholar, rank: index + 1 }));
-    
-    console.log('Final transformed scholars:', transformed);
+
     return transformed;
   };
 
   // Department action logic
   function showRankListModal(deptName, scholarType) {
-    console.log('=== SHOWING RANK LIST MODAL ===');
-    console.log(`Department: ${deptName}, Scholar Type: ${scholarType}`);
-    
-    // DEBUG: Show all available departments from examination records
-    if (examinationsData && examinationsData.length > 0) {
-      const availableDepartments = [...new Set(examinationsData.map(record => {
-        const dept = record.department;
-        return dept;
-      }).filter(Boolean))];
-      
-      console.log('=== AVAILABLE DEPARTMENTS IN EXAMINATION RECORDS ===');
-      console.log('Available departments:', availableDepartments);
-      console.log(`Searching for: "${deptName}"`);
-      console.log('Exact matches:', availableDepartments.filter(dept => dept === deptName));
-      console.log('Partial matches:', availableDepartments.filter(dept => 
-        dept.toLowerCase().includes(deptName.toLowerCase()) || 
-        deptName.toLowerCase().includes(dept.toLowerCase())
-      ));
-    }
-    
-    let rows = getScholarsForDepartment(deptName, scholarType);
-    
-    console.log('=== RAW SCHOLARS DATA FROM getScholarsForDepartment ===');
-    console.log('Raw rows:', rows);
-    if (rows.length > 0) {
-      console.log('First scholar raw data:', rows[0]);
-      console.log('Department field in first scholar:', rows[0].department);
-      console.log('All fields in first scholar:', Object.keys(rows[0]));
-    }
+    const rows = getScholarsForDepartment(deptName, scholarType);
 
-    // Transform the data to match the expected modal format
     const transformedRows = rows.map((scholar, index) => ({
       id: scholar.id,
       rank: index + 1,
       'Registered Name': scholar['Registered Name'] || scholar.registered_name || 'N/A',
       'Application Number': scholar['Application Number'] || scholar.application_no || 'N/A',
       'Mode of Study': scholar['Mode of Study'] || scholarType,
-      // FIXED: Show the actual specific part-time type from the database
       partTimeDetails: scholar.originalType || scholar.type || scholarType,
-      // Add the program field for Type column display
       department: scholar.department || 'N/A',
       writtenMarks: scholar.writtenMarks === 'Ab' ? 'Ab' : (typeof scholar.writtenMarks === 'number' ? scholar.writtenMarks : Math.round(scholar.written_marks || 0)),
       vivaMarks: scholar.vivaMarks === 'Ab' ? 'Ab' : (typeof scholar.vivaMarks === 'number' ? scholar.vivaMarks : Math.round(scholar.interview_marks || 0)),
@@ -568,16 +353,6 @@ export default function FOETResult() {
       status: scholar.status || (scholar.totalMarks === 'Absent' ? 'Absent' : ((parseFloat(scholar.totalMarks || scholar.total_marks || 0) >= 50) ? 'Qualified' : 'Not Qualified'))
     }));
 
-    console.log('=== TRANSFORMED ROWS FOR MODAL ===');
-    console.log('Transformed rows for modal:', transformedRows);
-    console.log('Sample row data:', transformedRows[0]);
-    if (transformedRows[0]) {
-      console.log('partTimeDetails:', transformedRows[0].partTimeDetails);
-      console.log('originalType:', transformedRows[0].originalType);
-      console.log('type:', transformedRows[0].type);
-      console.log('department in transformed row:', transformedRows[0].department);
-    }
-    console.log('Raw scholar data sample:', rows[0]);
     setModal({ deptName, scholarType, rows: transformedRows });
   }
 
@@ -597,40 +372,37 @@ export default function FOETResult() {
           // Get department short form
           const deptShortForm = DEPARTMENT_MAPPING[deptName] || deptName;
           const publishValue = `Published_To_${deptShortForm}`;
-          
-          console.log(`Publishing ${deptName} results to department with value: ${publishValue}`);
-          
+
           // Get all scholars for this department (both FT and PT)
           const ftScholars = getScholarsForDepartment(deptName, 'Full Time');
           const ptScholars = getScholarsForDepartment(deptName, 'Part Time');
           const allScholars = [...ftScholars, ...ptScholars];
-          
+
           if (allScholars.length === 0) {
             setMessageBox({ show: true, title: 'Notification', message: 'No scholars found for this department to publish.', type: 'warning' });
             setConfirmModal(null);
             return;
           }
-          
+
           // Update dept_result column for all scholars in this department
           const scholarIds = allScholars.map(scholar => scholar.id);
-          
+
           const { data, error } = await supabase
             .from('examination_records')
             .update({ dept_result: publishValue })
             .in('id', scholarIds);
-          
+
           if (error) {
             console.error('Error publishing results:', error);
             setMessageBox({ show: true, title: 'Notification', message: 'Error occurred while publishing results. Please try again.', type: 'error' });
           } else {
-            console.log(`Successfully published ${allScholars.length} scholars to ${deptName}`);
             setPublishedLists(prev => [...prev, deptId]);
           }
         } catch (error) {
           console.error('Exception during publish:', error);
           setMessageBox({ show: true, title: 'Notification', message: 'Error occurred while publishing results. Please try again.', type: 'error' });
         }
-        
+
         setConfirmModal(null);
         setIsPublishConfirmed(false); // Reset confirmation state
       }
@@ -685,29 +457,29 @@ export default function FOETResult() {
         const departmentMatch = recordDepartment.toLowerCase().includes(dept.name.toLowerCase());
         const nameMatch = record.registered_name?.toLowerCase().includes(searchTerm);
         const appNoMatch = record.application_no?.toLowerCase().includes(searchTerm);
-        
+
         // Check if result_dir contains "Published to" (improved matching)
-        const isPublished = record.result_dir && 
-                           (record.result_dir.includes('Published to Engineering') ||
-                            record.result_dir.includes('Published to Management') ||
-                            record.result_dir.includes('Published to Science') ||
-                            record.result_dir.includes('Published to Medical') ||
-                            record.result_dir.includes('Publish to Engineering') ||
-                            record.result_dir.includes('Publish to Management') ||
-                            record.result_dir.includes('Publish to Science') ||
-                            record.result_dir.includes('Publish to Medical') ||
-                            record.result_dir.toLowerCase().includes('publish'));
-        
+        const isPublished = record.result_dir &&
+          (record.result_dir.includes('Published to Engineering') ||
+            record.result_dir.includes('Published to Management') ||
+            record.result_dir.includes('Published to Science') ||
+            record.result_dir.includes('Published to Medical') ||
+            record.result_dir.includes('Publish to Engineering') ||
+            record.result_dir.includes('Publish to Management') ||
+            record.result_dir.includes('Publish to Science') ||
+            record.result_dir.includes('Publish to Medical') ||
+            record.result_dir.toLowerCase().includes('publish'));
+
         // Check if total_marks has actual marks OR if scholar has any marks (including partial absence)
-        const hasTotalMarks = (record.total_marks && 
-                             record.total_marks !== null && 
-                             record.total_marks !== '' && 
-                             parseFloat(record.total_marks) > 0) ||
-                             (record.total_marks === 'Absent') ||
-                             (record.written_marks === 'Ab' || record.interview_marks === 'Ab') ||
-                             (record.written_marks && parseFloat(record.written_marks) > 0) ||
-                             (record.interview_marks && parseFloat(record.interview_marks) > 0);
-        
+        const hasTotalMarks = (record.total_marks &&
+          record.total_marks !== null &&
+          record.total_marks !== '' &&
+          parseFloat(record.total_marks) > 0) ||
+          (record.total_marks === 'Absent') ||
+          (record.written_marks === 'Ab' || record.interview_marks === 'Ab') ||
+          (record.written_marks && parseFloat(record.written_marks) > 0) ||
+          (record.interview_marks && parseFloat(record.interview_marks) > 0);
+
         return departmentMatch && (nameMatch || appNoMatch) && isPublished && hasTotalMarks;
       });
     }
@@ -757,7 +529,7 @@ export default function FOETResult() {
             <button onClick={resetFilters} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Clear All Filters</button>
           </div>
         )}
-        
+
         <div className={`foet-result-faculty-card ${facultyColors['FOET'] || 'border-l-[6px] border-l-gray-400'}`}>
           <div className="flex items-center px-6 py-4 select-none">
             <span className="font-bold text-lg flex-1">{faculty.name}</span>
@@ -782,48 +554,48 @@ export default function FOETResult() {
                     <span className="font-medium text-gray-800">{dept.name}</span>
                   </div>
                   <div className="flex items-center">
-                      <div className="w-32 text-center">
+                    <div className="w-32 text-center">
+                      <button
+                        title="View Full Time Ranks"
+                        className="bg-blue-500 text-white hover:bg-blue-700 transition-colors px-2 py-1 rounded"
+                        onClick={() => showRankListModal(dept.name, 'Full Time')}
+                      >
+                        <FaEye size={20} />
+                      </button>
+                    </div>
+                    <div className="w-32 text-center">
+                      <button
+                        title="View Part Time Ranks"
+                        className="bg-purple-500 text-white hover:bg-purple-700 transition-colors px-2 py-1 rounded"
+                        onClick={() => showRankListModal(dept.name, 'Part Time')}
+                      >
+                        <FaEye size={20} />
+                      </button>
+                    </div>
+                    <div className="w-32 text-center">
+                      {publishedLists.includes(dept.id) || isDepartmentPublished(dept.name) ? (
                         <button
-                          title="View Full Time Ranks"
-                          className="bg-blue-500 text-white hover:bg-blue-700 transition-colors px-2 py-1 rounded"
-                          onClick={() => showRankListModal(dept.name, 'Full Time')}
+                          title="Published"
+                          className="text-green-500"
+                          disabled
                         >
-                          <FaEye size={20} />
+                          <FaCheckCircle size={20} />
                         </button>
-                      </div>
-                      <div className="w-32 text-center">
+                      ) : (
                         <button
-                          title="View Part Time Ranks"
-                          className="bg-purple-500 text-white hover:bg-purple-700 transition-colors px-2 py-1 rounded"
-                          onClick={() => showRankListModal(dept.name, 'Part Time')}
+                          title="Publish Ranks"
+                          className="bg-green-500 hover:bg-green-600 text-white transition-colors px-2 py-2 rounded"
+                          onClick={() => togglePublishRankList(dept.id, dept.name)}
                         >
-                          <FaEye size={20} />
+                          <FaPaperPlane size={14} />
                         </button>
-                      </div>
-                      <div className="w-32 text-center">
-                        {publishedLists.includes(dept.id) || isDepartmentPublished(dept.name) ? (
-                          <button
-                            title="Published"
-                            className="text-green-500"
-                            disabled
-                          >
-                            <FaCheckCircle size={20} />
-                          </button>
-                        ) : (
-                          <button
-                            title="Publish Ranks"
-                            className="bg-green-500 hover:bg-green-600 text-white transition-colors px-2 py-2 rounded"
-                            onClick={() => togglePublishRankList(dept.id, dept.name)}
-                          >
-                            <FaPaperPlane size={14} />
-                          </button>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -882,26 +654,23 @@ export default function FOETResult() {
                           </td>
                         )}
                         <td className="px-4 py-4 text-center border-b border-gray-100">
-                          <div className={`font-semibold ${
-                            (row.writtenMarks || row.written_marks || 0) === 'Ab' ? 'text-red-600' :
+                          <div className={`font-semibold ${(row.writtenMarks || row.written_marks || 0) === 'Ab' ? 'text-red-600' :
                             (row.writtenMarks || row.written_marks || 0) >= 35 ? 'text-green-600' : 'text-red-600'
-                          }`}>
+                            }`}>
                             {row.writtenMarks || row.written_marks || 0}
                           </div>
                         </td>
                         <td className="px-4 py-4 text-center border-b border-gray-100">
-                          <div className={`font-semibold ${
-                            (row.vivaMarks || row.interview_marks || 0) === 'Ab' ? 'text-red-600' :
+                          <div className={`font-semibold ${(row.vivaMarks || row.interview_marks || 0) === 'Ab' ? 'text-red-600' :
                             (row.vivaMarks || row.interview_marks || 0) >= 15 ? 'text-green-600' : 'text-red-600'
-                          }`}>
+                            }`}>
                             {row.vivaMarks || row.interview_marks || 0}
                           </div>
                         </td>
                         <td className="px-4 py-4 text-center border-b border-gray-100">
-                          <div className={`font-semibold ${
-                            (row.totalMarks || row.total_marks || 0) === 'Absent' ? 'text-red-600' :
+                          <div className={`font-semibold ${(row.totalMarks || row.total_marks || 0) === 'Absent' ? 'text-red-600' :
                             (row.totalMarks || row.total_marks || 0) >= 50 ? 'text-green-600' : 'text-red-600'
-                          }`}>
+                            }`}>
                             {row.totalMarks || row.total_marks || 0}
                           </div>
                         </td>
@@ -938,7 +707,7 @@ export default function FOETResult() {
           <div className="publish-confirmation-content">
             {/* Header */}
             <div className="publish-confirmation-header">
-              <button 
+              <button
                 onClick={() => setConfirmModal(null)}
                 className="publish-confirmation-close"
               >
@@ -985,8 +754,8 @@ export default function FOETResult() {
                 </ul>
 
                 <div className="consent-checkbox-container">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     id="confirmFOETCheckbox"
                     className="consent-checkbox"
                     checked={isPublishConfirmed}
@@ -1007,13 +776,13 @@ export default function FOETResult() {
 
               {/* Action Buttons */}
               <div className="confirmation-actions">
-                <button 
+                <button
                   onClick={() => setConfirmModal(null)}
                   className="confirmation-cancel-btn"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   className="confirmation-confirm-btn"
                   onClick={confirmModal.onConfirm}
                   disabled={!isPublishConfirmed}
@@ -1064,7 +833,7 @@ export default function FOETResult() {
 
       {/* Message Box - Rendered as Portal to appear on top */}
       {createPortal(
-        <MessageBox 
+        <MessageBox
           show={messageBox.show}
           title={messageBox.title}
           message={messageBox.message}

@@ -77,8 +77,9 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     // Apply active filters
     if (activeFilters.type !== 'All Types') {
       scholars = scholars.filter(s => {
-        if (activeFilters.type === 'Full Time') return s.type === 'Full Time';
-        if (activeFilters.type === 'Part Time') return s.type === 'Part Time';
+        const t = (s.type || '').toLowerCase();
+        if (activeFilters.type === 'Full Time') return /\bft[a-z]*\b|full\s*time/.test(t);
+        if (activeFilters.type === 'Part Time') return /\bpt[a-z]*\b|part\s*time/.test(t);
         return true;
       });
     }

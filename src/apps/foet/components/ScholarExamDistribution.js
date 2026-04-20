@@ -50,7 +50,6 @@ const ScholarExamDistribution = () => {
           console.error('Error fetching examination records:', error);
           setExaminationRecords([]);
         } else {
-          console.log('Loaded examination records:', examRecords);
           setExaminationRecords(examRecords || []);
         }
       } catch (err) {
@@ -65,13 +64,9 @@ const ScholarExamDistribution = () => {
   }, [assignedFaculty]);
 
   // Use examination records data instead of mock data
-  const [examinations, setExaminations] = useState([]);
-
-  useEffect(() => {
-    if (examinationRecords.length > 0) {
-      setExaminations(examinationRecords);
-    }
-  }, [examinationRecords]);
+  // examinationRecords is populated by the local fetch; fall back to context examinationsData
+  // while the local fetch is in progress
+  const activeExamData = examinationRecords.length > 0 ? examinationRecords : examinationsData;
 
   // Inline Table Styles - Matching ScholarManagement (Verified Scholar) styling
   const tableStyles = {
@@ -143,7 +138,7 @@ const ScholarExamDistribution = () => {
   };
 
   // Transform examination records data for display
-  const examData = examinationRecords.map((record, index) => {
+  const examData = activeExamData.map((record, index) => {
     // Show all scholars for this faculty from examination_records.faculty column
     // Display marks as numbers: 0 initially, real marks when available from the database
     // Status shows director_interview status: "Pending" initially, "Forwarded" when forwarded to director
@@ -265,11 +260,6 @@ const ScholarExamDistribution = () => {
 
       return program; // Return original if no pattern matches
     };
-
-    // Debug: Log the department field for the first few records
-    if (index < 3) {
-      console.log(`Record ${index + 1} department:`, record.department, 'type:', record.type);
-    }
 
     return {
       id: record.id || index + 1,

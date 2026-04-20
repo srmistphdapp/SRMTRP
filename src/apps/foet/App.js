@@ -33,8 +33,6 @@ import {
   fetchQueryScholars,
   fetchFacultyExaminationRecords,
   fetchFacultyQuestionPapers,
-  fetchVivaMarks,
-  fetchSubmissionLogs,
   fetchDepartments
 } from './services/supabaseService';
 import { fetchDepartments as fetchAllDepartments } from '../../services/departmentService';
@@ -129,8 +127,6 @@ function App() {
   const [queryScholarsData, setQueryScholarsData] = useState([]);
   const [examinationsData, setExaminationsData] = useState([]);
   const [questionPapersData, setQuestionPapersData] = useState([]);
-  const [vivaMarksData, setVivaMarksData] = useState([]);
-  const [submissionLogsData, setSubmissionLogsData] = useState([]);
   const [departmentsData, setDepartmentsData] = useState([]);
   const [facultiesData, setFacultiesData] = useState([]);
   const [isLoadingSupabase, setIsLoadingSupabase] = useState(true);
@@ -201,17 +197,22 @@ function App() {
       }
     };
 
-    // Initial session restore or load
-    const tabCoordinator = getTabCoordinatorInfo();
-    if (tabCoordinator) {
-      setCoordinatorInfo(tabCoordinator);
-      setAssignedFaculty(tabCoordinator.faculty);
-      setCoordinatorName(tabCoordinator.name);
-    } else {
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user?.email) loadCoordinatorInfo(user.email);
-      });
-    }
+    // Always re-fetch from DB to ensure the correct faculty is loaded for the
+    // currently authenticated user — never rely solely on the sessionStorage cache,
+    // which may belong to a previously logged-in coordinator.
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) {
+        loadCoordinatorInfo(user.email);
+      } else {
+        // No active session — fall back to cached info if available
+        const tabCoordinator = getTabCoordinatorInfo();
+        if (tabCoordinator) {
+          setCoordinatorInfo(tabCoordinator);
+          setAssignedFaculty(tabCoordinator.faculty);
+          setCoordinatorName(tabCoordinator.name);
+        }
+      }
+    });
 
     // Auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -238,14 +239,12 @@ function App() {
       setIsLoadingSupabase(true);
       try {
         // Fetch all required data from Supabase
-        const [scholarsRes, adminScholarsRes, queryScholarsRes, examsRes, qpRes, vivaRes, logsRes, deptRes, allDeptRes] = await Promise.all([
+        const [scholarsRes, adminScholarsRes, queryScholarsRes, examsRes, qpRes, deptRes, allDeptRes] = await Promise.all([
           fetchFacultyScholars(assignedFaculty),
           fetchAdminForwardScholars(assignedFaculty),
           fetchQueryScholars(assignedFaculty),
           fetchFacultyExaminationRecords(assignedFaculty),
           fetchFacultyQuestionPapers(assignedFaculty),
-          fetchVivaMarks(),
-          fetchSubmissionLogs(),
           fetchDepartments(assignedFaculty),
           fetchAllDepartments() // Fetch all departments for transfer functionality
         ]);
@@ -280,16 +279,6 @@ function App() {
           console.log(`Loaded ${qpRes.data.length} question papers for ${assignedFaculty}`);
         }
 
-        // Handle viva marks data
-        if (vivaRes.data) {
-          setVivaMarksData(vivaRes.data);
-        }
-
-        // Handle submission logs data
-        if (logsRes.data) {
-          setSubmissionLogsData(logsRes.data);
-        }
-
         // Handle departments data - already filtered by faculty in the service
         if (deptRes.data) {
           setDepartmentsData(deptRes.data);
@@ -300,7 +289,7 @@ function App() {
         if (allDeptRes.data) {
           // Group departments by faculty (same logic as admin)
           const grouped = {};
-          
+
           allDeptRes.data.forEach(dept => {
             if (!grouped[dept.faculty]) {
               grouped[dept.faculty] = {
@@ -533,10 +522,6 @@ function App() {
     setExaminationsData,
     questionPapersData,
     setQuestionPapersData,
-    vivaMarksData,
-    setVivaMarksData,
-    submissionLogsData,
-    setSubmissionLogsData,
     departmentsData,
     setDepartmentsData,
     facultiesData,

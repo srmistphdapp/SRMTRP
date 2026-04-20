@@ -89,7 +89,8 @@ export const fetchFacultyScholars = async (assignedFaculty) => {
       return { data: [], error: null };
     }
 
-    // Derive the expected status from the faculty name
+    // Derive the expected status value from the faculty name
+    // e.g. "Faculty of Medical and Health Sciences" -> "Forwarded to Medical"
     const statusValue = getStatusForFaculty(assignedFaculty);
     console.log(`Normalized faculty: ${assignedFaculty}, Status filter: ${statusValue}`);
 
@@ -98,38 +99,22 @@ export const fetchFacultyScholars = async (assignedFaculty) => {
       return { data: [], error: null };
     }
 
-    // Fetch by status only — institution column drives the status, not faculty column
-    const { data: statusData, error: statusError } = await supabase
+    // Single authoritative query: status column is set by the director when forwarding
+    // to a specific FOET faculty, so it is the correct filter for which scholars
+    // belong to this coordinator.
+    const { data, error } = await supabase
       .from('scholar_applications')
       .select('*, program_type')
       .eq('status', statusValue)
       .order('created_at', { ascending: false });
 
-    if (statusError) {
-      console.error('Error fetching scholars by status:', statusError);
-      return { data: null, error: statusError };
+    if (error) {
+      console.error('Error fetching scholars by status:', error);
+      return { data: null, error };
     }
 
-    // Also get scholars sent back to director for this faculty (still filter by faculty here
-    // since faculty_forward is set by the FOET portal itself)
-    const { data: backToDirectorData, error: backToDirectorError } = await supabase
-      .from('scholar_applications')
-      .select('*, program_type')
-      .eq('faculty_forward', 'Back_To_Director')
-      .eq('status', statusValue)
-      .order('created_at', { ascending: false });
-
-    if (backToDirectorError) {
-      console.error('Error fetching back to director scholars:', backToDirectorError);
-      return { data: null, error: backToDirectorError };
-    }
-
-    // Combine and deduplicate
-    const allData = [...(statusData || []), ...(backToDirectorData || [])];
-    const uniqueData = Array.from(new Map(allData.map(item => [item.id, item])).values());
-
-    console.log(`Found ${uniqueData?.length || 0} scholars for faculty: ${assignedFaculty}`);
-    return { data: uniqueData, error: null };
+    console.log(`Found ${data?.length || 0} scholars for faculty: ${assignedFaculty}`);
+    return { data: data || [], error: null };
   } catch (err) {
     console.error('Exception in fetchFacultyScholars:', err);
     return { data: null, error: err };
@@ -270,66 +255,6 @@ export const updateScholarStatus = async (id, status) => {
   }
 };
 
-// Fetch viva marks for scholars
-export const fetchVivaMarks = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('viva_marks')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching viva marks:', error);
-      return { data: null, error };
-    }
-
-    return { data, error: null };
-  } catch (err) {
-    console.error('Exception in fetchVivaMarks:', err);
-    return { data: null, error: err };
-  }
-};
-
-// Fetch submission logs
-export const fetchSubmissionLogs = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('submission_logs')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching submission logs:', error);
-      return { data: null, error };
-    }
-
-    return { data, error: null };
-  } catch (err) {
-    console.error('Exception in fetchSubmissionLogs:', err);
-    return { data: null, error: err };
-  }
-};
-
-// Add submission log
-export const addSubmissionLog = async (logData) => {
-  try {
-    const { data, error } = await supabase
-      .from('submission_logs')
-      .insert([logData])
-      .select();
-
-    if (error) {
-      console.error('Error adding submission log:', error);
-      return { data: null, error };
-    }
-
-    return { data, error: null };
-  } catch (err) {
-    console.error('Exception in addSubmissionLog:', err);
-    return { data: null, error: err };
-  }
-};
-
 // Fetch departments filtered by faculty
 export const fetchDepartments = async (assignedFaculty) => {
   try {
@@ -376,11 +301,13 @@ export const fetchDepartments = async (assignedFaculty) => {
 // Update scholar faculty_status for department forwarding
 export const updateScholarFacultyStatus = async (scholarId, facultyStatus, forwardingStatus) => {
   try {
+    const updates = { faculty_status: facultyStatus };
+    // Also persist the forwarding status so fetch queries on the `status` column work correctly
+    if (forwardingStatus) updates.status = forwardingStatus;
+
     const { data, error } = await supabase
       .from('scholar_applications')
-      .update({
-        faculty_status: facultyStatus
-      })
+      .update(updates)
       .eq('id', scholarId)
       .select();
 
@@ -399,14 +326,15 @@ export const updateScholarFacultyStatus = async (scholarId, facultyStatus, forwa
 // Batch update multiple scholars' faculty_status
 export const batchUpdateScholarsFacultyStatus = async (scholarIds, facultyStatus, forwardingStatus) => {
   try {
+    const updates = { faculty_status: facultyStatus };
+    if (forwardingStatus) updates.status = forwardingStatus;
+
     // Update each scholar individually to ensure proper tracking
     const results = await Promise.all(
       scholarIds.map(id =>
         supabase
           .from('scholar_applications')
-          .update({
-            faculty_status: facultyStatus
-          })
+          .update(updates)
           .eq('id', id)
           .select()
       )

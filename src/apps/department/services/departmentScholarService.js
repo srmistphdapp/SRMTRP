@@ -789,10 +789,10 @@ export const sendQueryToScholar = async (scholarId, queryText, departmentCode, q
       return { data: null, error: new Error('Query text is required'), success: false };
     }
 
-    // Get scholar data including current status for dept_status determination
+    // Get scholar data including institution and faculty for accurate dept_status determination
     const { data: scholar, error: fetchError } = await supabase
       .from('scholar_applications')
-      .select('id, registered_name, status, faculty_status')
+      .select('id, registered_name, status, faculty_status, institution, faculty')
       .eq('id', scholarId)
       .single();
 
@@ -806,38 +806,26 @@ export const sendQueryToScholar = async (scholarId, queryText, departmentCode, q
       return { data: null, error: new Error('Scholar not found'), success: false };
     }
 
-    // Determine dept_status based on scholar's current status (same logic as forwardScholar)
-    let deptStatusValue;
-    const currentStatus = scholar.status;
+    // Shared helper: map any string to a dept_status value by keyword
+    const mapToDeptStatus = (str) => {
+      if (!str) return null;
+      const lower = str.toLowerCase();
+      if (lower.includes('engineering') || lower.includes('technology')) return 'Back_To_Engineering';
+      if (lower.includes('medical') || lower.includes('health') || lower.includes('dentistry')) return 'Back_To_Medical';
+      if (lower.includes('management') || lower.includes('business')) return 'Back_To_Management';
+      if (lower.includes('science') || lower.includes('humanities')) return 'Back_To_Science';
+      return null;
+    };
 
-    if (currentStatus && currentStatus.includes('Engineering')) {
-      deptStatusValue = 'Back_To_Engineering';
-    } else if (currentStatus && currentStatus.includes('Science')) {
-      deptStatusValue = 'Back_To_Science';
-    } else if (currentStatus && currentStatus.includes('Medical')) {
-      deptStatusValue = 'Back_To_Medical';
-    } else if (currentStatus && currentStatus.includes('Management')) {
-      deptStatusValue = 'Back_To_Management';
-    } else {
-      // Default fallback based on department code
-      if (departmentCode) {
-        if (['BME', 'ENGBIO', 'ENGCHEM', 'CIVIL', 'CSE', 'EEE', 'ECE', 'ENGENG', 'ENGMATH', 'MECH', 'ENGPHYS'].includes(departmentCode)) {
-          deptStatusValue = 'Back_To_Engineering';
-        } else if (['BIO', 'COMM', 'CS', 'EFL', 'FASHION', 'MATH', 'TAMIL', 'VISCOM'].includes(departmentCode)) {
-          deptStatusValue = 'Back_To_Science';
-        } else if (['MBA'].includes(departmentCode)) {
-          deptStatusValue = 'Back_To_Management';
-        } else if (['BMS', 'CDE', 'OMPM', 'OMS', 'OMR', 'ORTHO', 'PPD', 'POI', 'PROSTH', 'PHD'].includes(departmentCode)) {
-          deptStatusValue = 'Back_To_Medical';
-        } else {
-          deptStatusValue = 'Back_To_Engineering'; // Default fallback
-        }
-      } else {
-        deptStatusValue = 'Back_To_Engineering'; // Default fallback
-      }
-    }
+    // Priority: institution > faculty > status
+    // faculty_status is intentionally skipped (it stores forwarding codes, not the scholar's own faculty)
+    const deptStatusValue =
+      mapToDeptStatus(scholar.institution) ||
+      mapToDeptStatus(scholar.faculty) ||
+      mapToDeptStatus(scholar.status) ||
+      'Back_To_Engineering'; // last-resort default
 
-    console.log(`📝 Auto-forwarding query: Setting dept_status to: ${deptStatusValue} based on status: ${currentStatus} and department: ${departmentCode}`);
+    console.log(`📝 Auto-forwarding query: Setting dept_status to: ${deptStatusValue} (institution="${scholar.institution}", faculty="${scholar.faculty}", status="${scholar.status}")`);
 
     // Update dept_review, dept_query, dept_status (auto-forward), and query_timestamp columns
     const currentTimestamp = new Date().toISOString(); // timestamptz format
@@ -922,57 +910,50 @@ export const forwardScholar = async (scholarId, currentStatus) => {
       type: currentScholar.type
     });
 
-    // Determine the faculty using multiple sources (in order of preference)
-    let facultyToCheck = '';
+    // Helper: map a string to a dept_status value by checking faculty/institution keywords
+    const mapToDeptStatus = (str) => {
+      if (!str) return null;
+      const lower = str.toLowerCase();
+      if (lower.includes('engineering') || lower.includes('technology')) return 'Back_To_Engineering';
+      if (lower.includes('medical') || lower.includes('health') || lower.includes('dentistry')) return 'Back_To_Medical';
+      if (lower.includes('management') || lower.includes('business')) return 'Back_To_Management';
+      if (lower.includes('science') || lower.includes('humanities')) return 'Back_To_Science';
+      return null;
+    };
 
-    // 1. Check faculty field first
-    if (currentScholar.faculty) {
-      facultyToCheck = currentScholar.faculty;
-      console.log(`📋 Using faculty field: "${facultyToCheck}"`);
-    }
-    // 2. Check faculty_status field
-    else if (currentScholar.faculty_status) {
-      facultyToCheck = currentScholar.faculty_status;
-      console.log(`📋 Using faculty_status field: "${facultyToCheck}"`);
-    }
-    // 3. Check status field
-    else if (currentScholar.status) {
-      facultyToCheck = currentScholar.status;
-      console.log(`📋 Using status field: "${facultyToCheck}"`);
-    }
-    // 4. Check passed currentStatus parameter
-    else if (currentStatus) {
-      facultyToCheck = currentStatus;
-      console.log(`📋 Using currentStatus parameter: "${facultyToCheck}"`);
-    }
+    // Determine dept_status using columns in priority order:
+    // 1. institution  (most reliable — directly stores the scholar's faculty/institution)
+    // 2. faculty      (explicit faculty field)
+    // 3. status       (e.g. "Forwarded to Engineering")
+    // 4. currentStatus parameter
+    // faculty_status is intentionally skipped — it stores the forwarding code (e.g. FORWARDED_TO_SCI_CSE)
+    // which does NOT reliably encode the scholar's own faculty.
+    let deptStatusValue =
+      mapToDeptStatus(currentScholar.institution) ||
+      mapToDeptStatus(currentScholar.faculty) ||
+      mapToDeptStatus(currentScholar.status) ||
+      mapToDeptStatus(currentStatus);
 
-    let deptStatusValue;
+    const usedSource =
+      (mapToDeptStatus(currentScholar.institution) && `institution="${currentScholar.institution}"`) ||
+      (mapToDeptStatus(currentScholar.faculty) && `faculty="${currentScholar.faculty}"`) ||
+      (mapToDeptStatus(currentScholar.status) && `status="${currentScholar.status}"`) ||
+      (mapToDeptStatus(currentStatus) && `currentStatus="${currentStatus}"`);
 
-    // Map faculty to dept_status values (check for keywords in faculty name)
-    const facultyLower = facultyToCheck.toLowerCase();
-
-    if (facultyLower.includes('engineering') || facultyLower.includes('technology')) {
-      deptStatusValue = 'Back_To_Engineering';
-    } else if (facultyLower.includes('science') || facultyLower.includes('humanities')) {
-      deptStatusValue = 'Back_To_Science';
-    } else if (facultyLower.includes('medical') || facultyLower.includes('health') || facultyLower.includes('dentistry')) {
-      deptStatusValue = 'Back_To_Medical';
-    } else if (facultyLower.includes('management') || facultyLower.includes('business')) {
-      deptStatusValue = 'Back_To_Management';
-    } else {
-      // Final fallback - log warning and default to Engineering
+    if (!deptStatusValue) {
       console.warn(`⚠️ Could not determine faculty from any field. Checked:`, {
+        institution: currentScholar.institution,
         faculty: currentScholar.faculty,
-        faculty_status: currentScholar.faculty_status,
         status: currentScholar.status,
-        currentStatus: currentStatus,
-        facultyToCheck: facultyToCheck
+        currentStatus,
       });
       console.warn(`⚠️ Defaulting to Back_To_Engineering`);
       deptStatusValue = 'Back_To_Engineering';
+    } else {
+      console.log(`📋 Resolved dept_status from ${usedSource}`);
     }
 
-    console.log(`📝 Setting dept_status to: ${deptStatusValue} (based on faculty: "${facultyToCheck}")`);
+    console.log(`📝 Setting dept_status to: ${deptStatusValue}`);
 
     const updates = {
       dept_status: deptStatusValue

@@ -77,10 +77,10 @@ export const addMultipleSupervisors = async (supervisorsArray) => {
   try {
     console.log(`Appending ${supervisorsArray.length} supervisors (skipping duplicates)`);
 
-    // Step 1: Fetch all existing supervisor emails to detect duplicates
+    // Step 1: Fetch all existing supervisor emails AND names to detect duplicates
     const { data: existingSupervisors, error: fetchError } = await supabaseAdmin
       .from('supervisors')
-      .select('email');
+      .select('email, name, faculty_name, department_name');
 
     if (fetchError) {
       console.error('Error fetching existing supervisors:', fetchError);
@@ -90,11 +90,20 @@ export const addMultipleSupervisors = async (supervisorsArray) => {
     const existingEmails = new Set(
       (existingSupervisors || []).map(s => (s.email || '').toLowerCase().trim())
     );
+    // Also deduplicate by name+faculty+department to prevent re-uploading same person
+    const existingKeys = new Set(
+      (existingSupervisors || []).map(s =>
+        `${(s.name || '').toLowerCase().trim()}|${(s.faculty_name || '').toLowerCase().trim()}|${(s.department_name || '').toLowerCase().trim()}`
+      )
+    );
 
-    // Step 2: Filter out supervisors whose email already exists
+    // Step 2: Filter out supervisors whose email already exists OR name+faculty+dept matches
     const newSupervisors = supervisorsArray.filter(s => {
       const email = (s.email || '').toLowerCase().trim();
-      return email && !existingEmails.has(email);
+      const key = `${(s.name || '').toLowerCase().trim()}|${(s.faculty_name || '').toLowerCase().trim()}|${(s.department_name || '').toLowerCase().trim()}`;
+      // If no email, check by name+faculty+dept
+      if (!email) return !existingKeys.has(key);
+      return !existingEmails.has(email) && !existingKeys.has(key);
     });
 
     const skippedCount = supervisorsArray.length - newSupervisors.length;

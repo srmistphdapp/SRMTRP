@@ -1,6 +1,8 @@
-/* Examination Component - Scholar Administration Table Styles */
+/* ============================================================
+   Examination Component — Director Portal
+   ============================================================ */
 
-/* Hide number input spinner buttons */
+/* Hide number input spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -12,3261 +14,34 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* --- MODAL STYLING ENHANCEMENT --- */
-
-/* Base styling for inputs/selects in modals to ensure consistency */
-.modal-form-input,
-.modal-form-select {
-  /* Match the clean, tall look from the screenshot */
-  padding: 12px 16px;
-  height: 50px;
-  /* Ensure inputs are tall and uniform */
-  font-size: 14px;
-  border: 1px solid #d1d5db;
-  /* Light gray border */
-  border-radius: 6px;
-  /* Slightly rounded corners */
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  /* Subtle shadow */
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.modal-form-input:focus,
-.modal-form-select:focus {
-  border-color: #3b82f6;
-  /* Blue ring on focus */
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-/* Modal form label style */
-.modal-form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #4b5563;
-  /* Darker gray text */
-  margin-bottom: 4px;
-  text-transform: uppercase;
-}
-
-/* Ensure the button container at the bottom of the modal looks correct */
-.modal-footer {
-  padding: 24px 0 0;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 24px;
-}
-
-/* Force specific styling for disabled/read-only inputs */
-.modal-form-input:disabled,
-.modal-form-input[disabled],
-.modal-form-input[readonly] {
-  background-color: #f3f4f6 !important;
-  /* Lighter gray background */
-  cursor: not-allowed;
-  color: #6b7280;
-}
-
-/* --- END MODAL STYLING ENHANCEMENT --- */
-
-
-/* Status Badges */
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  display: inline-block;
-  white-space: nowrap;
-  text-align: center;
-  min-width: 70px;
-}
-
-.status-passed {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.status-failed {
-  background: linear-gradient(135deg, #fecaca, #fca5a5);
-  color: #991b1b;
-  border: 1px solid #f87171;
-}
-
-.status-verified {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #1e40af;
-  border: 1px solid #93c5fd;
-}
-
-.status-forwarded {
-  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  color: #3730a3;
-  border: 1px solid #a5b4fc;
-}
-
-/* Examination Container - No scroll layout */
+/* ── Page Container ─────────────────────────────────────────── */
 #examination-container {
-  position: relative;
-  z-index: 1;
-  overflow: visible;
   width: 100%;
-  max-width: 100%;
-  height: 100%;
-  margin-left: 0;
   padding: 16px;
   box-sizing: border-box;
-  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  background: transparent;
 }
 
-/* Enhanced Table Container with Isolated Scrolling */
-.examination-table-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  width: 100%;
-  max-width: 100%;
-  position: relative;
-  z-index: 1;
-  overscroll-behavior: contain;
-  transition: all 0.3s ease;
-  flex: 1;
-  min-height: 0;
-  height: 500px;
-  max-height: 500px;
-}
-
-/* Examination main content wrapper - TRANSPARENT LAYOUT */
 #examination-container .bg-white.rounded-lg.shadow-md {
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  max-height: none;
-  overflow: visible;
   padding: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
   border-radius: 0 !important;
   margin: 0 !important;
-}
-
-/* Table container takes remaining space */
-.examination-table-container {
-  flex: 1;
-  min-height: 0;
-}
-
-/* Enhanced table styling to match Scholar Administration */
-.examination-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  /* INCREASED MINIMUM WIDTH: 1950px -> 2200px */
-  min-width: 2200px !important;
-  width: 2200px !important;
-  table-layout: fixed !important;
-  margin-right: 0 !important;
-  /* Instant scroll for better responsiveness */
-  scroll-behavior: auto !important;
-}
-
-.examination-table thead th {
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 12px;
-  font-weight: 500;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  backdrop-filter: blur(8px);
-  background-color: rgba(249, 250, 251, 0.95);
-}
-
-.examination-table tbody tr {
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.examination-table tbody tr:hover {
-  background-color: #f9fafb;
-}
-
-.examination-table td {
-  padding: 12px 16px;
-  white-space: nowrap;
-  font-size: 14px;
-  color: #1f2937;
-  overflow: visible;
-}
-
-.examination-table td.text-center {
-  text-align: center;
-}
-
-/* CRITICAL FIX: Optimized and increased column widths */
-
-/* 1. Checkbox */
-.examination-table th:nth-child(1),
-.examination-table td:nth-child(1) {
-  width: 50px !important;
-  min-width: 50px !important;
-  max-width: 50px !important;
-  text-align: center !important;
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 20 !important;
-  background: inherit !important;
-}
-
-/* 2. S.NO */
-.examination-table th:nth-child(2),
-.examination-table td:nth-child(2) {
-  width: 55px !important;
-  min-width: 55px !important;
-  max-width: 55px !important;
-  position: sticky !important;
-  left: 50px !important;
-  z-index: 20 !important;
-  background: inherit !important;
-}
-
-/* 3. REGISTERED NAME */
-.examination-table th:nth-child(3),
-.examination-table td:nth-child(3) {
-  width: 200px !important;
-  min-width: 200px !important;
-  max-width: 200px !important;
-  position: sticky !important;
-  left: 105px !important;
-  z-index: 20 !important;
-  background: inherit !important;
-}
-
-/* 4. APPLICATION NO */
-.examination-table th:nth-child(4),
-.examination-table td:nth-child(4) {
-  width: 140px !important;
-  min-width: 140px !important;
-  max-width: 140px !important;
-  position: sticky !important;
-  left: 305px !important;
-  z-index: 20 !important;
-  background: inherit !important;
-}
-
-/* 5. SELECT INSTITUTION (Faculty) */
-.examination-table th:nth-child(5),
-.examination-table td:nth-child(5) {
-  width: 250px !important;
-  min-width: 250px !important;
-  max-width: 250px !important;
-  padding: 12px 12px !important;
-  position: sticky !important;
-  left: 445px !important;
-  z-index: 20 !important;
-  background: inherit !important;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.15);
-}
-
-/* Sticky header cells — explicit background */
-.examination-table thead th:nth-child(1),
-.examination-table thead th:nth-child(2),
-.examination-table thead th:nth-child(3),
-.examination-table thead th:nth-child(4),
-.examination-table thead th:nth-child(5) {
-  z-index: 25 !important;
-  background: #f9fafb !important;
-}
-
-/* Sticky body cells — white background */
-.examination-table tbody td:nth-child(1),
-.examination-table tbody td:nth-child(2),
-.examination-table tbody td:nth-child(3),
-.examination-table tbody td:nth-child(4),
-.examination-table tbody td:nth-child(5) {
-  background: #ffffff !important;
-}
-
-/* Row hover — keep sticky cells in sync */
-.examination-table tbody tr:hover td:nth-child(1),
-.examination-table tbody tr:hover td:nth-child(2),
-.examination-table tbody tr:hover td:nth-child(3),
-.examination-table tbody tr:hover td:nth-child(4),
-.examination-table tbody tr:hover td:nth-child(5) {
-  background: #f9fafb !important;
-}
-
-/* 6. SELECT PROGRAM */
-.examination-table th:nth-child(6),
-.examination-table td:nth-child(6) {
-  width: 250px !important;
-  min-width: 250px !important;
-  padding: 12px 12px !important;
-}
-
-/* 7. TYPE */
-.examination-table th:nth-child(7),
-.examination-table td:nth-child(7) {
-  width: 160px !important;
-  text-align: left !important;
-}
-
-/* 8. MOBILE NUMBER */
-.examination-table th:nth-child(8),
-.examination-table td:nth-child(8) {
-  width: 160px !important;
-  text-align: left !important;
-}
-
-/* 9. EMAIL ID */
-.examination-table th:nth-child(9),
-.examination-table td:nth-child(9) {
-  width: 250px !important;
-  text-align: left !important;
-}
-
-/* 10. GENDER */
-.examination-table th:nth-child(10),
-.examination-table td:nth-child(10) {
-  width: 100px !important;
-  text-align: center !important;
-}
-
-
-/* Action Buttons - Matching Scholar Administration */
-.table-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2px;
-  flex-wrap: nowrap;
-  padding: 0 2px;
-}
-
-.table-action-btn {
-  width: 26px;
-  height: 26px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
-/* Ensure all action buttons are visible */
-.examination-table td button {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  min-width: 26px;
-  min-height: 26px;
-  width: 26px;
-  height: 26px;
-  margin: 0 1px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
-.table-action-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* View Button - Blue Gradient (Same as Scholar Administration) */
-.btn-view {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
-}
-
-/* Edit Button - Purple Gradient (Same as Scholar Administration) */
-.btn-edit {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-}
-
-/* Verify Button - Green Gradient */
-.btn-verify {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-.btn-verify:disabled {
-  background: #6b7280;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* Forward Button - Green Gradient (Same as Scholar Administration) */
-.btn-forward {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-.btn-forward:disabled {
-  background: #6b7280;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-/* Disabled state for all buttons */
-.table-action-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Marks Badge */
-.marks-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  text-align: center;
-  min-width: 50px;
-  transition: all 0.2s ease;
-}
-
-.marks-badge.cursor-pointer:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.marks-passed {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.marks-failed {
-  background: linear-gradient(135deg, #fecaca, #fca5a5);
-  color: #991b1b;
-  border: 1px solid #f87171;
-}
-
-/* Application Number Styling */
-.application-no {
-  color: #2563eb;
-  font-weight: 600;
-}
-
-/* Serial Number Styling */
-.serial-no {
-  color: #6b7280;
-  font-weight: 500;
-  text-align: center;
-}
-
-/* Faculty and Department Text */
-.faculty-text {
-  color: #374151;
-  font-size: 13px;
-}
-
-.department-text {
-  color: #6b7280;
-  font-size: 13px;
-}
-
-/* Name Styling */
-.scholar-name {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 48px 24px;
-  color: #6b7280;
-}
-
-.empty-state-icon {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 16px;
-  color: #d1d5db;
-}
-
-/* Container Styling */
-#examination-container {
-  height: auto;
-  max-height: none;
-  padding: 16px;
-}
-
-#examination-container .bg-white.rounded-lg.shadow-md {
-  height: auto;
-  max-height: none;
-  display: flex;
-  flex-direction: column;
-  padding: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-}
-
-/* Ensure table container takes remaining space */
-.examination-table-container {
-  flex: none;
-  min-height: 500px;
-  height: 500px;
-  max-height: 500px;
-}
-
-/* Responsive behavior */
-@media (max-width: 1024px) {
-  .examination-table {
-    min-width: 2000px !important;
-    width: 2000px !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .examination-table {
-    min-width: 1800px !important;
-    width: 1800px !important;
-  }
-
-  .examination-table th,
-  .examination-table td {
-    padding: 8px 6px;
-    font-size: 12px;
-  }
-}
-
-/* Ensure no horizontal overflow on main container - removed contain: layout style as it blocks sticky positioning */
-
-/* Examination page wrapper - no scroll */
-.examination-page-wrapper {
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* General fullscreen page wrapper */
-.fullscreen-page-wrapper {
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Examination header - compact */
-#examination-container .flex.items-center.justify-between.mb-4 {
-  margin-bottom: 12px;
-  flex-shrink: 0;
-}
-
-#examination-container h1 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-/* Controls Layout - Compact for no-scroll layout - MINIMAL SPACING */
-.examination-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px !important;
-  margin-top: 0 !important;
-  flex-shrink: 0;
-}
-
-.examination-controls-left {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  min-width: 0;
-}
-
-.examination-controls-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  position: sticky;
-  right: 0;
-  background: white;
-  padding-left: 8px;
-}
-
-/* Fullscreen Button Styling - Always visible */
-.fullscreen-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
-
-.fullscreen-btn:hover {
-  background-color: #e2e8f0;
-  border-color: #cbd5e1;
-  color: #475569;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.fullscreen-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.fullscreen-btn svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* Fullscreen mode adjustments - handled by parent container */
-.fullscreen-mode #examination-container {
-  padding: 20px;
-  height: 100vh;
-}
-
-.fullscreen-mode .bg-white.rounded-lg.shadow-md {
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-.fullscreen-mode .examination-table-container {
-  flex: 1;
-  margin-top: 20px;
-}
-
-/* Header styling in fullscreen */
-.fullscreen-mode h1 {
-  font-size: 28px;
-}
-
-.fullscreen-mode .fullscreen-btn {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.fullscreen-mode .fullscreen-btn:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
-}
-
-/* Responsive fullscreen button */
-@media (max-width: 640px) {
-  .fullscreen-btn span {
-    display: none;
-  }
-
-  .fullscreen-btn {
-    padding: 8px;
-    min-width: 40px;
-    justify-content: center;
-  }
-}
-
-/* Fixed table size - no growing */
-.examination-table-container {
-  min-height: 500px;
-  height: 500px;
-  max-height: 500px;
-}
-
-/* Consistent table size across screen sizes */
-@media (min-height: 800px) {
-  .examination-table-container {
-    height: 500px;
-    max-height: 500px;
-    min-height: 500px;
-  }
-}
-
-@media (min-height: 900px) {
-  .examination-table-container {
-    height: 500px;
-    max-height: 500px;
-    min-height: 500px;
-  }
-}
-
-@media (min-height: 1000px) {
-  .examination-table-container {
-    height: 500px;
-    max-height: 500px;
-    min-height: 500px;
-  }
-}
-
-/* Fullscreen optimizations */
-.fullscreen-mode .examination-table-container {
-  height: auto !important;
-  max-height: none !important;
-  min-height: 0 !important;
-}
-
-/* Remove unnecessary margins and padding - ALREADY HANDLED ABOVE */
-
-/* Optimize header spacing - MINIMAL SPACING */
-#examination-container .bg-white.rounded-lg.shadow-md>div:first-child {
-  margin-bottom: 12px;
-}
-
-#examination-container .bg-white.rounded-lg.shadow-md>div:nth-child(2) {
-  margin-bottom: 12px;
-}
-
-/* Floating Fullscreen Button Styling */
-.fullscreen-btn-floating {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 50%;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 48px;
-  height: 48px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-}
-
-.fullscreen-btn-floating:hover {
-  background-color: #f8fafc;
-  border-color: #cbd5e1;
-  color: #475569;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.fullscreen-btn-floating:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Fullscreen mode adjustments for floating button */
-.fullscreen-mode .fullscreen-btn-floating {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
-
-.fullscreen-mode .fullscreen-btn-floating:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
-}
-
-/* Responsive controls layout */
-@media (max-width: 768px) {
-  .examination-controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-
-  .examination-controls-left {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .examination-controls-right {
-    align-self: flex-end;
-  }
-
-  .fullscreen-btn {
-    width: 44px;
-    height: 44px;
-  }
-}
-
-/* Responsive floating button */
-@media (max-width: 640px) {
-  .fullscreen-btn-floating {
-    bottom: 16px;
-    right: 16px;
-    width: 44px;
-    height: 44px;
-    padding: 10px;
-  }
-}
-
-/* Additional fix for sidebar overlap prevention */
-.examination-table {
-  position: relative;
-  z-index: 1;
-  /* removed isolation: isolate - blocks sticky */
-}
-
-/* Responsive design for different screen sizes */
-@media (min-width: 1200px) {
-  .examination-table-container {
-    height: calc(100vh - 220px);
-    max-height: calc(100vh - 180px);
-  }
-
-  .examination-fullscreen .examination-table-container {
-    height: calc(100vh - 180px);
-    max-height: calc(100vh - 150px);
-  }
-}
-
-@media (max-width: 1199px) {
-  #examination-container {
-    padding: 12px;
-  }
-
-  .examination-table-container {
-    height: calc(100vh - 280px);
-    min-height: 350px;
-  }
-}
-
-@media (max-width: 768px) {
-  #examination-container {
-    max-width: 100vw !important;
-    margin-left: 0 !important;
-    padding: 8px;
-  }
-
-  .examination-table-container {
-    height: calc(100vh - 320px);
-    min-height: 300px;
-  }
-
-  .examination-fullscreen {
-    padding: 10px;
-  }
-
-  .examination-fullscreen .examination-table-container {
-    height: calc(100vh - 160px);
-  }
-}
-
-/* Force proper layering - removed isolation: isolate as it blocks sticky */
-
-/* ENHANCED EXAMINATION TABLE SCROLLING - ISOLATED BEHAVIOR */
-
-/* Add scroll indicators for better UX */
-.examination-table-scroll {
-  position: relative;
-}
-
-.examination-table-scroll::before {
-
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  background: rgba(59, 130, 246, 0.9);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  z-index: 20;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.examination-table-scroll:hover::before {
-  opacity: 1;
-}
-
-/* Prevent body scroll when scrolling table */
-.examination-table-scroll:hover {
-  overscroll-behavior: contain;
-}
-
-/* Enhanced table styling for better scrolling experience */
-.examination-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  min-width: 1470px;
-  table-layout: fixed;
-  /* Instant scroll for better responsiveness */
-  scroll-behavior: auto !important;
-  margin-right: 0;
-}
-
-/* Ensure sticky header works perfectly with scrolling */
-.examination-table thead th {
-  background-color: #f9fafb !important;
-  border-bottom: 1px solid #e5e7eb;
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 12px;
-  font-weight: 500;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  /* Ensure header stays on top during scroll */
-  backdrop-filter: blur(8px);
-  background-color: rgba(249, 250, 251, 0.95);
-}
-
-/* Visual feedback for scrollable content */
-.examination-table-container::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(to top, rgba(226, 232, 240, 0.6), transparent);
-  pointer-events: none;
-  z-index: 5;
-}
-
-.examination-table-container::before {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  background: rgba(59, 130, 246, 0.9);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  z-index: 20;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.examination-table-container:hover::before {
-  opacity: 1;
-}
-
-/* Smooth scrolling for all table elements - disabled for better performance */
-.examination-table,
-.examination-table * {
-  scroll-behavior: auto !important;
-}
-
-/* Enhanced container isolation */
-.examination-table-container {
-  /* removed isolation: isolate - blocks sticky */
-  /* Prevent scroll chaining */
-  overscroll-behavior: contain;
-  /* Better performance */
-  will-change: scroll-position;
-}
-
-/* Mobile touch scrolling improvements */
-@media (max-width: 768px) {
-  .examination-table-scroll {
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x proximity;
-  }
-
-  .examination-table-scroll::before {
-    content: '↔ Swipe to scroll';
-    font-size: 9px;
-  }
-}
-
-/* Fullscreen mode enhancements */
-.fullscreen-mode .examination-table-scroll {
-  height: 100%;
-}
-
-/* Ensure proper layering and isolation */
-.examination-table-scroll {
-  /* removed transform: translateZ(0) - blocks sticky */
-  /* removed contain: layout style paint - blocks sticky */
-  /* Prevent scroll propagation */
-  overscroll-behavior: contain;
-}
-
-/* Additional scrollbar styling for better visibility */
-.examination-table-container::-webkit-scrollbar,
-.examination-table-scroll::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
-}
-
-.examination-table-container::-webkit-scrollbar-track,
-.examination-table-scroll::-webkit-scrollbar-track {
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  margin: 2px;
-}
-
-.examination-table-container::-webkit-scrollbar-thumb,
-.examination-table-scroll::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-  border: 2px solid #f8fafc;
-  min-height: 30px;
-  min-width: 30px;
-}
-
-.examination-table-container::-webkit-scrollbar-thumb:hover,
-.examination-table-scroll::-webkit-scrollbar-thumb:hover {
-  cursor: grab;
-}
-
-.examination-table-container::-webkit-scrollbar-corner,
-.examination-table-scroll::-webkit-scrollbar-corner {
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-
-
-/* Ensure table content doesn't interfere with page layout */
-.examination-table tbody tr {
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-  transition: background-color 0.2s ease;
-}
-
-.examination-table tbody tr:hover {
-  background-color: #f9fafb;
-}
-
-/* Final isolation rules */
-.examination-table-container,
-.examination-table-scroll {
-  /* Prevent scroll events from bubbling up */
-  overscroll-behavior: contain;
-  /* Instant scroll for better responsiveness */
-  scroll-behavior: auto !important;
-  /* Touch scrolling on mobile */
-  -webkit-overflow-scrolling: touch;
-}
-
-/* ENHANCED RESPONSIVE LAYOUT - FINAL IMPLEMENTATION */
-/* Container adjustments for different states */
-#examination-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-#examination-container .bg-white.rounded-lg.shadow-md {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-}
-
-/* Enhanced fullscreen experience */
-.fullscreen-mode {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-}
-
-.fullscreen-mode .bg-white.rounded-lg.shadow-md {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.fullscreen-mode h1 {
-  font-size: 32px;
-  background: linear-gradient(135deg, #1e293b, #475569);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Table container responsive heights */
-.examination-table-container {
-  flex: 1;
-  min-height: 0;
-}
-
-/* Button section responsive */
-.fullscreen-mode .flex.flex-wrap.gap-2 {
-  gap: 12px;
-}
-
-.fullscreen-mode .flex.flex-wrap.gap-2 button {
-  padding: 12px 20px;
-  font-size: 14px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.fullscreen-mode .flex.flex-wrap.gap-2 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Search and filter section in fullscreen */
-.fullscreen-mode .flex.items-center.gap-2 {
-  gap: 16px;
-}
-
-.fullscreen-mode .relative input {
-  padding: 12px 16px 12px 40px;
-  font-size: 14px;
-  border-radius: 8px;
-  border: 2px solid #e2e8f0;
-  transition: all 0.3s ease;
-}
-
-.fullscreen-mode .relative input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-}
-
-/* Enhanced table in fullscreen */
-.fullscreen-mode .examination-table-container {
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
-}
-
-.fullscreen-mode .examination-table th {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  font-size: 13px;
-  padding: 16px;
-}
-
-.fullscreen-mode .examination-table td {
-  padding: 16px;
-  font-size: 14px;
-}
-
-/* Responsive adjustments for larger screens */
-@media (min-width: 1024px) {
-  #examination-container {
-    padding: 20px;
-  }
-}
-
-/* Ultra-wide screen optimizations */
-@media (min-width: 1600px) {
-  .fullscreen-mode .examination-table-container {
-    flex: 1;
-  }
-
-  .fullscreen-mode h1 {
-    font-size: 36px;
-  }
-
-  .fullscreen-mode .bg-white.rounded-lg.shadow-md {
-    padding: 32px;
-  }
-}
-
-/* Smooth transitions for all responsive changes */
-#examination-container,
-.examination-table-container,
-.bg-white.rounded-lg.shadow-md {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Remove debug borders */
-.examination-table-container {
-  border: 1px solid #e5e7eb !important;
-}
-
-.examination-table-scroll {
   border: none !important;
-}
-
-/* Enhanced visual hierarchy in fullscreen */
-.fullscreen-mode .flex.items-center.justify-between.mb-4 {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.fullscreen-mode .flex.flex-col.gap-4.mb-6 {
-  margin-bottom: 32px;
-  gap: 20px;
-}
-
-/* ENSURE ACTION COLUMN VISIBILITY */
-/* Action column - accessible through horizontal scroll */
-.examination-table th:nth-child(7),
-.examination-table td:nth-child(7) {
-  text-align: center;
-  vertical-align: middle;
-  min-width: 250px !important;
-  width: px !important;
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-}
-
-.examination-table thead th:nth-child(7) {
-  background: #f9fafb;
-  text-align: center;
-}
-
-/* Table container with horizontal scroll for action column access */
-.examination-table-container {
-  position: relative;
-  overflow-y: hidden !important;
-  overflow-x: hidden !important;
-  width: 100%;
-}
-
-/* Responsive adjustments for action column */
-@media (max-width: 1200px) {
-
-  .examination-table th:nth-child(7),
-  .examination-table td:nth-child(7) {
-    min-width: 120px;
-    width: 120px;
-  }
-}
-
-@media (max-width: 768px) {
-
-  .examination-table th:nth-child(7),
-  .examination-table td:nth-child(7) {
-    min-width: 100px;
-    width: 100px;
-  }
-
-  .table-actions {
-    gap: 2px !important;
-  }
-
-  .table-action-btn {
-    width: 20px !important;
-    height: 20px !important;
-  }
-}
-
-/* Ensure action buttons are always clickable */
-.table-actions {
-  position: relative;
-}
-
-/* Better column distribution for smaller screens */
-@media (max-width: 1024px) {
-
-  .examination-table th:nth-child(4),
-  .examination-table td:nth-child(4),
-  .examination-table th:nth-child(5),
-  .examination-table td:nth-child(5) {
-    width: 14%;
-    min-width: 90px;
-  }
-
-  .examination-table th:nth-child(2),
-  .examination-table td:nth-child(2) {
-    width: 14%;
-    min-width: 80px;
-  }
-}
-
-/* CRITICAL FIX FOR HORIZONTAL SCROLLING */
-.examination-table-container {
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  max-width: 100% !important;
-  width: 100% !important;
-  position: relative;
-}
-
-.examination-table-scroll {
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-  width: 100% !important;
-  position: relative;
-  /* Ensure full scroll range */
-  max-width: none !important;
-}
-
-/* Ensure table can scroll horizontally with proper width */
-.examination-table {
-  width: 100% !important;
-  min-width: 2200px !important;
-  table-layout: fixed !important;
-  margin: 0 !important;
-}
-
-/* Optimized column widths for better spacing and alignment */
-.examination-table th:nth-child(1),
-.examination-table td:nth-child(1) {
-  width: 70px !important;
-  min-width: 70px !important;
-  text-align: center !important;
-  padding: 12px 6px !important;
-}
-
-.examination-table th:nth-child(2),
-.examination-table td:nth-child(2) {
-  width: 240px !important;
-  /* Increased spacing */
-  min-width: 240px !important;
-  padding: 12px 12px !important;
-}
-
-.examination-table th:nth-child(3),
-.examination-table td:nth-child(3) {
-  width: 160px !important;
-  /* Adjusted width */
-  min-width: 160px !important;
-  padding: 12px 12px !important;
-}
-
-.examination-table th:nth-child(4),
-.examination-table td:nth-child(4) {
-  width: 350px !important;
-  /* Increased spacing */
-  padding: 12px 12px !important;
-}
-
-.examination-table th:nth-child(5),
-.examination-table td:nth-child(5) {
-  width: 250px !important;
-  /* Increased width significantly */
-  min-width: 250px !important;
-  padding: 12px 12px !important;
-}
-
-.examination-table th:nth-child(6),
-.examination-table td:nth-child(6) {
-  width: 160px !important;
-  /* Increased spacing */
-  min-width: 160px !important;
-  text-align: left !important;
-  padding: 12px 12px !important;
-}
-
-.examination-table th:nth-child(7),
-.examination-table td:nth-child(7) {
-  width: 250px !important;
-  /* Increased spacing */
-  min-width: 250px !important;
-  text-align: left !important;
-  padding: 12px 12px !important;
-}
-
-.examination-table th:nth-child(8),
-.examination-table td:nth-child(8) {
-  width: 100px !important;
-  /* Adjusted width */
-  min-width: 100px !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-  padding: 12px 6px !important;
-}
-
-.examination-table th:nth-child(9),
-.examination-table td:nth-child(9) {
-  width: 150px !important;
-  /* Increased spacing */
-  min-width: 150px !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-  padding: 12px 6px !important;
-}
-
-.examination-table th:nth-child(10),
-.examination-table td:nth-child(10) {
-  width: 120px !important;
-  min-width: 120px !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-  padding: 12px 6px !important;
-}
-
-.examination-table th:nth-child(11),
-.examination-table td:nth-child(11) {
-  width: 120px !important;
-  min-width: 120px !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-  padding: 12px 6px !important;
-}
-
-.examination-table th:nth-child(12),
-.examination-table td:nth-child(12) {
-  width: 160px !important;
-  /* Increased spacing */
-  min-width: 160px !important;
-  text-align: center !important;
-  vertical-align: middle !important;
-  padding: 12px 6px !important;
-}
-
-/* Ensure all parent containers allow horizontal scroll */
-.examination-table-container,
-.examination-table-scroll {
-  contain: none !important;
-}
-
-/* Enhanced horizontal and vertical scrolling support */
-.examination-table-scroll {
-  /* Enable focus for keyboard navigation */
-  outline: none;
-  /* Smooth scrolling behavior - auto for better responsiveness */
-  scroll-behavior: auto;
-  /* Better touch scrolling on mobile */
-  -webkit-overflow-scrolling: touch;
-  /* Allow both horizontal and vertical scroll chaining when needed */
-  overscroll-behavior-x: contain;
-  overscroll-behavior-y: auto;
-  /* removed transform: translateZ(0) - blocks sticky */
-  will-change: scroll-position;
-  /* Better scrolling performance */
-  scroll-snap-type: none;
-}
-
-.examination-table-scroll:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: -2px;
-}
-
-/* Scrollbar styling for better visibility */
-.examination-table-scroll::-webkit-scrollbar {
-  width: 16px;
-  height: 16px;
-}
-
-.examination-table-scroll::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 8px;
-  border: 2px solid #e2e8f0;
-}
-
-.examination-table-scroll::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-  border: 2px solid #f1f5f9;
-  min-height: 40px;
-  min-width: 40px;
-}
-
-.examination-table-scroll::-webkit-scrollbar-thumb:hover {
-  cursor: grab;
-}
-
-.examination-table-scroll::-webkit-scrollbar-thumb:active {
-  cursor: grabbing;
-}
-
-.examination-table-scroll::-webkit-scrollbar-corner {
-  background: #f1f5f9;
-  border-radius: 8px;
-}
-
-/* Mobile touch scrolling improvements */
-@media (max-width: 768px) {
-  .examination-table-scroll {
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .examination-table th,
-  .examination-table td {
-    scroll-snap-align: start;
-  }
-}
-
-/* Add extra space to ensure Actions column is fully accessible */
-.examination-table {
-  margin-right: 0 !important;
-  margin-left: 0 !important;
-}
-
-/* Ensure scroll container allows full width and bidirectional scrolling */
-.examination-table-scroll {
-  padding-right: 50px !important;
-  padding-left: 0 !important;
-  box-sizing: content-box !important;
-  /* Ensure scroll starts from the beginning */
-  scroll-padding-left: 0 !important;
-}
-
-/* Examination Component - Scholar Administration Table Styles */
-
-/* Hide number input spinner buttons */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-/* --- MODAL STYLING ENHANCEMENT --- */
-.modal-form-input,
-.modal-form-select {
-  padding: 12px 16px;
-  height: 50px;
-  font-size: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.modal-form-input:focus,
-.modal-form-select:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.modal-form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-}
-
-.modal-footer {
-  padding: 24px 0 0;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 24px;
-}
-
-.modal-form-input:disabled,
-.modal-form-input[disabled],
-.modal-form-input[readonly] {
-  background-color: #f3f4f6 !important;
-  cursor: not-allowed;
-  color: #6b7280;
-}
-
-/* --- TABLE CONTAINER & SCROLLING --- */
-
-/* Main Container */
-#examination-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* Table Scroll Wrapper - Fixed for proper scrolling with expanded height */
-.examination-table-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  flex: 1;
-  width: 100%;
-  min-height: 0;
-  /* CRITICAL: Enable both X and Y scrolling with expanded height */
-  overflow: auto !important;
-  position: relative;
-  /* Dynamic height based on screen size - Expanded */
-  height: calc(100vh - 180px) !important;
-  max-height: none !important;
-}
-
-/* Table Base Styles - Fixed for proper scrolling */
-.examination-table {
-  width: max-content;
-  /* Allow table to grow beyond container */
-  min-width: 1700px !important;
-  /* Ensure minimum width for all columns */
-  border-collapse: separate;
-  border-spacing: 0;
-  table-layout: fixed;
-  /* Respect column widths */
-}
-
-/* Sticky Header */
-.examination-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 12px;
-  font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Cell Styles */
-.examination-table tbody td {
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #1f2937;
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: middle;
-  /* Align text nicely */
-  background-color: white;
-}
-
-.examination-table tbody tr:hover td {
-  background-color: #f9fafb;
-}
-
-
-
-/* --- COMPONENT STYLES --- */
-
-/* Action Buttons */
-.table-actions {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-}
-
-.table-action-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-
-.table-action-btn:hover {
-  transform: scale(1.1);
-}
-
-/* Status Badges */
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: capitalize;
-  display: inline-block;
-}
-
-/* Marks Badge */
-.marks-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.marks-passed {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.marks-failed {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
-}
-
-/* Empty State */
-.empty-state {
-  padding: 40px;
-  text-align: center;
-  color: #6b7280;
-}
-
-/* Fullscreen Mode Overrides */
-.fullscreen-mode #examination-container {
-  padding: 24px;
-  background: #f3f4f6;
-}
-
-.fullscreen-mode .examination-table-container {
-  height: calc(100vh - 120px);
-  max-height: none;
-}
-
-/* Examination Component - Scholar Administration Table Styles */
-
-/* Hide number input spinner buttons */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-/* --- MODAL STYLING ENHANCEMENT --- */
-.modal-form-input,
-.modal-form-select {
-  padding: 12px 16px;
-  height: 50px;
-  font-size: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  width: 100%;
-}
-
-.modal-form-input:focus,
-.modal-form-select:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.modal-form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-}
-
-.modal-footer {
-  padding: 24px 0 0;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 24px;
-}
-
-.modal-form-input:disabled,
-.modal-form-input[disabled],
-.modal-form-input[readonly] {
-  background-color: #f3f4f6 !important;
-  cursor: not-allowed;
-  color: #6b7280;
-}
-
-/* Main Container - MINIMAL SPACING */
-#examination-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 12px !important;
-  box-sizing: border-box;
-  overflow: hidden;
-  width: 100%;
-  margin: 0 !important;
-  gap: 12px !important;
-}
-
-#examination-container .bg-white.rounded-lg.shadow-md {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 100%;
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-/* Controls Section */
-.examination-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  flex-shrink: 0;
-}
-
-.examination-controls-left {
-  display: flex;
-  flex-wrap: wrap;
   gap: 12px;
-  align-items: center;
 }
 
-/* --- TABLE CONTAINER & SCROLLING --- */
-
-.examination-table-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  flex: 1;
-  width: 100%;
-  min-height: 0;
-  overflow: auto !important;
-  position: relative;
-  /* isolation: isolate REMOVED — it breaks sticky positioning */
-}
-
-/* Custom Scrollbar Styling */
-.examination-table-container::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-.examination-table-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 6px;
-}
-
-.examination-table-container::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 6px;
-  border: 3px solid #f1f5f9;
-}
-
-.examination-table-container::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
-}
-
-/* --- TABLE STYLES --- */
-
-.examination-table {
-  width: max-content;
-  min-width: 2000px;
-  /* Slight increase to accommodate wider Email */
-  border-collapse: separate;
-  /* Required for sticky to work correctly */
-  border-spacing: 0;
-  table-layout: fixed;
-}
-
-/* --- STICKY HEADER CONFIGURATION --- */
-
-.examination-table thead th {
-  position: sticky;
-  top: 0;
-  /* Standardized z-index for consistency */
-  z-index: 15;
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 11px;
-  font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* Table Rows */
-.examination-table tbody tr {
-  background-color: white;
-  transition: background-color 0.15s ease;
-}
-
-.examination-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
-.examination-table tbody td {
-  padding: 12px 16px;
-  font-size: 13px;
-  color: #1f2937;
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: middle;
-}
-
-/* --- COLUMN CONFIGURATION (13 COLUMNS) --- */
-
-/* 1. S.NO */
-.examination-table th:nth-child(1),
-.examination-table td:nth-child(1) {
-  width: 60px !important;
-  text-align: center;
-}
-
-/* 2. REGISTERED NAME */
-.examination-table th:nth-child(2),
-.examination-table td:nth-child(2) {
-  width: 200px !important;
-  white-space: normal;
-  line-height: 1.4;
-  font-weight: 600;
-}
-
-/* 3. APPLICATION NO */
-.examination-table th:nth-child(3),
-.examination-table td:nth-child(3) {
-  width: 140px !important;
-  white-space: nowrap;
-  color: #2563eb;
-}
-
-/* 4. SELECT INSTITUTION */
-.examination-table th:nth-child(4),
-.examination-table td:nth-child(4) {
-  width: 260px !important;
-  white-space: normal;
-  line-height: 1.3;
-  color: #4b5563;
-}
-
-/* 5. SELECT PROGRAM */
-.examination-table th:nth-child(5),
-.examination-table td:nth-child(5) {
-  width: 260px !important;
-  white-space: normal;
-  line-height: 1.3;
-  color: #4b5563;
-}
-
-/* 6. TYPE */
-.examination-table th:nth-child(6),
-.examination-table td:nth-child(6) {
-  width: 120px !important;
-  white-space: nowrap;
-}
-
-/* 7. MOBILE NUMBER (Strict Width Constraint) */
-.examination-table th:nth-child(7),
-.examination-table td:nth-child(7) {
-  width: 10vw !important;
-  min-width: 110px !important;
-  max-width: 10vw !important;
-  /* Force browser to respect width */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 8. EMAIL ID (Increased Width) */
-.examination-table th:nth-child(8),
-.examination-table td:nth-child(8) {
-  width: 280px !important;
-  min-width: 280px !important;
-  white-space: normal;
-  word-break: break-all;
-}
-
-/* 9. GENDER */
-.examination-table th:nth-child(9),
-.examination-table td:nth-child(9) {
-  width: 90px !important;
-  text-align: center;
-}
-
-/* 10. CERTIFICATES */
-.examination-table th:nth-child(10),
-.examination-table td:nth-child(10) {
-  width: 120px !important;
-  text-align: center;
-}
-
-/* 11. MARKS */
-.examination-table th:nth-child(11),
-.examination-table td:nth-child(11) {
-  width: 100px !important;
-  text-align: center;
-}
-
-/* 12. STATUS */
-.examination-table th:nth-child(12),
-.examination-table td:nth-child(12) {
-  width: 120px !important;
-  text-align: center;
-}
-
-/* 13. ACTIONS (Sticky Right Column) */
-
-/* 13. INTERVIEW MARKS - Remove special styling */
-.examination-table td:nth-child(13) {
-  width: 120px !important;
-  text-align: center !important;
-  /* Remove border and shadow that was incorrectly applied */
-}
-
-.examination-table thead th:nth-child(13) {
-  width: 120px !important;
-  text-align: center !important;
-  /* Remove border and shadow that was incorrectly applied */
-}
-
-/* --- BADGES & BUTTONS --- */
-
-.table-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-block;
-}
-
-.marks-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  cursor: pointer;
-  min-width: 30px;
-}
-
-.marks-passed {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.marks-failed {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
-}
-
-/* --- FULLSCREEN ADJUSTMENTS --- */
-.fullscreen-mode #examination-container {
-  padding: 0;
-  height: 100vh;
-}
-
-.fullscreen-mode .bg-white.rounded-lg.shadow-md {
-  border-radius: 0;
-  height: 100%;
-  padding: 24px;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  .examination-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .examination-controls-left {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .examination-table-container {
-    margin-top: 10px;
-  }
-}
-
-/* Examination Component - Scholar Administration Table Styles */
-
-/* Hide number input spinner buttons */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-/* --- MODAL STYLING --- */
-.modal-form-input,
-.modal-form-select {
-  padding: 12px 16px;
-  height: 50px;
-  font-size: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  width: 100%;
-}
-
-.modal-form-input:focus,
-.modal-form-select:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.modal-form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #4b5563;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-}
-
-.modal-footer {
-  padding: 24px 0 0;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 24px;
-}
-
-.modal-form-input:disabled,
-.modal-form-input[disabled],
-.modal-form-input[readonly] {
-  background-color: #f3f4f6 !important;
-  cursor: not-allowed;
-  color: #6b7280;
-}
-
-/* --- MAIN CONTAINER LAYOUT --- */
-#examination-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  overflow: hidden;
-  width: 100%;
-}
-
-#examination-container .bg-white.rounded-lg.shadow-md {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  max-height: 100%;
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-/* Controls Section */
-.examination-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-  flex-shrink: 0;
-}
-
-.examination-controls-left {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-}
-
-.examination-controls-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Fullscreen Button */
-.fullscreen-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 40px;
-  height: 40px;
-}
-
-.fullscreen-btn:hover {
-  background-color: #e2e8f0;
-  color: #475569;
-}
-
-/* --- TABLE CONTAINER & SCROLLING --- */
-.examination-table-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  flex: 1;
-  width: 100%;
-  min-height: 0;
-  overflow: auto !important;
-  position: relative;
-  /* isolation: isolate REMOVED — it breaks sticky positioning */
-}
-
-/* Custom Scrollbar Styling */
-.examination-table-container::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-.examination-table-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 6px;
-}
-
-.examination-table-container::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 6px;
-  border: 3px solid #f1f5f9;
-}
-
-.examination-table-container::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8;
-}
-
-/* --- TABLE STYLES --- */
-.examination-table {
-  width: max-content;
-  min-width: 1700px !important;
-  border-collapse: separate;
-  /* Required for sticky to work correctly */
-  border-spacing: 0;
-  table-layout: fixed;
-}
-
-/* Header Cells */
-.examination-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 11px;
-  font-weight: 700;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* Table Rows */
-.examination-table tbody tr {
-  background-color: white;
-  transition: background-color 0.15s ease;
-}
-
-.examination-table tbody tr:hover {
-  background-color: #f8fafc;
-}
-
-.examination-table tbody td {
-  padding: 12px 16px;
-  font-size: 13px;
-  color: #1f2937;
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: middle;
-  background-color: white;
-  /* Ensures content doesn't show through if rows overlap */
-  position: relative;
-  z-index: 1;
-  /* Standard z-index for normal cells */
-}
-
-/* --- COLUMN CONFIGURATION (13 COLUMNS) --- */
-
-/* 1. S.NO */
-.examination-table th:nth-child(1),
-.examination-table td:nth-child(1) {
-  width: 60px !important;
-  text-align: center;
-}
-
-/* 2. REGISTERED NAME */
-.examination-table th:nth-child(2),
-.examination-table td:nth-child(2) {
-  width: 200px !important;
-  white-space: normal;
-  line-height: 1.4;
-  font-weight: 600;
-}
-
-/* 3. APPLICATION NO (Fix: Changed color from blue to standard gray) */
-.examination-table th:nth-child(3),
-.examination-table td:nth-child(3) {
-  width: 10vw !important;
-  white-space: nowrap;
-  color: #1f2937;
-  /* Standard dark gray */
-  font-weight: 500;
-  text-align: center;
-}
-
-/* 4. SELECT INSTITUTION */
-.examination-table th:nth-child(4),
-.examination-table td:nth-child(4) {
-  width: 10vw !important;
-  white-space: normal;
-  line-height: 1.3;
-  color: #4b5563;
-  text-align: center;
-}
-
-/* 5. SELECT PROGRAM */
-.examination-table th:nth-child(5),
-.examination-table td:nth-child(5) {
-  width: 18vw !important;
-  white-space: normal;
-  line-height: 1.3;
-  color: #4b5563;
-  text-align: center;
-}
-
-/* 6. TYPE */
-.examination-table th:nth-child(6),
-.examination-table td:nth-child(6) {
-  width: 25vw !important;
-  white-space: nowrap;
-  text-align: center !important;
-}
-
-/* 7. MOBILE NUMBER */
-.examination-table th:nth-child(7),
-.examination-table td:nth-child(7) {
-  width: 280px !important;
-  min-width: 280px !important;
-  white-space: normal;
-  word-break: break-all;
-  text-align: center !important;
-}
-
-/* 8. EMAIL ID */
-.examination-table th:nth-child(8),
-.examination-table td:nth-child(8) {
-  width: 140px !important;
-  min-width: 140px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-
-}
-
-/* 9. GENDER */
-.examination-table th:nth-child(9),
-.examination-table td:nth-child(9) {
-  width: 280px !important;
-  min-width: 280px !important;
-  white-space: normal;
-  word-break: break-all;
-  text-align: center;
-}
-
-/* 10. CERTIFICATES */
-.examination-table th:nth-child(10),
-.examination-table td:nth-child(10) {
-  width: 120px !important;
-  text-align: center;
-}
-
-/* 11. MARKS */
-.examination-table th:nth-child(11),
-.examination-table td:nth-child(11) {
-  width: 10vw !important;
-  text-align: center;
-}
-
-/* 12. STATUS */
-.examination-table th:nth-child(12),
-.examination-table td:nth-child(12) {
-  width: 10vw !important;
-  position: unset !important;
-  text-align: center;
-}
-
-/* 13. ACTIONS (Sticky Right Column - Fix for Overlap) */
-
-/* Remove duplicate incorrect styling for column 13 (INTERVIEW MARKS) */
-.examination-table td:nth-child(13) {
-  width: 120px !important;
-  min-width: 120px !important;
-  text-align: center !important;
-  /* Remove incorrect sticky and border styling */
-}
-
-.examination-table thead th:nth-child(13) {
-  width: 120px !important;
-  min-width: 120px !important;
-  text-align: center !important;
-  /* Remove incorrect sticky and border styling */
-}
-
-/* --- BADGES & BUTTONS --- */
-.table-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-block;
-}
-
-.marks-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  cursor: pointer;
-  min-width: 30px;
-}
-
-.marks-passed {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.marks-failed {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
-}
-
-/* --- FULLSCREEN ADJUSTMENTS --- */
-.fullscreen-mode #examination-container {
-  padding: 0;
-  height: 100vh;
-}
-
-.fullscreen-mode .bg-white.rounded-lg.shadow-md {
-  border-radius: 0;
-  height: 100%;
-  padding: 24px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .examination-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .examination-controls-left {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .examination-table-container {
-    margin-top: 10px;
-  }
-}
-
-/* Upload Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.upload-modal-modern {
-  max-width: 900px !important;
-  width: 95% !important;
-}
-
-.upload-modal-header {
-  display: flex;
-  align-items: center;
-  padding: 24px 28px;
-  border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-}
-
-.upload-header-icon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  margin-right: 16px;
-}
-
-.upload-header-text h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 4px 0;
-}
-
-.upload-header-text p {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.upload-modal-close {
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: #f3f4f6;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-left: auto;
-}
-
-.upload-modal-close:hover {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.upload-modal-body {
-  padding: 28px;
-}
-
-.upload-dropzone {
-  margin-bottom: 28px;
-}
-
-.upload-file-input {
-  display: none;
-}
-
-.upload-dropzone-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48px 32px;
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
-  background: #f8fafc;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.upload-dropzone-label::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.upload-dropzone-label:hover {
-  border-color: #8b5cf6;
-  background: white;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
-}
-
-.upload-dropzone-label:hover::before {
-  opacity: 1;
-}
-
-.upload-dropzone-icon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6366f1;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-  z-index: 1;
-}
-
-.upload-dropzone-label:hover .upload-dropzone-icon {
-  transform: scale(1.1) rotate(5deg);
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-}
-
-.upload-dropzone-text {
-  text-align: center;
-  margin-bottom: 20px;
-  z-index: 1;
-}
-
-.upload-dropzone-text h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 8px 0;
-}
-
-.upload-dropzone-text p {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0;
-}
-
-.upload-dropzone-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  z-index: 1;
-}
-
-.upload-dropzone-label:hover .upload-dropzone-button {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
-}
-
-.upload-info-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.upload-info-card {
-  display: flex;
-  gap: 14px;
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: white;
-  transition: all 0.2s ease;
-}
-
-.upload-info-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
-}
-
-.upload-info-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.upload-info-icon.success {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  color: #059669;
-}
-
-.upload-info-icon.info {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #2563eb;
-}
-
-.upload-info-icon.warning {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #d97706;
-}
-
-.upload-info-content {
-  flex: 1;
-}
-
-.upload-info-content h4 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 8px 0;
-}
-
-.upload-info-content ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.upload-info-content li {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 4px;
-  padding-left: 12px;
-  position: relative;
-}
-
-.upload-info-content li::before {
-  content: '•';
-  position: absolute;
-  left: 0;
-  color: #8b5cf6;
-  font-weight: bold;
-}
-
-.upload-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
-}
-
-.upload-cancel-btn {
-  padding: 10px 20px;
-  border: 1px solid #d1d5db;
-  background: white;
-  color: #374151;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.upload-cancel-btn:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
-}
-
-.upload-help-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 1px solid #8b5cf6;
-  background: white;
-  color: #8b5cf6;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.upload-help-btn:hover {
-  background: #8b5cf6;
-  color: white;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .upload-modal-modern {
-    max-width: 95% !important;
-    margin: 20px;
-  }
-
-  .upload-modal-header {
-    padding: 20px;
-  }
-
-  .upload-modal-body {
-    padding: 20px;
-  }
-
-  .upload-dropzone-label {
-    padding: 32px 20px;
-  }
-
-  .upload-info-section {
-    grid-template-columns: 1fr;
-  }
-
-  .upload-modal-footer {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .upload-cancel-btn,
-  .upload-help-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* Filter Modal Styles */
-.filter-modal {
-  max-width: 600px !important;
-  width: 90% !important;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 28px;
-  border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-}
-
-.modal-header h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0;
-}
-
-.modal-close {
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: #f3f4f6;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.modal-close:hover {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.filter-content {
-  padding: 28px;
-}
-
-.filter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.filter-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 4px;
-}
-
-.filter-select {
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
-  font-size: 14px;
-  color: #374151;
-  transition: all 0.2s;
-}
-
-.filter-select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.filter-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 20px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.filter-actions button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: 120px;
-}
-
-/* Responsive filter modal */
-@media (max-width: 768px) {
-  .filter-modal {
-    max-width: 95% !important;
-    margin: 20px;
-  }
-
-  .filter-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .filter-actions {
-    flex-direction: column;
-  }
-
-  .filter-actions button {
-    width: 100%;
-  }
-}
-
-/* Enhanced Modal Animations and Transitions */
-.modal-overlay {
-  animation: fadeIn 0.2s ease-out;
-}
-
-.modal-content {
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Consistent button styling across all modals */
-.modal-content button {
-  transition: all 0.2s ease;
-}
-
-.modal-content button:hover {
-  transform: translateY(-1px);
-}
-
-.modal-content button:active {
-  transform: translateY(0);
-}
-
-/* Enhanced shadow for better depth perception */
-.modal-content {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-
-/* Better focus states for accessibility */
-.modal-content button:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-.filter-select:focus,
-.modal-form-input:focus,
-.modal-form-select:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Action Button Icons Fix */
-.examination-action-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  min-height: 28px !important;
-  max-width: 28px !important;
-  max-height: 28px !important;
-  border: none !important;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0;
-  flex-shrink: 0;
-}
-
-.examination-action-btn svg {
-  width: 14px !important;
-  height: 14px !important;
-  display: block !important;
-  pointer-events: none;
-  flex-shrink: 0;
-}
-
-.examination-action-btn.edit {
-  background-color: #3b82f6;
-  color: white;
-}
-
-.examination-action-btn.edit:hover {
-  background-color: #2563eb;
-}
-
-.examination-action-btn.verify {
-  background-color: #10b981;
-  color: white;
-}
-
-.examination-action-btn.verify:hover {
-  background-color: #059669;
-}
-
-.examination-action-btn.forward {
-  background-color: #10b981;
-  color: white;
-}
-
-.examination-action-btn.forward:hover {
-  background-color: #059669;
-}
-
-.examination-action-btn:disabled {
-  background-color: #9ca3af;
-  color: white;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.examination-action-btn:disabled:hover {
-  background-color: #9ca3af;
-  transform: none;
-}
-
-/* Action buttons container */
-.examination-actions {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 6px !important;
-  flex-wrap: nowrap !important;
-  padding: 0 4px !important;
-}
-
-/* Ensure icons are always visible */
-.examination-action-btn svg {
-  pointer-events: none;
-  flex-shrink: 0;
-}
-
-/* Better disabled state visibility */
-.examination-action-btn:disabled svg {
-  opacity: 0.7;
-}
-
-/* Focus states for accessibility */
-.examination-action-btn:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Ensure buttons work in fullscreen mode */
-.fullscreen-mode .examination-action-btn {
-  width: 32px;
-  height: 32px;
-}
-
-.fullscreen-mode .examination-action-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-/* Comprehensive fix for examination action button icons */
-.examination-table .examination-actions .examination-action-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  min-height: 28px !important;
-  max-width: 28px !important;
-  max-height: 28px !important;
-  border: none !important;
-  border-radius: 4px !important;
-  cursor: pointer !important;
-  font-size: 0 !important;
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-}
-
-.examination-table .examination-actions .examination-action-btn svg {
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  min-height: 14px !important;
-  max-width: 14px !important;
-  max-height: 14px !important;
-  display: block !important;
-  pointer-events: none !important;
-  flex-shrink: 0 !important;
-}
-
-/* Ensure colors are properly applied */
-.examination-table .examination-actions .examination-action-btn.edit {
-  background-color: #3b82f6 !important;
-  color: white !important;
-}
-
-.examination-table .examination-actions .examination-action-btn.verify {
-  background-color: #10b981 !important;
-  color: white !important;
-}
-
-.examination-table .examination-actions .examination-action-btn.forward {
-  background-color: #10b981 !important;
-  color: white !important;
-}
-
-.examination-table .examination-actions .examination-action-btn:disabled {
-  background-color: #9ca3af !important;
-  color: white !important;
-  cursor: not-allowed !important;
-  opacity: 0.6 !important;
-}
-
-/* Ensure icons are visible in all states */
-.examination-table .examination-actions .examination-action-btn svg {
-  fill: currentColor !important;
-}
-
-.examination-table .examination-actions .examination-action-btn.verify svg,
-.examination-table .examination-actions .examination-action-btn.forward svg {
-  stroke: currentColor !important;
-  fill: none !important;
-}
-
-/* View Button Styles */
-.examination-action-btn.view {
-  background-color: #8b5cf6 !important;
-  color: white !important;
-}
-
-.examination-action-btn.view:hover {
-  background-color: #7c3aed !important;
-}
-
-.examination-table .examination-actions .examination-action-btn.view {
-  background-color: #8b5cf6 !important;
-  color: white !important;
-}
-
-.examination-table .examination-actions .examination-action-btn.view:hover {
-  background-color: #7c3aed !important;
-}
-
-/* View Modal Styles */
-.view-field {
-  padding: 12px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.view-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
-}
-
-.view-value {
-  font-size: 0.875rem;
-  color: #111827;
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.view-value:empty::before {
-  content: 'N/A';
-  color: #9ca3af;
-  font-style: italic;
-}
-
-
-/* Examination Statistics Tiles - Modern UI - MINIMAL SPACING */
+/* ── Stats Grid ─────────────────────────────────────────────── */
 .examination-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 12px !important;
-  margin-top: 0 !important;
+  gap: 16px;
 }
 
 .examination-stat-card {
@@ -3276,14 +51,14 @@ input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .examination-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .examination-stat-content {
@@ -3296,13 +71,13 @@ input[type="number"] {
   font-size: 13px;
   font-weight: 500;
   color: #6b7280;
-  text-transform: capitalize;
 }
 
 .examination-stat-number {
   font-size: 32px;
   font-weight: 700;
   line-height: 1;
+  color: #1f2937;
 }
 
 .examination-stat-icon {
@@ -3315,17 +90,6 @@ input[type="number"] {
   flex-shrink: 0;
 }
 
-/* Total Records - Blue */
-.examination-stat-total .examination-stat-number {
-  color: #1f2937;
-}
-
-.examination-stat-icon-blue {
-  background: #dbeafe;
-  color: #3b82f6;
-}
-
-/* Passed - Green */
 .examination-stat-passed {
   background: #f0fdf4;
   border-color: #bbf7d0;
@@ -3335,12 +99,6 @@ input[type="number"] {
   color: #16a34a;
 }
 
-.examination-stat-icon-green {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-/* Failed - Red */
 .examination-stat-failed {
   background: #fef2f2;
   border-color: #fecaca;
@@ -3350,12 +108,6 @@ input[type="number"] {
   color: #dc2626;
 }
 
-.examination-stat-icon-red {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-/* Pass Rate - Purple */
 .examination-stat-rate {
   background: #faf5ff;
   border-color: #e9d5ff;
@@ -3365,12 +117,26 @@ input[type="number"] {
   color: #9333ea;
 }
 
+.examination-stat-icon-blue {
+  background: #dbeafe;
+  color: #3b82f6;
+}
+
+.examination-stat-icon-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.examination-stat-icon-red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
 .examination-stat-icon-purple {
   background: #f3e8ff;
   color: #9333ea;
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
   .examination-stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -3381,726 +147,485 @@ input[type="number"] {
   .examination-stats-grid {
     grid-template-columns: 1fr;
   }
-
-  .examination-stat-number {
-    font-size: 28px;
-  }
-
-  .examination-stat-icon {
-    width: 40px;
-    height: 40px;
-  }
 }
 
-
-/* Responsive design for different screen sizes - Expanded height */
-@media (min-height: 800px) {
-  .examination-table-container {
-    height: calc(100vh - 180px) !important;
-    max-height: none !important;
-  }
-}
-
-@media (min-height: 900px) {
-  .examination-table-container {
-    height: calc(100vh - 160px) !important;
-    max-height: none !important;
-  }
-}
-
-@media (min-height: 1000px) {
-  .examination-table-container {
-    height: calc(100vh - 140px) !important;
-    max-height: none !important;
-  }
-}
-
-@media (min-height: 1200px) {
-  .examination-table-container {
-    height: calc(100vh - 120px) !important;
-    max-height: none !important;
-  }
-}
-
-
-/* Fullscreen mode - Maximize table height wions */
-.fullscreen-mode .examination-table-container {
-  height: calc(100vh - 120px) !important;
-  max-height: none !important;
-}
-
-/* Adjust for different screen sizes in fullscreen - */
-@media (min-height: 800px) {
-  .fullscreen-mode .examination-table-container {
-    height: calc(100vh - 100px) !important;
-    max-height: none !important;
-  }
-}
-
-@media (min-height: 900px) {
-  .fullscreen-mode .examination-table-container {
-    height: calc(100vh - 80px) !important;
-    max-height: none !important;
-  }
-}
-
-@media (min-height: 1000px) {
-  .fullscreen-mode .examination-table-container {
-    height: calc(100vh - 60px) !important;
-    max-height: none !important;
-  }
-}
-
-@media (min-height: 1200px) {
-  .fullscreen-mode .examination-table-container {
-    height: calc(100vh - 40px) !important;
-    max-height: none !important;
-  }
-}
-
-
-/* Remove white container background and styling - ENHANCED */
-#examination-container .bg-white.rounded-lg.shadow-md {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-}
-
-/* Adjust padding for main container - MINIMAL SPACING */
-#examination-container {
-  padding: 16px !important;
-  background: transparent !important;
-  margin: 0 !important;
-  gap: 16px !important;
-}
-
-/* Keep individual elements styled with minimal spacing */
-.examination-stats-grid {
-  margin-bottom: 16px !important;
-  margin-top: 0 !important;
-}
-
+/* ── Controls ───────────────────────────────────────────────── */
 .examination-controls {
-  margin-bottom: 16px !important;
-  margin-top: 0 !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-/* Keep table container with its own background - NO EXTRA MARGINS */
-.examination-table-container {
-  background: white !important;
-  border-radius: 8px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  margin: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+.examination-controls-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
-
-/* Reduce tile number size */
-.examination-stat-number {
-  font-size: 24px !important;
-  font-weight: 700 !important;
+.examination-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-
-/* ===== BULK SELECTION & ACTIONS STYLING ===== */
-
-/* Checkbox styling */
-input[type="checkbox"] {
+/* ── Fullscreen Button ──────────────────────────────────────── */
+.fullscreen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #64748b;
   cursor: pointer;
-  transition: all 0.2s ease;
+  flex-shrink: 0;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
-input[type="checkbox"]:hover {
-  transform: scale(1.1);
+.fullscreen-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #475569;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Selected row highlight */
-tr.bg-blue-50 {
-  background-color: #eff6ff !important;
-  border-left: 3px solid #3b82f6;
+.fullscreen-btn:active {
+  transform: translateY(0);
 }
 
-tr.bg-blue-50:hover {
-  background-color: #dbeafe !important;
+.fullscreen-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
-/* Floating action bar animation */
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-.animate-slide-up {
-  animation: slide-up 0.3s ease-out;
-}
-
-/* Floating action bar styling */
-.fixed.bottom-8 {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-/* Bulk action buttons hover effects */
-.fixed button:hover {
-  transform: scale(1.05);
-  transition: all 0.2s ease;
-}
-
-.fixed button:active {
-  transform: scale(0.98);
-}
-
-/* Responsive bulk actions bar */
-@media (max-width: 768px) {
-  .fixed.bottom-8>div {
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-  }
-
-  .fixed.bottom-8 .h-10 {
-    display: none;
-  }
-
-  .fixed.bottom-8 button {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* Smooth transitions for selection */
-tr {
-  transition: background-color 0.2s ease, border-left 0.2s ease;
-}
-
-/* Checkbox column width */
-.examination-table th:first-child,
-.examination-table td:first-child {
-  width: 50px !important;
-  min-width: 50px !important;
-  padding: 12px 8px !important;
-}
-
-/* Adjust S.NO column */
-.examination-table th:nth-child(2),
-.examination-table td:nth-child(2) {
-  width: 70px !important;
-  min-width: 70px !important;
-}
-
-/* Modal backdrop blur effect */
-.fixed.inset-0.bg-black.bg-opacity-50 {
-  backdrop-filter: blur(4px);
-  transition: backdrop-filter 0.3s ease;
-}
-
-/* Bulk action modal animations */
-.fixed.inset-0>div {
-  animation: modal-appear 0.3s ease-out;
-}
-
-@keyframes modal-appear {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Selection counter badge */
-.bg-white\/20 {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.bg-white\/30 {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.bg-white\/10 {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Divider in floating bar */
-.w-px {
-  width: 1px;
-}
-
-/* Gradient backgrounds */
-.bg-gradient-to-r {
-  background-image: linear-gradient(to right, var(--tw-gradient-stops));
-}
-
-.from-blue-600 {
-  --tw-gradient-from: #2563eb;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(37, 99, 235, 0));
-}
-
-.to-blue-700 {
-  --tw-gradient-to: #1d4ed8;
-}
-
-/* Border opacity */
-.border-blue-400\/30 {
-  border-color: rgba(96, 165, 250, 0.3);
-}
-
-.border-white\/20 {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.border-white\/30 {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.border-red-400\/30 {
-  border-color: rgba(248, 113, 113, 0.3);
-}
-
-/* Backdrop blur */
-.backdrop-blur-lg {
-  backdrop-filter: blur(16px);
-}
-
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-}
-
-/* Text colors */
-.text-blue-100 {
-  color: #dbeafe;
-}
-
-/* Red button background */
-.bg-red-500\/90 {
-  background-color: rgba(239, 68, 68, 0.9);
-}
-
-/* Hover scale effect */
-.hover\:scale-105:hover {
-  transform: scale(1.05);
-}
-
-/* Ensure floating bar is above everything */
-.z-50 {
-  z-index: 50;
-}
-
-/* Smooth checkbox transitions */
-input[type="checkbox"] {
-  transition: all 0.15s ease-in-out;
-}
-
-input[type="checkbox"]:checked {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-}
-
-/* Selection info text */
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-
-/* Rounded corners for modern look */
-.rounded-2xl {
-  border-radius: 1rem;
-}
-
-.rounded-xl {
-  border-radius: 0.75rem;
-}
-
-/* Shadow effects */
-.shadow-2xl {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Transform utilities */
-.transform {
-  transform: var(--tw-transform);
-}
-
-.-translate-x-1\/2 {
-  --tw-translate-x: -50%;
-}
-
-/* Flex utilities for bulk actions */
-.gap-6 {
-  gap: 1.5rem;
-}
-
-.gap-3 {
-  gap: 0.75rem;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-/* Padding utilities */
-.px-6 {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.px-5 {
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-}
-
-.py-2\.5 {
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
-}
-
-/* Font weights */
-.font-semibold {
-  font-weight: 600;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-/* Text sizes */
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-/* Ensure proper stacking */
-.fixed {
+.fullscreen-btn-floating {
   position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  color: #64748b;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
-.bottom-8 {
-  bottom: 2rem;
+.fullscreen-btn-floating:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.left-1\/2 {
-  left: 50%;
-}
-
-/* COMPREHENSIVE SCROLLING FIX - ENSURE ALL SCHOLARS ARE VISIBLE */
-
-/* Main table container - CRITICAL SCROLLING FIX */
+/* ── THE TABLE WRAPPER — this is the scroll container ──────── */
+/*
+   The div has BOTH classes: examination-table-container examination-table-scroll
+   It must be the ONLY scroll container. No parent should clip it.
+*/
 .examination-table-container {
-  background: white !important;
-  border-radius: 8px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  border: 1px solid #e5e7eb !important;
-
-  /* CRITICAL: Enable proper scrolling */
+  width: 100%;
   overflow-x: auto !important;
   overflow-y: auto !important;
-
-  /* CRITICAL: Proper height calculation */
-  height: calc(100vh - 200px) !important;
-  max-height: calc(100vh - 150px) !important;
-  min-height: 400px !important;
-
-  /* CRITICAL: Ensure content is fully contained */
-  flex: 1 !important;
-  width: 100% !important;
-  position: relative !important;
-
-  /* CRITICAL: Better scroll behavior */
-  scroll-behavior: smooth !important;
-  overscroll-behavior: contain !important;
-
-  /* CRITICAL: Ensure last rows are visible */
-  padding-bottom: 40px !important;
-  box-sizing: border-box !important;
-
-  /* Remove conflicting properties */
-  margin: 0 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  position: relative;
+  /* Height: fill remaining viewport space */
+  height: calc(100vh - 310px);
+  min-height: 350px;
 }
 
-/* CRITICAL: Ensure table body shows all rows */
-.examination-table tbody {
-  display: table-row-group !important;
-  vertical-align: middle !important;
-}
-
-/* CRITICAL: Extra padding for last row visibility */
-.examination-table tbody tr:last-child td {
-  padding-bottom: 30px !important;
-  border-bottom: 2px solid transparent !important;
-}
-
-/* CRITICAL: Ensure table takes full width and allows scrolling */
-.examination-table {
-  width: max-content !important;
-  min-width: 100% !important;
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-  table-layout: auto !important;
-  margin-bottom: 20px !important;
-}
-
-/* CRITICAL: Enhanced scrollbar for better visibility */
+/* Scrollbar styling */
 .examination-table-container::-webkit-scrollbar {
-  width: 16px !important;
-  height: 16px !important;
+  width: 8px;
+  height: 8px;
 }
 
 .examination-table-container::-webkit-scrollbar-track {
-  background: #f1f5f9 !important;
-  border-radius: 8px !important;
-  border: 2px solid #e2e8f0 !important;
+  background: #f1f5f9;
+  border-radius: 4px;
 }
 
 .examination-table-container::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1 !important;
-  border-radius: 8px !important;
-  border: 2px solid #f1f5f9 !important;
-  min-height: 40px !important;
-  min-width: 40px !important;
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: 2px solid #f1f5f9;
 }
 
 .examination-table-container::-webkit-scrollbar-thumb:hover {
-  background-color: #94a3b8 !important;
-  cursor: grab !important;
+  background: #94a3b8;
 }
 
 .examination-table-container::-webkit-scrollbar-corner {
-  background: #f1f5f9 !important;
-  border-radius: 8px !important;
+  background: #f1f5f9;
 }
 
-/* CRITICAL: Responsive height adjustments */
-@media screen and (max-height: 1080px) {
-  .examination-table-container {
-    height: calc(100vh - 180px) !important;
-    max-height: calc(100vh - 130px) !important;
-  }
+/* ── The Table itself ───────────────────────────────────────── */
+/*
+   CRITICAL: Do NOT use width:100% or min-w-full here.
+   The table must be wider than its container to enable horizontal scroll.
+   Tailwind's w-full / min-w-full on the <table> element is overridden below.
+*/
+.examination-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  width: max-content !important;
+  /* grows to fit all columns naturally */
+  min-width: 100% !important;
+  /* at minimum fills the container */
+  table-layout: auto !important;
+  /* let columns size to their content */
 }
 
-@media screen and (max-height: 900px) {
-  .examination-table-container {
-    height: calc(100vh - 160px) !important;
-    max-height: calc(100vh - 110px) !important;
-    min-height: 350px !important;
-  }
+/* Override any Tailwind width utilities applied directly on the table */
+table.examination-table.w-full,
+table.examination-table.min-w-full {
+  width: max-content !important;
 }
 
-@media screen and (max-height: 800px) {
-  .examination-table-container {
-    height: calc(100vh - 140px) !important;
-    max-height: calc(100vh - 90px) !important;
-    min-height: 300px !important;
-  }
+/* ── Header ─────────────────────────────────────────────────── */
+.examination-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-@media screen and (max-height: 700px) {
-  .examination-table-container {
-    height: calc(100vh - 120px) !important;
-    max-height: calc(100vh - 70px) !important;
-    min-height: 250px !important;
-  }
+/* ── Body rows ──────────────────────────────────────────────── */
+.examination-table tbody tr {
+  background: white;
 }
 
-/* CRITICAL: Fullscreen mode optimizations */
-.fullscreen-mode .examination-table-container {
-  height: calc(100vh - 100px) !important;
-  max-height: calc(100vh - 50px) !important;
-  min-height: calc(100vh - 120px) !important;
-  padding-bottom: 50px !important;
+.examination-table tbody tr:hover {
+  background: #f9fafb;
 }
 
-/* CRITICAL: Mobile responsive adjustments */
-@media (max-width: 768px) {
-  .examination-table-container {
-    height: calc(100vh - 220px) !important;
-    max-height: calc(100vh - 170px) !important;
-    min-height: 300px !important;
-    padding-bottom: 50px !important;
-  }
-
-  .examination-table tbody tr:last-child td {
-    padding-bottom: 40px !important;
-  }
+.examination-table td {
+  padding: 11px 14px;
+  font-size: 13px;
+  color: #374151;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-/* CRITICAL: Ensure no content is cut off */
-.examination-table-container::after {
-  content: '' !important;
-  display: block !important;
-  height: 30px !important;
-  width: 100% !important;
-  flex-shrink: 0 !important;
-  clear: both !important;
+/* ── Sticky columns — inline styles in JSX already handle left/width.
+      We only need to ensure z-index and background are correct here. ── */
+.examination-table thead th[style*="sticky"] {
+  z-index: 25 !important;
+  background: #f9fafb !important;
 }
 
-/* CRITICAL: Remove any conflicting overflow settings */
-#examination-container {
-  overflow: visible !important;
+.examination-table tbody td[style*="sticky"] {
+  z-index: 10 !important;
 }
 
-#examination-container .bg-white.rounded-lg.shadow-md {
-  overflow: visible !important;
-  height: auto !important;
-  max-height: none !important;
+/* Row hover must keep sticky cells in sync */
+.examination-table tbody tr:hover td[style*="sticky"] {
+  background: #f9fafb !important;
 }
 
-/* FINAL OVERRIDE - ENSURE LAST SCHOLARS ARE VISIBLE */
-/* This override ensures all previous conflicting styles are overridden */
-
-.examination-table-container {
-  /* CRITICAL: Override all previous height settings */
-  height: calc(100vh - 200px) !important;
-  max-height: calc(100vh - 150px) !important;
-  min-height: 400px !important;
-
-  /* CRITICAL: Enable scrolling */
-  overflow-x: auto !important;
-  overflow-y: auto !important;
-
-  /* CRITICAL: Ensure proper spacing for last rows */
-  padding-bottom: 40px !important;
-
-  /* CRITICAL: Remove any conflicting properties */
-  contain: none !important;
-  isolation: auto !important;
-
-  /* CRITICAL: Ensure proper positioning */
-  position: relative !important;
-  flex: 1 !important;
-  width: 100% !important;
-
-  /* CRITICAL: Better scroll behavior */
-  scroll-behavior: smooth !important;
-  overscroll-behavior: contain !important;
-  box-sizing: border-box !important;
+/* ── Status Badges ──────────────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  min-width: 72px;
+  text-align: center;
 }
 
-/* CRITICAL: Ensure table body is properly displayed */
-.examination-table tbody {
-  display: table-row-group !important;
-  vertical-align: middle !important;
+.status-passed {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
 }
 
-/* CRITICAL: Ensure last row has extra padding */
-.examination-table tbody tr:last-child td {
-  padding-bottom: 30px !important;
-  border-bottom: 2px solid transparent !important;
+.status-failed {
+  background: #fecaca;
+  color: #991b1b;
+  border: 1px solid #f87171;
 }
 
-/* CRITICAL: Add space after table */
-.examination-table-container::after {
-  content: '' !important;
-  display: block !important;
-  height: 30px !important;
-  width: 100% !important;
-  flex-shrink: 0 !important;
-  clear: both !important;
+.status-verified {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
 }
 
-/* CRITICAL: Responsive adjustments */
-@media screen and (max-height: 900px) {
-  .examination-table-container {
-    height: calc(100vh - 180px) !important;
-    max-height: calc(100vh - 130px) !important;
-  }
+.status-forwarded {
+  background: #e0e7ff;
+  color: #3730a3;
+  border: 1px solid #a5b4fc;
 }
 
-@media screen and (max-height: 800px) {
-  .examination-table-container {
-    height: calc(100vh - 160px) !important;
-    max-height: calc(100vh - 110px) !important;
-  }
+/* ── Marks Badge ────────────────────────────────────────────── */
+.marks-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 48px;
+  text-align: center;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
-@media screen and (max-height: 700px) {
-  .examination-table-container {
-    height: calc(100vh - 140px) !important;
-    max-height: calc(100vh - 90px) !important;
-    min-height: 300px !important;
-  }
+.marks-badge.cursor-pointer:hover {
+  transform: scale(1.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
-/* CRITICAL: Fullscreen mode */
-.fullscreen-mode .examination-table-container {
-  height: calc(100vh - 120px) !important;
-  max-height: calc(100vh - 70px) !important;
-  padding-bottom: 50px !important;
+.marks-passed {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
 }
 
-/* CRITICAL: Mobile adjustments */
-@media (max-width: 768px) {
-  .examination-table-container {
-    height: calc(100vh - 240px) !important;
-    max-height: calc(100vh - 190px) !important;
-    padding-bottom: 50px !important;
-  }
+.marks-failed {
+  background: #fecaca;
+  color: #991b1b;
+  border: 1px solid #f87171;
 }
 
-/* Fix for correct ACTIONS column (column 16) */
-.examination-table td:nth-child(16) {
-  width: 140px !important;
-  min-width: 140px !important;
-  text-align: center !important;
+/* ── Action Buttons ─────────────────────────────────────────── */
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
 }
 
-.examination-table thead th:nth-child(16) {
-  width: 140px !important;
-  min-width: 140px !important;
-  text-align: center !important;
+.table-action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
 }
 
-/* Ensure all columns have consistent styling - remove unwanted borders/shadows */
-.examination-table td:nth-child(n),
-.examination-table thead th:nth-child(n) {
-  border-left: none !important;
+.table-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 }
 
-/* Only keep the standard table borders */
-.examination-table td,
-.examination-table th {
-  border-bottom: 1px solid #e5e7eb !important;
+.table-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Delete action button */
-.examination-action-btn.delete {
-  background-color: #ef4444;
+.btn-view {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
 }
 
-.examination-action-btn.delete:hover {
-  background-color: #dc2626;
+.btn-edit {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
 }
 
-.examination-table .examination-actions .examination-action-btn.delete {
-  background-color: #ef4444 !important;
-  color: white !important;
+.btn-verify {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
 }
 
-.examination-table .examination-actions .examination-action-btn.delete:hover {
-  background-color: #dc2626 !important;
+.btn-forward {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-verify:disabled,
+.btn-forward:disabled {
+  background: #9ca3af;
+}
+
+/* ── Text helpers ───────────────────────────────────────────── */
+.application-no {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.serial-no {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.scholar-name {
+  color: #111827;
+  font-weight: 600;
+}
+
+.faculty-text {
+  color: #374151;
+  font-size: 13px;
+}
+
+.department-text {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* ── Empty State ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: #9ca3af;
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  color: #d1d5db;
+}
+
+/* ── Modal Styling ──────────────────────────────────────────── */
+.modal-form-input,
+.modal-form-select {
+  padding: 11px 14px;
+  height: 48px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-form-input:focus,
+.modal-form-select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.modal-form-input:disabled,
+.modal-form-input[readonly] {
+  background: #f3f4f6;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+.modal-form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.modal-footer {
+  padding: 20px 0 0;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 20px;
+}
+
+/* ── Fullscreen mode ────────────────────────────────────────── */
+.fullscreen-mode #examination-container {
+  padding: 20px;
+}
+
+.fullscreen-mode .examination-table-container {
+  height: calc(100vh - 240px) !important;
+  min-height: 0;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1199px) {
+  #examination-container {
+    padding: 12px;
+  }
+
+  .examination-table-container {
+    height: calc(100vh - 330px);
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  #examination-container {
+    padding: 8px;
+  }
+
+  .examination-table-container {
+    height: calc(100vh - 360px);
+    min-height: 280px;
+  }
+
+  .examination-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .examination-controls-left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .examination-controls-right {
+    align-self: flex-end;
+  }
+
+  .fullscreen-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fullscreen-btn-floating {
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .table-action-btn {
+    width: 24px;
+    height: 24px;
+  }
 }

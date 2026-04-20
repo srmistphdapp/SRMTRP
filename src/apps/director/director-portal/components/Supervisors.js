@@ -20,28 +20,30 @@ import {
 import { toast } from 'react-toastify';
 
 const ALL_AVAILABLE_COLUMNS = [
-  { key: 'sno', label: 'S.No', category: 'Basic Info' },
-  { key: 'name', label: 'Name', category: 'Basic Info' },
-  { key: 'email', label: 'Email', category: 'Basic Info' },
-  { key: 'phone', label: 'Phone', category: 'Basic Info' },
-  { key: 'staff_id', label: 'Staff Id', category: 'Professional Info' },
-  { key: 'designation', label: 'Designation', category: 'Professional Info' },
-  { key: 'faculty', label: 'Faculty', category: 'Professional Info' },
-  { key: 'department', label: 'Department', category: 'Professional Info' },
-  { key: 'specialization', label: 'Specialization', category: 'Professional Info' },
-  { key: 'area_of_interest', label: 'Area of Interest', category: 'Professional Info' },
-  { key: 'maxFullTimeScholars', label: 'Max Full Time', category: 'Capacity & Vacancy' },
-  { key: 'maxPartTimeInternalScholars', label: 'Max PT Internal', category: 'Capacity & Vacancy' },
-  { key: 'maxPartTimeExternalScholars', label: 'Max PT External', category: 'Capacity & Vacancy' },
-  { key: 'maxPartTimeIndustryScholars', label: 'Max PT Industry', category: 'Capacity & Vacancy' },
-  { key: 'admittedFullTime', label: 'Admitted Full Time', category: 'Capacity & Vacancy' },
-  { key: 'admittedPartTimeInternal', label: 'Admitted PT Internal', category: 'Capacity & Vacancy' },
-  { key: 'admittedPartTimeExternal', label: 'Admitted PT External', category: 'Capacity & Vacancy' },
-  { key: 'admittedPartTimeIndustry', label: 'Admitted PT Industry', category: 'Capacity & Vacancy' },
-  { key: 'vacancyFullTime', label: 'Vacancy Full Time', category: 'Capacity & Vacancy' },
-  { key: 'vacancyPartTimeInternal', label: 'Vacancy PT Internal', category: 'Capacity & Vacancy' },
-  { key: 'vacancyPartTimeExternal', label: 'Vacancy PT External', category: 'Capacity & Vacancy' },
-  { key: 'vacancyPartTimeIndustry', label: 'Vacancy PT Industry', category: 'Capacity & Vacancy' },
+    { key: 'sno', label: 'S.No', category: 'Basic Info' },
+    { key: 'name', label: 'Name of the Supervisor', category: 'Basic Info' },
+    { key: 'email', label: 'Email', category: 'Basic Info' },
+    { key: 'phone', label: 'Phone', category: 'Basic Info' },
+    { key: 'staff_id', label: 'Faculty ID', category: 'Professional Info' },
+    { key: 'designation', label: 'Designation', category: 'Professional Info' },
+    { key: 'faculty', label: 'Faculty', category: 'Professional Info' },
+    { key: 'department', label: 'Department', category: 'Professional Info' },
+    { key: 'specialization', label: 'Specialization', category: 'Professional Info' },
+    { key: 'area_of_interest', label: 'Area of Research', category: 'Professional Info' },
+    { key: 'maxStudents', label: 'Maximum Number of Students Allowed (N)', category: 'Capacity & Vacancy' },
+    { key: 'currentlyGuiding', label: 'No. of Scholars Currently Guiding (C)', category: 'Capacity & Vacancy' },
+    { key: 'availableVacancy', label: 'No. of Available Vacancy (N-C)', category: 'Capacity & Vacancy' },
+    { key: 'phdCompleted', label: 'Number of PhD Students Completed (Degree Awarded)', category: 'Capacity & Vacancy' },
+    { key: 'eligibleForSession', label: 'Is Eligible to Fill Vacancy (Yes/No)', category: 'Capacity & Vacancy' },
+    { key: 'ineligibleReason', label: 'If Not Eligible, Reason', category: 'Capacity & Vacancy' },
+    { key: 'admittedFullTime', label: 'Full Time - Admitted', category: 'Scholar Type Breakdown' },
+    { key: 'vacancyFullTime', label: 'Full Time - Vacancy', category: 'Scholar Type Breakdown' },
+    { key: 'admittedPartTimeInternal', label: 'Part Time Internal - Admitted', category: 'Scholar Type Breakdown' },
+    { key: 'vacancyPartTimeInternal', label: 'Part Time Internal - Vacancy', category: 'Scholar Type Breakdown' },
+    { key: 'admittedPartTimeExternal', label: 'Part Time External - Admitted', category: 'Scholar Type Breakdown' },
+    { key: 'vacancyPartTimeExternal', label: 'Part Time External - Vacancy', category: 'Scholar Type Breakdown' },
+    { key: 'admittedPartTimeIndustry', label: 'Part Time Industry - Admitted', category: 'Scholar Type Breakdown' },
+    { key: 'vacancyPartTimeIndustry', label: 'Part Time Industry - Vacancy', category: 'Scholar Type Breakdown' },
 ];
 
 // 1. Accept the `isSidebarClosed` prop here
@@ -120,6 +122,10 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                 const vacancyPartTimeExternal = Math.max(0, (sup.max_part_time_external_scholars || 0) - (sup.current_part_time_external_scholars || 0));
                 const vacancyPartTimeIndustry = Math.max(0, (sup.max_part_time_industry_scholars || 0) - (sup.current_part_time_industry_scholars || 0));
 
+                // Total across all types
+                const totalMax = (sup.max_full_time_scholars || 0) + (sup.max_part_time_internal_scholars || 0) + (sup.max_part_time_external_scholars || 0) + (sup.max_part_time_industry_scholars || 0);
+                const totalCurrent = (sup.current_full_time_scholars || 0) + (sup.current_part_time_internal_scholars || 0) + (sup.current_part_time_external_scholars || 0) + (sup.current_part_time_industry_scholars || 0);
+
                 return {
                     id: sup.id,
                     name: sup.name,
@@ -150,6 +156,14 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                     vacancyPartTimeInternal: vacancyPartTimeInternal,
                     vacancyPartTimeExternal: vacancyPartTimeExternal,
                     vacancyPartTimeIndustry: vacancyPartTimeIndustry,
+                    // Aggregate totals for new columns
+                    maxStudents: totalMax,
+                    currentlyGuiding: totalCurrent,
+                    availableVacancy: Math.max(0, totalMax - totalCurrent),
+                    // New fields
+                    phdCompleted: sup.phd_completed || 0,
+                    eligibleForSession: sup.eligible_for_session ?? null,
+                    ineligibleReason: sup.ineligible_reason || '',
                     isActive: sup.is_active,
                     status: sup.status,
                     createdAt: sup.created_at,
@@ -271,56 +285,118 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                 const wb = XLSX.read(bstr, { type: 'binary' });
                 const wsname = wb.SheetNames[0];
                 const ws = wb.Sheets[wsname];
-                const data = XLSX.utils.sheet_to_json(ws);
 
-                if (data.length === 0) {
+                // Read as raw array to handle any header row position
+                const rawRows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+                if (rawRows.length < 2) {
                     toast.error("The uploaded Excel file is empty.");
                     setLoading(false);
                     return;
                 }
 
-                // Map Excel data to Supervisor data
-                const supervisorsToInsert = data.map((row) => {
-                    // Try to find faculty ID by name
-                    const facultyNameFromExcel = (row['Faculty'] || '').toString().toLowerCase().trim();
-                    const faculty = faculties.find(f => f.name.toLowerCase().trim() === facultyNameFromExcel);
-                    const facultyId = faculty ? faculty.id : null;
-
-                    // Try to find department ID by name
-                    let departmentId = null;
-                    let dept = null;
-                    if (faculty) {
-                        const deptNameFromExcel = (row['Department'] || '').toString().toLowerCase().trim();
-                        dept = faculty.departments.find(d => d.name.toLowerCase().trim() === deptNameFromExcel);
-                        if (dept) departmentId = dept.id;
+                // Find the header row — first row containing 'name' and 'faculty' or 'designation'
+                let headerRowIndex = 0;
+                for (let i = 0; i < Math.min(5, rawRows.length); i++) {
+                    const rowStr = rawRows[i].join('|').toLowerCase();
+                    if (rowStr.includes('name') && (rowStr.includes('supervisor') || rowStr.includes('faculty') || rowStr.includes('designation'))) {
+                        headerRowIndex = i;
+                        break;
                     }
+                }
+
+                const headers = rawRows[headerRowIndex].map(h => h.toString().trim());
+                const dataRows = rawRows.slice(headerRowIndex + 1).filter(row =>
+                    row.some(cell => cell !== null && cell !== undefined && cell.toString().trim() !== '')
+                );
+
+                console.log('📋 Detected headers:', headers);
+                console.log('📋 Data rows count:', dataRows.length);
+                console.log('📋 Available faculties in DB:', faculties.map(f => f.name));
+
+                // Helper to get cell value by partial header match
+                const getVal = (row, ...keys) => {
+                    for (const key of keys) {
+                        let idx = headers.findIndex(h => h.toLowerCase() === key.toLowerCase());
+                        if (idx === -1) idx = headers.findIndex(h => h.toLowerCase().includes(key.toLowerCase()));
+                        if (idx !== -1 && row[idx] !== undefined && row[idx] !== '') {
+                            return row[idx].toString().trim();
+                        }
+                    }
+                    return '';
+                };
+
+                const getNum = (row, ...keys) => parseInt(getVal(row, ...keys)) || 0;
+
+                const data = dataRows;
+                const facultyColIdx = headers.findIndex(h => h.toLowerCase() === 'faculty');
+                const deptColIdx = headers.findIndex(h => h.toLowerCase() === 'department');
+                const normalizeName = (s) => s.toLowerCase().replace(/\band\b/g, '&').replace(/\s+/g, ' ').trim();
+
+                // Map Excel data to Supervisor data
+                const supervisorsToInsert = data.map((row, rowIndex) => {
+                    const facultyNameRaw = (facultyColIdx !== -1 ? (row[facultyColIdx] || '') : '').toString().trim();
+                    const deptNameRaw = (deptColIdx !== -1 ? (row[deptColIdx] || '') : '').toString().trim();
+
+                    const matchedFaculty = faculties.find(f => normalizeName(f.name) === normalizeName(facultyNameRaw));
+                    const matchedDept = matchedFaculty?.departments.find(d =>
+                        normalizeName(d.name) === normalizeName(deptNameRaw) ||
+                        normalizeName(d.name).includes(normalizeName(deptNameRaw)) ||
+                        normalizeName(deptNameRaw).includes(normalizeName(d.name))
+                    );
+
+                    const facultyId = matchedFaculty ? matchedFaculty.id : facultyNameRaw.substring(0, 50);
+                    const facultyName = matchedFaculty ? matchedFaculty.name : facultyNameRaw;
+                    const deptId = matchedDept ? matchedDept.id : deptNameRaw.substring(0, 50);
+                    const deptName = matchedDept ? matchedDept.name : deptNameRaw;
+
+                    const supervisorName = getVal(row, 'name of the supervisor', 'name');
+                    const emailRaw = getVal(row, 'email');
+                    const safeName = supervisorName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || `sup${rowIndex}`;
+                    const email = emailRaw || `${safeName}${rowIndex + 1}@placeholder.edu.in`;
+
+                    const eligibleRaw = getVal(row, 'eligible', 'yes / no', 'yes/no');
+
+                    // area_of_interest is text[] in DB — must be an array
+                    const areaRaw = getVal(row, 'area of research', 'area of interest');
+                    const areaArray = areaRaw
+                        ? areaRaw.split(',').map(s => s.trim()).filter(Boolean)
+                        : [];
+
+                    // employee_id has unique constraint — set null if empty to avoid collisions
+                    const employeeIdRaw = getVal(row, 'employee id', 'employee_id');
+                    const employeeId = employeeIdRaw || null;
 
                     return {
-                        name: (row['Name'] || '').toString().trim(),
-                        email: (row['Email'] || '').toString().trim(),
-                        phone: row['Phone'] ? row['Phone'].toString().trim() : null,
-                        employee_id: row['Employee Id'] || row['Employee ID'] ? (row['Employee Id'] || row['Employee ID']).toString().trim() : null,
+                        name: supervisorName,
+                        email: email,
+                        phone: getVal(row, 'phone') || null,
+                        employee_id: employeeId,
                         faculty_id: facultyId,
-                        faculty_name: faculty ? faculty.name : '',
-                        department_id: departmentId,
-                        department_name: (dept && dept.name) ? dept.name : '',
-                        specialization: (row['Specialization'] || 'N/A').toString().trim(),
-                        staff_id: row['Staff Id'] || row['Staff ID'] ? (row['Staff Id'] || row['Staff ID']).toString().trim() : null,
-                        designation: row['Designation'] ? row['Designation'].toString().trim() : null,
-                        max_full_time_scholars: parseInt(row['Max Full Time Scholars']) || 0,
-                        max_part_time_internal_scholars: parseInt(row['Max Part Time Internal']) || parseInt(row['Max Part Time Internal Scholars']) || 0,
-                        max_part_time_external_scholars: parseInt(row['Max Part Time External']) || parseInt(row['Max Part Time External Scholars']) || 0,
-                        max_part_time_industry_scholars: parseInt(row['Max Part Time Industry']) || parseInt(row['Max Part Time Industry Scholars']) || 0,
+                        faculty_name: facultyName,
+                        department_id: deptId,
+                        department_name: deptName,
+                        specialization: getVal(row, 'specialization') || 'N/A',
+                        staff_id: getVal(row, 'faculty id', 'staff id', 'staff_id') || null,
+                        designation: getVal(row, 'designation') || null,
+                        area_of_interest: areaArray,
+                        max_full_time_scholars: getNum(row, 'maximum number of students', 'max full time scholars', 'max full time'),
+                        max_part_time_internal_scholars: getNum(row, 'max part time internal'),
+                        max_part_time_external_scholars: getNum(row, 'max part time external'),
+                        max_part_time_industry_scholars: getNum(row, 'max part time industry'),
+                        phd_completed: getNum(row, 'phd students completed', 'phd completed', 'degree awarded', 'number of phd'),
+                        eligible_for_session: eligibleRaw ? eligibleRaw.toUpperCase() === 'YES' : null,
+                        ineligible_reason: getVal(row, 'if not eligible', 'ineligible reason', 'mention the reason') || null,
                         status: 'Approved',
                         is_active: true
                     };
                 });
 
-                // Validate basic required fields
-                const validSupervisors = supervisorsToInsert.filter(s => s.name && s.email && s.faculty_id && s.department_id);
+                // Only require name to be present
+                const validSupervisors = supervisorsToInsert.filter(s => s.name && s.name.trim() !== '');
 
                 if (validSupervisors.length === 0) {
-                    toast.error("No valid supervisors found in Excel. Check Faculty/Department names, Name, and Email.");
+                    toast.error("No valid supervisors found in Excel. Make sure the 'Name of the Supervisor' column has data.");
                     setLoading(false);
                     return;
                 }
@@ -341,8 +417,8 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                     if (newlyAdded === 0 && (!skippedCount || skippedCount === 0)) {
                         toast.info('No new supervisors were added.');
                     }
-                    if (validSupervisors.length < data.length) {
-                        toast.warning(`${data.length - validSupervisors.length} rows were skipped due to invalid data (e.g., mismatched Faculty/Department).`);
+                    if (validSupervisors.length < dataRows.length) {
+                        toast.warning(`${dataRows.length - validSupervisors.length} rows were skipped due to invalid data (e.g., mismatched Faculty/Department).`);
                     }
                     loadAllData(); // Refresh UI
                 }
@@ -438,6 +514,9 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                     max_part_time_internal_scholars: parseInt(formData.maxPartTimeInternalScholars) || 0,
                     max_part_time_external_scholars: parseInt(formData.maxPartTimeExternalScholars) || 0,
                     max_part_time_industry_scholars: parseInt(formData.maxPartTimeIndustryScholars) || 0,
+                    phd_completed: parseInt(formData.phdCompleted) || 0,
+                    eligible_for_session: formData.eligibleForSession ?? null,
+                    ineligible_reason: formData.ineligibleReason || null,
                     is_active: formData.isActive !== undefined ? formData.isActive : true
                 };
 
@@ -468,11 +547,18 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                     specialization: formData.specialization,
                     staff_id: formData.staff_id || '',
                     designation: formData.designation || '',
-                    area_of_interest: formData.areaOfInterest ? formData.areaOfInterest.split(',').map(s => s.trim()) : [],
+                    area_of_interest: formData.areaOfInterest
+                        ? (Array.isArray(formData.areaOfInterest)
+                            ? formData.areaOfInterest
+                            : formData.areaOfInterest.split(',').map(s => s.trim()).filter(Boolean))
+                        : [],
                     max_full_time_scholars: parseInt(formData.maxFullTimeScholars) || 0,
                     max_part_time_internal_scholars: parseInt(formData.maxPartTimeInternalScholars) || 0,
                     max_part_time_external_scholars: parseInt(formData.maxPartTimeExternalScholars) || 0,
                     max_part_time_industry_scholars: parseInt(formData.maxPartTimeIndustryScholars) || 0,
+                    phd_completed: parseInt(formData.phdCompleted) || 0,
+                    eligible_for_session: formData.eligibleForSession ?? null,
+                    ineligible_reason: formData.ineligibleReason || null,
                     is_active: true,
                     status: 'Active',
                     created_by: 'director'
@@ -786,32 +872,34 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
         const dataForDownload = filteredSupervisors.map((supervisor, index) => {
             const faculty = faculties.find(f => f.id === supervisor.facultyId);
             const department = faculty?.departments.find(d => d.id === supervisor.departmentId);
-            
+
             const rowData = {};
             selectedColumns.forEach(key => {
                 switch (key) {
                     case 'sno': rowData['S.No'] = index + 1; break;
-                    case 'name': rowData['Name'] = supervisor.name || ''; break;
+                    case 'name': rowData['Name of the Supervisor'] = supervisor.name || ''; break;
                     case 'email': rowData['Email'] = supervisor.email || ''; break;
                     case 'phone': rowData['Phone'] = supervisor.phone || ''; break;
-                    case 'staff_id': rowData['Staff Id'] = supervisor.staff_id || ''; break;
+                    case 'staff_id': rowData['Faculty ID'] = supervisor.staff_id || ''; break;
                     case 'designation': rowData['Designation'] = supervisor.designation || ''; break;
                     case 'faculty': rowData['Faculty'] = faculty?.name || supervisor.facultyName || ''; break;
                     case 'department': rowData['Department'] = department?.name || supervisor.departmentName || ''; break;
                     case 'specialization': rowData['Specialization'] = supervisor.specialization || ''; break;
-                    case 'area_of_interest': rowData['Area of Interest'] = supervisor.areaOfInterest ? supervisor.areaOfInterest.join(', ') : ''; break;
-                    case 'maxFullTimeScholars': rowData['Max Full Time'] = supervisor.maxFullTimeScholars || 0; break;
-                    case 'maxPartTimeInternalScholars': rowData['Max PT Internal'] = supervisor.maxPartTimeInternalScholars || 0; break;
-                    case 'maxPartTimeExternalScholars': rowData['Max PT External'] = supervisor.maxPartTimeExternalScholars || 0; break;
-                    case 'maxPartTimeIndustryScholars': rowData['Max PT Industry'] = supervisor.maxPartTimeIndustryScholars || 0; break;
-                    case 'admittedFullTime': rowData['Admitted Full Time'] = supervisor.admittedFullTime || supervisor.currentFullTimeScholars || 0; break;
-                    case 'admittedPartTimeInternal': rowData['Admitted PT Internal'] = supervisor.admittedPartTimeInternal || supervisor.currentPartTimeInternalScholars || 0; break;
-                    case 'admittedPartTimeExternal': rowData['Admitted PT External'] = supervisor.admittedPartTimeExternal || supervisor.currentPartTimeExternalScholars || 0; break;
-                    case 'admittedPartTimeIndustry': rowData['Admitted PT Industry'] = supervisor.admittedPartTimeIndustry || supervisor.currentPartTimeIndustryScholars || 0; break;
-                    case 'vacancyFullTime': rowData['Vacancy Full Time'] = supervisor.vacancyFullTime || 0; break;
-                    case 'vacancyPartTimeInternal': rowData['Vacancy PT Internal'] = supervisor.vacancyPartTimeInternal || 0; break;
-                    case 'vacancyPartTimeExternal': rowData['Vacancy PT External'] = supervisor.vacancyPartTimeExternal || 0; break;
-                    case 'vacancyPartTimeIndustry': rowData['Vacancy PT Industry'] = supervisor.vacancyPartTimeIndustry || 0; break;
+                    case 'area_of_interest': rowData['Area of Research'] = supervisor.areaOfInterest ? (Array.isArray(supervisor.areaOfInterest) ? supervisor.areaOfInterest.join(', ') : supervisor.areaOfInterest) : ''; break;
+                    case 'maxStudents': rowData['Maximum Number of Students Allowed (N)'] = supervisor.maxStudents || 0; break;
+                    case 'currentlyGuiding': rowData['No. of Scholars Currently Guiding (C)'] = supervisor.currentlyGuiding || 0; break;
+                    case 'availableVacancy': rowData['No. of Available Vacancy (N-C)'] = supervisor.availableVacancy || 0; break;
+                    case 'phdCompleted': rowData['Number of PhD Students Completed (Degree Awarded)'] = supervisor.phdCompleted || 0; break;
+                    case 'eligibleForSession': rowData['Is Eligible to Fill Vacancy (Yes/No)'] = supervisor.eligibleForSession === true ? 'YES' : supervisor.eligibleForSession === false ? 'NO' : 'N/A'; break;
+                    case 'ineligibleReason': rowData['If Not Eligible, Reason'] = supervisor.ineligibleReason || 'NA'; break;
+                    case 'admittedFullTime': rowData['Full Time - Admitted'] = supervisor.admittedFullTime || supervisor.currentFullTimeScholars || 0; break;
+                    case 'vacancyFullTime': rowData['Full Time - Vacancy'] = supervisor.vacancyFullTime || 0; break;
+                    case 'admittedPartTimeInternal': rowData['Part Time Internal - Admitted'] = supervisor.admittedPartTimeInternal || supervisor.currentPartTimeInternalScholars || 0; break;
+                    case 'vacancyPartTimeInternal': rowData['Part Time Internal - Vacancy'] = supervisor.vacancyPartTimeInternal || 0; break;
+                    case 'admittedPartTimeExternal': rowData['Part Time External - Admitted'] = supervisor.admittedPartTimeExternal || supervisor.currentPartTimeExternalScholars || 0; break;
+                    case 'vacancyPartTimeExternal': rowData['Part Time External - Vacancy'] = supervisor.vacancyPartTimeExternal || 0; break;
+                    case 'admittedPartTimeIndustry': rowData['Part Time Industry - Admitted'] = supervisor.admittedPartTimeIndustry || supervisor.currentPartTimeIndustryScholars || 0; break;
+                    case 'vacancyPartTimeIndustry': rowData['Part Time Industry - Vacancy'] = supervisor.vacancyPartTimeIndustry || 0; break;
                     default: break;
                 }
             });
@@ -822,7 +910,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Supervisors Data");
         XLSX.writeFile(wb, `Supervisors_Data_${new Date().toISOString().split('T')[0]}.xlsx`);
-        
+
         setShowDownloadModal(false);
     };
 
@@ -1026,7 +1114,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                 {/* Inner scrollable container for horizontal + vertical scroll */}
                 <div className={`flex-1 overflow-auto p-1 ${isFullscreen ? 'max-w-full' : (isSidebarClosed ? 'max-w-[92.5vw]' : 'max-w-[79.5vw]')}`}>
                     <div className="max-h-[70vh] overflow-y-auto relative">
-                        <table className="min-w-full divide-y divide-gray-200">
+                        <table className="supervisors-table min-w-full divide-y divide-gray-200">
                             <thead className="sticky top-0 bg-white z-10">
                                 <style>{`
                                 .supervisors-table thead {
@@ -1046,45 +1134,23 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                 <tr>
                                     <th rowSpan="2" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">S.No.</th>
                                     <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Name</th>
-                                    <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Staff Id</th>
+                                    <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Faculty ID</th>
                                     <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Designation</th>
                                     <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Faculty</th>
                                     <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Department</th>
-                                    <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Specialization</th>
-                                    <th colSpan="2" className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 bg-gray-50">Full Time</th>
-                                    <th colSpan="2" className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 bg-gray-50">Part Time Internal</th>
-                                    <th colSpan="2" className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 bg-gray-50">Part Time External</th>
-                                    <th colSpan="2" className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200 bg-gray-50">Part Time Industry</th>
+                                    <th rowSpan="2" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom min-w-[220px]">Area of Research</th>
+                                    <th rowSpan="2" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Max Students</th>
+                                    <th rowSpan="2" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Currently Guiding</th>
+                                    <th rowSpan="2" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Available Vacancy</th>
+                                    <th rowSpan="2" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">PhD Completed</th>
                                     <th rowSpan="2" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50 align-bottom">Actions</th>
                                 </tr>
-                                <tr>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Admitted</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Vacancy</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Admitted</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Vacancy</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Admitted</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Vacancy</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Admitted</th>
-                                    <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-b-2 border-gray-200 bg-gray-50">Vacancy</th>
-                                </tr>
+                                <tr></tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredSupervisors.map((sup, index) => {
                                     const faculty = faculties.find(f => f.id === sup.facultyId);
                                     const department = faculty?.departments.find(d => d.id === sup.departmentId);
-
-                                    // Use the current counts and calculated vacancies from supervisor data
-                                    const admittedFT = sup.currentFullTimeScholars || 0;
-                                    const vacancyFT = sup.vacancyFullTime || 0;
-
-                                    const admittedPTI = sup.currentPartTimeInternalScholars || 0;
-                                    const vacancyPTI = sup.vacancyPartTimeInternal || 0;
-
-                                    const admittedPTE = sup.currentPartTimeExternalScholars || 0;
-                                    const vacancyPTE = sup.vacancyPartTimeExternal || 0;
-
-                                    const admittedPTInd = sup.currentPartTimeIndustryScholars || 0;
-                                    const vacancyPTInd = sup.vacancyPartTimeIndustry || 0;
 
                                     return (
                                         <tr key={sup.id} className="hover:bg-gray-50 transition-colors duration-200">
@@ -1092,17 +1158,13 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{sup.name}</td>
                                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{sup.staff_id || 'N/A'}</td>
                                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{sup.designation || 'N/A'}</td>
-                                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{faculty?.name || 'N/A'}</td>
-                                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{department?.name || 'N/A'}</td>
-                                            <td className="px-4 py-3 text-sm text-gray-900">{sup.specialization}</td>
-                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{admittedFT}</td>
-                                            <td className={`px-4 py-3 text-center whitespace-nowrap text-sm font-bold ${vacancyFT > 0 ? 'text-green-600' : 'text-red-600'}`}>{vacancyFT}</td>
-                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{admittedPTI}</td>
-                                            <td className={`px-4 py-3 text-center whitespace-nowrap text-sm font-bold ${vacancyPTI > 0 ? 'text-green-600' : 'text-red-600'}`}>{vacancyPTI}</td>
-                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{admittedPTE}</td>
-                                            <td className={`px-4 py-3 text-center whitespace-nowrap text-sm font-bold ${vacancyPTE > 0 ? 'text-green-600' : 'text-red-600'}`}>{vacancyPTE}</td>
-                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{admittedPTInd}</td>
-                                            <td className={`px-4 py-3 text-center whitespace-nowrap text-sm font-bold ${vacancyPTInd > 0 ? 'text-green-600' : 'text-red-600'}`}>{vacancyPTInd}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{faculty?.name || sup.facultyName || 'N/A'}</td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{department?.name || sup.departmentName || 'N/A'}</td>
+                                            <td className="px-4 py-3 text-sm text-gray-900 min-w-[220px]">{sup.areaOfInterest ? (Array.isArray(sup.areaOfInterest) ? sup.areaOfInterest.join(', ') : sup.areaOfInterest) : 'N/A'}</td>
+                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{sup.maxStudents}</td>
+                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{sup.currentlyGuiding}</td>
+                                            <td className={`px-4 py-3 text-center whitespace-nowrap text-sm font-bold ${sup.availableVacancy > 0 ? 'text-green-600' : 'text-red-600'}`}>{sup.availableVacancy}</td>
+                                            <td className="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-900">{sup.phdCompleted}</td>
                                             <td className="px-4 py-3 text-center">
                                                 <div className="supervisors-actions">
                                                     <button
@@ -1158,12 +1220,12 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                         {(modal.type === 'add' || modal.type === 'edit') && <>
                             <h3 className="text-2xl font-bold mb-4">{modal.type === 'edit' ? 'Edit Supervisor' : 'Add Supervisor'}</h3>
                             <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                                <div><label className="block text-sm font-bold mb-2">Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleFormChange} required /></div>
+                                <div><label className="block text-sm font-bold mb-2">Name of the Supervisor</label><input type="text" name="name" value={formData.name || ''} onChange={handleFormChange} required /></div>
                                 <div><label className="block text-sm font-bold mb-2">Email</label><input type="email" name="email" value={formData.email || ''} onChange={handleFormChange} required /></div>
                                 <div><label className="block text-sm font-bold mb-2">Faculty</label><select name="facultyId" value={formData.facultyId || ''} onChange={handleFormChange} required><option value="">Select Faculty</option>{faculties.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select></div>
                                 <div><label className="block text-sm font-bold mb-2">Department</label><select name="departmentId" value={formData.departmentId || ''} onChange={handleFormChange} disabled={!formData.facultyId} required><option value="">Select Department</option>{formData.facultyId && faculties.find(f => f.id === formData.facultyId)?.departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}</select></div>
-                                <div className="md:col-span-2"><label className="block text-sm font-bold mb-2">Specialization</label><input type="text" name="specialization" value={formData.specialization || ''} onChange={handleFormChange} required /></div>
-                                <div><label className="block text-sm font-bold mb-2">Staff Id</label><input type="text" name="staff_id" value={formData.staff_id || ''} onChange={handleFormChange} placeholder="Enter Staff Id" /></div>
+                                <div className="md:col-span-2"><label className="block text-sm font-bold mb-2">Area of Research</label><input type="text" name="areaOfInterest" value={formData.areaOfInterest ? (Array.isArray(formData.areaOfInterest) ? formData.areaOfInterest.join(', ') : formData.areaOfInterest) : ''} onChange={handleFormChange} placeholder="e.g. Machine Learning, Data Mining" /></div>
+                                <div><label className="block text-sm font-bold mb-2">Faculty ID</label><input type="text" name="staff_id" value={formData.staff_id || ''} onChange={handleFormChange} placeholder="Enter Faculty ID" /></div>
                                 <div><label className="block text-sm font-bold mb-2">Designation</label><input type="text" name="designation" value={formData.designation || ''} onChange={handleFormChange} placeholder="Enter designation" /></div>
 
                                 {/* Vacancy Slots Section */}
@@ -1176,6 +1238,21 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                 <div><label className="block text-sm font-bold mb-2">Max Part Time External</label><input type="number" name="maxPartTimeExternalScholars" value={formData.maxPartTimeExternalScholars || ''} onChange={handleFormChange} min="0" required className="w-full p-2 border rounded" /></div>
                                 <div><label className="block text-sm font-bold mb-2">Max Part Time Industry</label><input type="number" name="maxPartTimeIndustryScholars" value={formData.maxPartTimeIndustryScholars || ''} onChange={handleFormChange} min="0" required className="w-full p-2 border rounded" /></div>
 
+                                {/* New fields */}
+                                <div className="md:col-span-2 mt-4 mb-2">
+                                    <h4 className="text-lg font-bold text-gray-700 border-b pb-2">Session Eligibility</h4>
+                                </div>
+                                <div><label className="block text-sm font-bold mb-2">Number of PhD Students Completed (Degree Awarded)</label><input type="number" name="phdCompleted" value={formData.phdCompleted || ''} onChange={handleFormChange} min="0" className="w-full p-2 border rounded" /></div>
+                                <div>
+                                    <label className="block text-sm font-bold mb-2">Is Eligible to Fill Vacancy (Yes/No)</label>
+                                    <select name="eligibleForSession" value={formData.eligibleForSession === true ? 'yes' : formData.eligibleForSession === false ? 'no' : ''} onChange={(e) => setFormData(prev => ({ ...prev, eligibleForSession: e.target.value === 'yes' ? true : e.target.value === 'no' ? false : null }))} className="w-full p-2 border rounded">
+                                        <option value="">Select...</option>
+                                        <option value="yes">YES</option>
+                                        <option value="no">NO</option>
+                                    </select>
+                                </div>
+                                <div className="md:col-span-2"><label className="block text-sm font-bold mb-2">If Not Eligible, Mention the Reason</label><input type="text" name="ineligibleReason" value={formData.ineligibleReason || ''} onChange={handleFormChange} placeholder="e.g. There is no vacancy available" /></div>
+
                                 <div className="md:col-span-2 flex justify-end gap-3 mt-4"><button type="button" onClick={closeModal} className="btn bg-black text-gray-800 hover:bg-black text-white">Cancel</button><button type="submit" className="btn bg-blue-600 text-white hover:bg-blue-700">Save</button></div>
                             </form>
                         </>}
@@ -1185,12 +1262,12 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                             <h3 className="text-2xl font-bold mb-6">Supervisor Details</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 text-left">
                                 {[
-                                    { label: "Name", value: modal.data.name },
+                                    { label: "Name of the Supervisor", value: modal.data.name },
                                     { label: "Email", value: modal.data.email },
-                                    { label: "Faculty", value: faculties.find(f => f.id === modal.data.facultyId)?.name },
-                                    { label: "Department", value: faculties.flatMap(f => f.departments).find(d => d.id === modal.data.departmentId)?.name },
-                                    { label: "Specialization", value: modal.data.specialization, colSpan: true },
-                                    { label: "Staff Id", value: modal.data.staff_id },
+                                    { label: "Faculty", value: faculties.find(f => f.id === modal.data.facultyId)?.name || modal.data.facultyName },
+                                    { label: "Department", value: faculties.flatMap(f => f.departments).find(d => d.id === modal.data.departmentId)?.name || modal.data.departmentName },
+                                    { label: "Area of Research", value: modal.data.areaOfInterest ? (Array.isArray(modal.data.areaOfInterest) ? modal.data.areaOfInterest.join(', ') : modal.data.areaOfInterest) : 'N/A', colSpan: true },
+                                    { label: "Faculty ID", value: modal.data.staff_id },
                                     { label: "Designation", value: modal.data.designation },
                                 ].map(({ label, value, colSpan }) => (
                                     <div key={label} className={`border-b border-gray-200 pb-2 ${colSpan ? 'md:col-span-2' : ''}`}>
@@ -1208,8 +1285,11 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                     { label: "Max Part Time Internal", value: modal.data.maxPartTimeInternalScholars },
                                     { label: "Max Part Time External", value: modal.data.maxPartTimeExternalScholars },
                                     { label: "Max Part Time Industry", value: modal.data.maxPartTimeIndustryScholars },
-                                ].map(({ label, value }) => (
-                                    <div key={label} className="border-b border-gray-200 pb-2">
+                                    { label: "PhD Students Completed (Degree Awarded)", value: modal.data.phdCompleted },
+                                    { label: "Eligible to Fill Vacancy", value: modal.data.eligibleForSession === true ? 'YES' : modal.data.eligibleForSession === false ? 'NO' : 'N/A' },
+                                    { label: "If Not Eligible, Reason", value: modal.data.ineligibleReason || 'NA', colSpan: true },
+                                ].map(({ label, value, colSpan }) => (
+                                    <div key={label} className={`border-b border-gray-200 pb-2 ${colSpan ? 'md:col-span-2' : ''}`}>
                                         <p className="text-sm font-medium text-gray-500">{label}</p>
                                         <p className="mt-1 text-base text-gray-900 font-semibold">{value ?? 0}</p>
                                     </div>
@@ -1294,18 +1374,10 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                         disabled={!isDepartmentSelected}
                                     >
                                         <option value="">Choose the type of scholar...</option>
-                                        <option value="Full Time" disabled={(modal.data.vacancyFullTime || 0) <= 0}>
-                                            Full Time {(modal.data.vacancyFullTime || 0) > 0 ? `(${modal.data.vacancyFullTime} vacancy)` : '(No vacancy)'}
-                                        </option>
-                                        <option value="Part Time Internal" disabled={(modal.data.vacancyPartTimeInternal || 0) <= 0}>
-                                            Part Time Internal {(modal.data.vacancyPartTimeInternal || 0) > 0 ? `(${modal.data.vacancyPartTimeInternal} vacancy)` : '(No vacancy)'}
-                                        </option>
-                                        <option value="Part Time External" disabled={(modal.data.vacancyPartTimeExternal || 0) <= 0}>
-                                            Part Time External {(modal.data.vacancyPartTimeExternal || 0) > 0 ? `(${modal.data.vacancyPartTimeExternal} vacancy)` : '(No vacancy)'}
-                                        </option>
-                                        <option value="Part Time Industry" disabled={(modal.data.vacancyPartTimeIndustry || 0) <= 0}>
-                                            Part Time Industry {(modal.data.vacancyPartTimeIndustry || 0) > 0 ? `(${modal.data.vacancyPartTimeIndustry} vacancy)` : '(No vacancy)'}
-                                        </option>
+                                        <option value="Full Time" disabled={(modal.data.vacancyFullTime || 0) <= 0}>Full Time</option>
+                                        <option value="Part Time Internal" disabled={(modal.data.vacancyPartTimeInternal || 0) <= 0}>Part Time Internal</option>
+                                        <option value="Part Time External" disabled={(modal.data.vacancyPartTimeExternal || 0) <= 0}>Part Time External</option>
+                                        <option value="Part Time Industry" disabled={(modal.data.vacancyPartTimeIndustry || 0) <= 0}>Part Time Industry</option>
                                     </select>
                                     <p className="text-xs text-gray-500 mt-1">
                                         Select type first - only scholars of this type will be shown

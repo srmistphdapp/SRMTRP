@@ -1627,7 +1627,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
 
         {/* Table */}
         <div className="examination-table-container examination-table-scroll" ref={tableScrollRef}>
-          <table className="examination-table w-full divide-y divide-gray-200 min-w-full">
+          <table className="examination-table divide-y divide-gray-200">
             <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ position: 'sticky', left: 0, zIndex: 25, background: '#f9fafb', width: '40px', minWidth: '40px', maxWidth: '40px', padding: '12px 6px', whiteSpace: 'nowrap' }}>

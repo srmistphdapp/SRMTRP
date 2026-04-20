@@ -633,3 +633,60 @@ table.examination-table.min-w-full {
     height: 24px;
   }
 }
+
+/* ── Examination Action Buttons (used in the Actions column) ── */
+.examination-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+}
+
+.examination-action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  color: white;
+}
+
+.examination-action-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.examination-action-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.examination-action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+  transform: none;
+  box-shadow: none;
+}
+
+.examination-action-btn.view {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.examination-action-btn.edit {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.examination-action-btn.forward {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.examination-action-btn.delete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}

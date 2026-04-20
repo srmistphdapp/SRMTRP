@@ -1655,7 +1655,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">INTERVIEW MARKS</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL MARKS</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '140px', width: '140px' }}>ACTIONS</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '180px', width: '180px' }}>ACTIONS</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -1892,7 +1892,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                         {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Pending'}
                       </span>
                     </td>
-                    <td className="px-6 py-3 whitespace-nowrap text-center text-sm bg-white" style={{ minWidth: '140px', width: '140px' }}>
+                    <td className="px-6 py-3 whitespace-nowrap text-center text-sm bg-white" style={{ minWidth: '180px', width: '180px' }}>
                       <div className="examination-actions">
                         <button onClick={() => { setViewingScholar(item); setIsViewModalOpen(true); }} className="examination-action-btn view" title="View Details">
                           <svg fill="currentColor" viewBox="0 0 24 24">

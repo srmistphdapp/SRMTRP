@@ -26,7 +26,6 @@ import Coordinators from './components/Coordinators';
 import Faculties from './components/Faculties';
 import ScholarManagement from './components/ScholarManagement';
 import VerifiedScholars from './components/VerifiedScholars';
-import QueryScholars from './components/QueryScholars';
 import HallTicket from './components/HallTicket';
 import Examination from './components/Examination';
 import Supervisors from './components/Supervisors';
@@ -54,7 +53,7 @@ const DirectorPortal = () => {
 
   // Auto-open Scholar Administration submenu when on those pages
   useEffect(() => {
-    if (activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'queryScholars') {
+    if (activeTab === 'scholarManagement' || activeTab === 'verifiedScholars') {
       setScholarSubmenuOpen(true);
     }
   }, [activeTab]);
@@ -277,15 +276,6 @@ const DirectorPortal = () => {
         break;
       case 'verifiedScholars':
         content = <VerifiedScholars
-          appData={appData}
-          openModal={openModal}
-          isSidebarMinimized={isSidebarMinimized}
-          onFullscreenChange={(isFs) => setIsFullscreen(isFs)}
-          onModalStateChange={handleModalStateChange}
-        />;
-        break;
-      case 'queryScholars':
-        content = <QueryScholars
           appData={appData}
           openModal={openModal}
           isSidebarMinimized={isSidebarMinimized}
@@ -535,7 +525,7 @@ const DirectorPortal = () => {
                 <div className="relative">
                   <TabButton
                     id="scholarManagement"
-                    active={activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'queryScholars'}
+                    active={activeTab === 'scholarManagement' || activeTab === 'verifiedScholars'}
                     onClick={() => {
                       if (isSidebarMinimized) {
                         // When minimized, default to Initial view
@@ -582,19 +572,6 @@ const DirectorPortal = () => {
                         Verified Scholars
                       </button>
 
-                      <button
-                        onClick={() => {
-                          setActiveTab('queryScholars');
-                          setScholarSubmenuOpen(true);
-                        }}
-                        className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2 ${activeTab === 'queryScholars'
-                          ? 'bg-orange-600 text-white font-semibold shadow-md'
-                          : 'text-gray-600 hover:bg-gray-100'
-                          }`}
-                      >
-                        <span className={`w-2 h-2 rounded-full ${activeTab === 'queryScholars' ? 'bg-white' : 'bg-orange-500'}`}></span>
-                        Query Scholars
-                      </button>
                     </div>
                   )}
                 </div>
@@ -715,7 +692,7 @@ const DirectorPortal = () => {
 
           {/* Main Content Area */}
           <main className={`main-content-area ${isFullscreen ? 'content-fullscreen' : hasActiveModal ? 'content-with-sidebar-hidden' : isSidebarMinimized ? 'content-with-sidebar-minimized' : 'content-with-sidebar-expanded'}`}>
-            <div className={`${activeTab === 'examination' ? 'examination-page-wrapper p-4' : activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'hallTicket' || activeTab === 'queryScholars' || activeTab === 'questionPapers' ? 'fullscreen-page-wrapper p-4' : 'p-4 h-full'}`}>
+            <div className={`${activeTab === 'examination' ? 'examination-page-wrapper p-4' : activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'hallTicket' || activeTab === 'questionPapers' ? 'fullscreen-page-wrapper p-4' : 'p-4 h-full'}`}>
               {renderTabContent()}
             </div>
           </main>

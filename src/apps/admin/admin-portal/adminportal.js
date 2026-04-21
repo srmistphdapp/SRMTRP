@@ -30,7 +30,6 @@ import WorkflowExamination from './components/WorkflowExamination';
 import Checklist from './components/Checklist'; // ✅ NEW
 import VerifiedScholars from './components/VerifiedScholars';
 import ScholarManagement from './components/ScholarManagement';
-import QueryScholars from './components/QueryScholars';
 import HallTicket from './components/HallTicket';
 
 const AdminPortal = () => {
@@ -262,7 +261,6 @@ const AdminPortal = () => {
       'workflow',
       'verifiedScholars',
       'hallTicket',
-      'queryScholars',
       'checklist', // ✅ NEW
     ];
 
@@ -333,15 +331,6 @@ const AdminPortal = () => {
       case 'uploadedScholars':
         content = (
           <ScholarManagement
-            appData={appData}
-            onFullscreenChange={(isFs) => setIsFullscreen(isFs)}
-            onModalStateChange={handleModalStateChange}
-          />
-        );
-        break;
-      case 'queryScholars':
-        content = (
-          <QueryScholars
             appData={appData}
             onFullscreenChange={(isFs) => setIsFullscreen(isFs)}
             onModalStateChange={handleModalStateChange}
@@ -487,7 +476,7 @@ const AdminPortal = () => {
 
                 <TabButton
                   id="scholarManagement"
-                  active={activeTab === 'uploadedScholars' || activeTab === 'verifiedScholars' || activeTab === 'queryScholars'}
+                  active={activeTab === 'uploadedScholars' || activeTab === 'verifiedScholars'}
                   onClick={() => {
                     if (isSidebarMinimized) {
                       setActiveTab('verifiedScholars');
@@ -529,19 +518,6 @@ const AdminPortal = () => {
                       Verified Scholars
                     </button>
 
-                    <button
-                      onClick={() => {
-                        setActiveTab('queryScholars');
-                        setScholarSubmenuOpen(true);
-                      }}
-                      className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2 ${activeTab === 'queryScholars'
-                        ? 'bg-orange-600 text-white font-semibold shadow-md'
-                        : 'text-gray-600 hover:bg-gray-100'
-                        }`}
-                    >
-                      <span className={`w-2 h-2 rounded-full ${activeTab === 'queryScholars' ? 'bg-white' : 'bg-orange-500'}`}></span>
-                      Query Scholars
-                    </button>
                   </div>
                 )}
                 <TabButton

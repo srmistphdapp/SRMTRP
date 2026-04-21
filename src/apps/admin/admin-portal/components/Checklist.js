@@ -49,26 +49,40 @@ const extractDepartmentFromProgram = (programString) => {
   return '';
 };
 
+// Normalize faculty name to handle variations like:
+// "Faculty of Medical & Health Science" (examination_records)
+// "Faculty of Medical and Health Sciences" (departments table)
+const normalizeFacultyName = (name) => {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .replace(/\s*&\s*/g, ' and ')       // & → and
+    .replace(/sciences\b/g, 'science')  // plural → singular
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
 // Helper function to find matching department in faculty's department list
 const findMatchingDepartment = (extractedDept, facultyName, facultiesData) => {
   if (!extractedDept || !facultyName) return null;
-  
-  const faculty = facultiesData.find(f => f.name === facultyName);
+
+  const normalizedFacultyName = normalizeFacultyName(facultyName);
+  const faculty = facultiesData.find(f => normalizeFacultyName(f.name) === normalizedFacultyName);
   if (!faculty || !faculty.departments) return null;
-  
+
   const normalizedExtracted = extractedDept.toLowerCase().trim();
-  
-  const exactMatch = faculty.departments.find(d => 
+
+  const exactMatch = faculty.departments.find(d =>
     d.name.toLowerCase().trim() === normalizedExtracted
   );
   if (exactMatch) return exactMatch.name;
-  
-  const partialMatch = faculty.departments.find(d => 
-    d.name.toLowerCase().includes(normalizedExtracted) || 
+
+  const partialMatch = faculty.departments.find(d =>
+    d.name.toLowerCase().includes(normalizedExtracted) ||
     normalizedExtracted.includes(d.name.toLowerCase())
   );
   if (partialMatch) return partialMatch.name;
-  
+
   return null;
 };
 
@@ -77,12 +91,12 @@ const getDisplayDepartment = (scholar, facultiesData) => {
   if (scholar.department && scholar.department !== 'Unknown Department') {
     return scholar.department;
   }
-  
+
   if (scholar.program && scholar.faculty) {
     const extractedDept = extractDepartmentFromProgram(scholar.program);
     return findMatchingDepartment(extractedDept, scholar.faculty, facultiesData) || null;
   }
-  
+
   return null;
 };
 
@@ -102,7 +116,7 @@ export default function Checklist({ onModalStateChange }) {
   const [loading, setLoading] = useState(true);
   const { scholarFilters, facultiesData } = useAppContext();
   const pageSize = 10;
-  
+
   useEffect(() => {
     const loadScholars = async () => {
       setLoading(true);
@@ -114,31 +128,31 @@ export default function Checklist({ onModalStateChange }) {
           showSuccessNotification('Error loading scholars. Please refresh the page.');
         } else {
           console.log(`📊 Admitted scholars fetched: ${data?.length || 0}`);
-          
+
           const mappedData = (data || []).map((scholar, index) => {
             const faculty = scholar.faculty || '';
             const department = scholar.department || extractDepartmentFromProgram(scholar.program) || '';
-            
+
             // --- FIX: Safely parse JSON from checklist_verification column and MERGE with default structure ---
             let parsedChecklist = scholar.checklist_verification; // Changed from scholar.checklist
             if (typeof parsedChecklist === 'string') {
-                try {
-                    parsedChecklist = JSON.parse(parsedChecklist);
-                } catch (e) {
-                    console.warn('Failed to parse checklist_verification JSON for scholar:', scholar.id, e);
-                    parsedChecklist = null;
-                }
+              try {
+                parsedChecklist = JSON.parse(parsedChecklist);
+              } catch (e) {
+                console.warn('Failed to parse checklist_verification JSON for scholar:', scholar.id, e);
+                parsedChecklist = null;
+              }
             }
 
             // Determine if scholar is verified to set default state for NEW fields
             const isVerifiedOrCompleted = scholar.checklist_status === 'Completed' || scholar.checklist_status === 'Verified' || scholar.checklist_status === 'Approved';
-            
+
             // Merge default checklist (with new fields) with the saved checklist.
             // Spread order matters: default first ensures new keys exist and order is preserved,
             // saved second ensures existing data overwrites default.
-            parsedChecklist = { 
-                ...defaultChecklistFor(isVerifiedOrCompleted), 
-                ...(parsedChecklist || {}) 
+            parsedChecklist = {
+              ...defaultChecklistFor(isVerifiedOrCompleted),
+              ...(parsedChecklist || {})
             };
 
             return {
@@ -177,7 +191,7 @@ export default function Checklist({ onModalStateChange }) {
               eligible_checklist: scholar.eligible_checklist
             };
           });
-          
+
           setScholars(mappedData);
         }
       } catch (err) {
@@ -204,7 +218,7 @@ export default function Checklist({ onModalStateChange }) {
     setShowNotification(true);
     setTimeout(() => { setShowNotification(false); }, 3000);
   };
-  
+
 
   const filtered = useMemo(() => {
     const localQ = (query || '').toString().toLowerCase();
@@ -230,13 +244,16 @@ export default function Checklist({ onModalStateChange }) {
   }, [query, status, scholars, scholarFilters]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  
+
   const facultyDeptTypeGroups = useMemo(() => {
     const groups = {};
-    
+    // Map from normalized faculty name -> canonical faculty name (from facultiesData)
+    const normalizedFacultyMap = {};
+
     // Initialize structure: Faculty -> Department -> Type -> Scholars[]
     facultiesData.forEach(faculty => {
       groups[faculty.name] = {};
+      normalizedFacultyMap[normalizeFacultyName(faculty.name)] = faculty.name;
       faculty.departments.forEach(dept => {
         groups[faculty.name][dept.name] = {
           'Full Time': [],
@@ -246,22 +263,24 @@ export default function Checklist({ onModalStateChange }) {
         };
       });
     });
-    
+
     filtered.forEach(s => {
-      const facultyKey = s.faculty;
+      // Resolve canonical faculty name via normalization to handle variants like
+      // "Faculty of Medical & Health Science" vs "Faculty of Medical and Health Sciences"
+      const canonicalFaculty = normalizedFacultyMap[normalizeFacultyName(s.faculty)] || s.faculty;
       let deptKey = s.department;
-      
+
       if (!deptKey || deptKey.trim() === '') {
         deptKey = getDisplayDepartment(s, facultiesData);
       }
-      
-      if (!facultyKey || !deptKey) {
+
+      if (!canonicalFaculty || !deptKey) {
         return;
       }
-      
+
       // Determine scholar type
       let scholarType = s.type || s.program_type || '';
-      
+
       // Normalize type to match our four categories
       // IMPORTANT: Check for 'industry' FIRST before 'external' to properly separate them
       if (scholarType.toLowerCase().includes('full')) {
@@ -278,17 +297,17 @@ export default function Checklist({ onModalStateChange }) {
         // Default to Full Time if type is unclear
         scholarType = 'Full Time';
       }
-      
-      if (groups[facultyKey] && groups[facultyKey][deptKey]) {
-        groups[facultyKey][deptKey][scholarType].push(s);
+
+      if (groups[canonicalFaculty] && groups[canonicalFaculty][deptKey]) {
+        groups[canonicalFaculty][deptKey][scholarType].push(s);
       } else {
-        const matchedDept = findMatchingDepartment(deptKey, facultyKey, facultiesData);
-        if (matchedDept && groups[facultyKey] && groups[facultyKey][matchedDept]) {
-          groups[facultyKey][matchedDept][scholarType].push(s);
+        const matchedDept = findMatchingDepartment(deptKey, canonicalFaculty, facultiesData);
+        if (matchedDept && groups[canonicalFaculty] && groups[canonicalFaculty][matchedDept]) {
+          groups[canonicalFaculty][matchedDept][scholarType].push(s);
         }
       }
     });
-    
+
     return groups;
   }, [filtered, facultiesData]);
 
@@ -297,15 +316,15 @@ export default function Checklist({ onModalStateChange }) {
   const handleScholarClick = (scholar) => {
     let checklist = scholar.checklist;
     if (typeof checklist === 'string') {
-        try { checklist = JSON.parse(checklist); } catch(e) { checklist = null; }
+      try { checklist = JSON.parse(checklist); } catch (e) { checklist = null; }
     }
 
     const isVerifiedOrCompleted = scholar.status === 'Completed' || scholar.status === 'Verified' || scholar.status === 'Approved';
 
     // Merge logic: ensure new fields appear even if checklist exists
-    checklist = { 
-        ...defaultChecklistFor(isVerifiedOrCompleted), 
-        ...(checklist || {}) 
+    checklist = {
+      ...defaultChecklistFor(isVerifiedOrCompleted),
+      ...(checklist || {})
     };
 
     if (checklist && checklist.aadharPan) {
@@ -320,11 +339,11 @@ export default function Checklist({ onModalStateChange }) {
 
     const displayDepartment = getDisplayDepartment(scholar, facultiesData) || scholar.department || '—';
 
-    setSelectedScholar({ 
-      ...scholar, 
-      checklist, 
+    setSelectedScholar({
+      ...scholar,
+      checklist,
       additionalNotes: scholar.additionalNotes || scholar.notes || '',
-      displayDepartment 
+      displayDepartment
     });
     setShowVerification(true);
   };
@@ -337,22 +356,22 @@ export default function Checklist({ onModalStateChange }) {
   const handleCheckboxChange = (checklistItem) => {
     setSelectedScholar(prev => ({
       ...prev,
-      checklist: { 
-        ...prev.checklist, 
-        [checklistItem]: { 
-          ...prev.checklist[checklistItem], 
-          checked: !prev.checklist[checklistItem].checked, 
-          status: !prev.checklist[checklistItem].checked ? 'Verified' : 'Pending' 
-        } 
+      checklist: {
+        ...prev.checklist,
+        [checklistItem]: {
+          ...prev.checklist[checklistItem],
+          checked: !prev.checklist[checklistItem].checked,
+          status: !prev.checklist[checklistItem].checked ? 'Verified' : 'Pending'
+        }
       }
     }));
   };
-  
+
   const handleSelectAll = () => {
     if (!selectedScholar) return;
-    
+
     const updatedChecklist = { ...selectedScholar.checklist };
-    
+
     // Check all mandatory items
     for (const key in updatedChecklist) {
       if (updatedChecklist[key].type === 'mandatory') {
@@ -363,23 +382,23 @@ export default function Checklist({ onModalStateChange }) {
         };
       }
     }
-    
+
     setSelectedScholar(prev => ({
       ...prev,
       checklist: updatedChecklist
     }));
   };
-  
+
   const handleNotesChange = (e) => {
     setSelectedScholar(prev => ({
-        ...prev,
-        additionalNotes: e.target.value
+      ...prev,
+      additionalNotes: e.target.value
     }));
   };
 
   const handleSaveChanges = async () => {
     if (!selectedScholar) return;
-    
+
     try {
       const { error } = await updateScholarChecklist(selectedScholar.id, {
         checklist_verification: selectedScholar.checklist,
@@ -410,9 +429,9 @@ export default function Checklist({ onModalStateChange }) {
 
     const completedChecklist = { ...selectedScholar.checklist };
     for (const key in completedChecklist) {
-        if (completedChecklist[key].type === 'mandatory') {
-            completedChecklist[key] = { ...completedChecklist[key], checked: true, status: 'Verified' };
-        }
+      if (completedChecklist[key].type === 'mandatory') {
+        completedChecklist[key] = { ...completedChecklist[key], checked: true, status: 'Verified' };
+      }
     }
 
     try {
@@ -457,13 +476,13 @@ export default function Checklist({ onModalStateChange }) {
   if (showVerification && selectedScholar) {
     // --- STRICT IMMUTABILITY CHECK ---
     const sStatus = (selectedScholar.status || '').toString();
-    const isFrozen = 
-        sStatus === 'Completed' || 
-        sStatus === 'Verified' || 
-        sStatus === 'Approved' || 
-        selectedScholar.eligible_checklist === 'Checked';
+    const isFrozen =
+      sStatus === 'Completed' ||
+      sStatus === 'Verified' ||
+      sStatus === 'Approved' ||
+      selectedScholar.eligible_checklist === 'Checked';
 
-    const allMandatoryChecked = selectedScholar.checklist && Object.values(selectedScholar.checklist).every(item => 
+    const allMandatoryChecked = selectedScholar.checklist && Object.values(selectedScholar.checklist).every(item =>
       item && (item.type === 'optional' || item.checked)
     );
 
@@ -558,7 +577,7 @@ export default function Checklist({ onModalStateChange }) {
             <p style={{ marginBottom: '16px', color: '#6b7280', fontSize: '14px' }}>
               {isFrozen ? 'This scholar has been verified. Data is read-only.' : 'Please verify all the documents and details'}
             </p>
-            
+
             {/* Select All Button */}
             {!isFrozen && (
               <div style={{ marginBottom: '20px' }}>
@@ -588,7 +607,7 @@ export default function Checklist({ onModalStateChange }) {
 
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '18px', padding: '12px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #eef2ff' }}>
               <div style={{ width: 56, height: 56, borderRadius: 28, background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1e3a8a' }}>
-                {(selectedScholar.name||'').charAt(0) || 'S'}
+                {(selectedScholar.name || '').charAt(0) || 'S'}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>{selectedScholar.name}</div>
@@ -604,56 +623,56 @@ export default function Checklist({ onModalStateChange }) {
               </div>
             </div>
             {selectedScholar.checklist && Object.entries(selectedScholar.checklist).map(([key, value], index) => {
-                if (!value || typeof value !== 'object') return null;
+              if (!value || typeof value !== 'object') return null;
 
-                const label = value.label || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                const isOptional = value.type === 'optional';
-                const nocNote = 'Mandatory to fill this for Part Time Industry and Part Time External';
-                const noteText = (key && key.toString().toLowerCase() === 'noc') ? nocNote : (value.note || '');
+              const label = value.label || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+              const isOptional = value.type === 'optional';
+              const nocNote = 'Mandatory to fill this for Part Time Industry and Part Time External';
+              const noteText = (key && key.toString().toLowerCase() === 'noc') ? nocNote : (value.note || '');
 
-                return (
-                    <div key={key} style={{ marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
-                        <span style={{ fontSize: '16px', fontWeight: '600', color: '#374151', marginRight: '16px', minWidth: '24px' }}>
-                          {index + 1}.
+              return (
+                <div key={key} style={{ marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
+                  <span style={{ fontSize: '16px', fontWeight: '600', color: '#374151', marginRight: '16px', minWidth: '24px' }}>
+                    {index + 1}.
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={!!value.checked}
+                    onChange={() => handleCheckboxChange(key)}
+                    disabled={isFrozen}
+                    style={{
+                      marginRight: '12px',
+                      width: '18px',
+                      height: '18px',
+                      cursor: isFrozen ? 'not-allowed' : 'pointer'
+                    }}
+                  />
+                  <span style={{ fontSize: '15px', color: '#111827', flex: '1' }}>
+                    {label}
+                    {noteText ? (
+                      <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px', fontWeight: 'normal', fontStyle: 'italic' }}>
+                        ({noteText})
+                      </span>
+                    ) : (
+                      isOptional && (
+                        <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px', fontWeight: 'normal', fontStyle: 'italic' }}>
+                          (Optional)
                         </span>
-                        <input 
-                          type="checkbox" 
-                          checked={!!value.checked} 
-                          onChange={() => handleCheckboxChange(key)} 
-                          disabled={isFrozen} 
-                          style={{ 
-                            marginRight: '12px', 
-                            width: '18px', 
-                            height: '18px', 
-                            cursor: isFrozen ? 'not-allowed' : 'pointer' 
-                          }} 
-                        />
-                        <span style={{ fontSize: '15px', color: '#111827', flex: '1' }}>
-                          {label}
-                          {noteText ? (
-                            <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px', fontWeight: 'normal', fontStyle: 'italic' }}>
-                              ({noteText})
-                            </span>
-                          ) : (
-                            isOptional && (
-                              <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px', fontWeight: 'normal', fontStyle: 'italic' }}>
-                                (Optional)
-                              </span>
-                            )
-                          )}
-                        </span>
-                        <span style={{ 
-                          padding: '6px 12px', 
-                          borderRadius: '6px', 
-                          fontSize: '12px', 
-                          fontWeight: '500', 
-                          backgroundColor: value.checked ? '#dcfce7' : '#fef3c7', 
-                          color: value.checked ? '#166534' : '#92400e' 
-                        }}>
-                          {value.checked ? 'Verified' : 'Pending'}
-                        </span>
-                    </div>
-                );
+                      )
+                    )}
+                  </span>
+                  <span style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    backgroundColor: value.checked ? '#dcfce7' : '#fef3c7',
+                    color: value.checked ? '#166534' : '#92400e'
+                  }}>
+                    {value.checked ? 'Verified' : 'Pending'}
+                  </span>
+                </div>
+              );
             })}
             <div>
               <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#111827' }}>
@@ -664,50 +683,50 @@ export default function Checklist({ onModalStateChange }) {
                 value={selectedScholar.additionalNotes || ''}
                 onChange={handleNotesChange}
                 disabled={isFrozen}
-                style={{ 
-                  width: '100%', 
-                  height: '80px', 
-                  padding: '12px', 
-                  border: '1px solid #d1d5db', 
-                  borderRadius: '6px', 
-                  fontSize: '14px', 
-                  resize: 'vertical', 
-                  fontFamily: 'inherit', 
-                  backgroundColor: isFrozen ? '#f3f4f6' : 'white' 
+                style={{
+                  width: '100%',
+                  height: '80px',
+                  padding: '12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  fontFamily: 'inherit',
+                  backgroundColor: isFrozen ? '#f3f4f6' : 'white'
                 }}
               />
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button 
-                onClick={handleSaveChanges} 
-                disabled={isFrozen} 
-                style={{ 
-                  padding: '10px 20px', 
-                  backgroundColor: isFrozen ? '#9ca3af' : '#3b82f6', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '6px', 
-                  cursor: isFrozen ? 'not-allowed' : 'pointer', 
-                  fontSize: '14px', 
-                  fontWeight: '500', 
-                  opacity: isFrozen ? 0.7 : 1 
+              <button
+                onClick={handleSaveChanges}
+                disabled={isFrozen}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: isFrozen ? '#9ca3af' : '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: isFrozen ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  opacity: isFrozen ? 0.7 : 1
                 }}
               >
                 Save Changes
               </button>
-              <button 
-                onClick={handleCompleteVerification} 
-                disabled={!allMandatoryChecked || isFrozen} 
-                style={{ 
-                  padding: '10px 20px', 
-                  backgroundColor: (!allMandatoryChecked || isFrozen) ? '#9ca3af' : '#10b981', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '6px', 
-                  cursor: (!allMandatoryChecked || isFrozen) ? 'not-allowed' : 'pointer', 
-                  fontSize: '14px', 
-                  fontWeight: '500', 
-                  opacity: (!allMandatoryChecked || isFrozen) ? 0.7 : 1 
+              <button
+                onClick={handleCompleteVerification}
+                disabled={!allMandatoryChecked || isFrozen}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: (!allMandatoryChecked || isFrozen) ? '#9ca3af' : '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: (!allMandatoryChecked || isFrozen) ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  opacity: (!allMandatoryChecked || isFrozen) ? 0.7 : 1
                 }}
               >
                 {isFrozen ? 'Verified' : 'Complete Verification'}
@@ -716,24 +735,24 @@ export default function Checklist({ onModalStateChange }) {
           </div>
         </div>
         {showNotification && (
-          <div style={{ 
-            position: 'fixed', 
-            bottom: '20px', 
-            left: '50%', 
-            transform: 'translateX(-50%)', 
-            backgroundColor: '#10b981', 
-            color: 'white', 
-            padding: '16px 24px', 
-            borderRadius: '8px', 
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', 
-            zIndex: 1000, 
-            fontSize: '14px', 
-            fontWeight: '500', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px', 
-            minWidth: '300px', 
-            justifyContent: 'center' 
+          <div style={{
+            position: 'fixed',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: '#10b981',
+            color: 'white',
+            padding: '16px 24px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 1000,
+            fontSize: '14px',
+            fontWeight: '500',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            minWidth: '300px',
+            justifyContent: 'center'
           }}>
             {notificationMessage}
           </div>
@@ -742,8 +761,8 @@ export default function Checklist({ onModalStateChange }) {
     );
   }
 
-    return (
-      <div className={`checklist-page ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+  return (
+    <div className={`checklist-page ${isFullscreen ? 'fullscreen-mode' : ''}`}>
       <button
         onClick={() => setIsFullscreen(!isFullscreen)}
         title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
@@ -786,31 +805,31 @@ export default function Checklist({ onModalStateChange }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Search scholars..." 
-                value={query} 
-                onChange={(e) => { setPage(1); setQuery(e.target.value); }} 
-                className="pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64" 
+              <input
+                type="text"
+                placeholder="Search scholars..."
+                value={query}
+                onChange={(e) => { setPage(1); setQuery(e.target.value); }}
+                className="pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
               />
-              <svg 
-                className="absolute w-4 h-4 text-gray-400" 
-                style={{ left: '12px', top: '50%', transform: 'translateY(-50%)' }} 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="absolute w-4 h-4 text-gray-400"
+                style={{ left: '12px', top: '50%', transform: 'translateY(-50%)' }}
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
             </div>
-            <select 
-              value={status} 
-              onChange={(e) => { setPage(1); setStatus(e.target.value); }} 
+            <select
+              value={status}
+              onChange={(e) => { setPage(1); setStatus(e.target.value); }}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-32"
             >
               <option value="All">All</option>
@@ -833,7 +852,7 @@ export default function Checklist({ onModalStateChange }) {
           ) : (
             Object.entries(facultyDeptTypeGroups).map(([facultyName, depts], fidx) => {
               // Calculate total count across all departments and types
-              const count = Object.values(depts).reduce((total, types) => 
+              const count = Object.values(depts).reduce((total, types) =>
                 total + Object.values(types).reduce((sum, list) => sum + list.length, 0), 0
               );
               const facultyKey = facultyName;
@@ -874,10 +893,10 @@ export default function Checklist({ onModalStateChange }) {
                           const deptExpanded = !!expandedDepartments[deptKey];
                           // Calculate total scholars in this department across all types
                           const deptCount = Object.values(types).reduce((sum, list) => sum + list.length, 0);
-                          
+
                           // Skip departments with no scholars
                           if (deptCount === 0) return null;
-                          
+
                           return (
                             <div key={deptName} className="mb-4">
                               <div
@@ -907,10 +926,10 @@ export default function Checklist({ onModalStateChange }) {
                                   {Object.entries(types).map(([typeName, list]) => {
                                     const typeKey = deptKey + '::' + typeName;
                                     const typeExpanded = !!expandedTypes[typeKey];
-                                    
+
                                     // Skip types with no scholars
                                     if (list.length === 0) return null;
-                                    
+
                                     return (
                                       <div key={typeName} className="mb-3">
                                         <div
@@ -919,12 +938,12 @@ export default function Checklist({ onModalStateChange }) {
                                           role="button"
                                           tabIndex={0}
                                           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { setExpandedTypes(prev => ({ ...prev, [typeKey]: !prev[typeKey] })); } }}
-                                          style={{ 
-                                            display: 'flex', 
-                                            alignItems: 'center', 
-                                            gap: '10px', 
-                                            padding: '8px 10px', 
-                                            cursor: 'pointer', 
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '10px',
+                                            padding: '8px 10px',
+                                            cursor: 'pointer',
                                             background: '#f9fafb',
                                             borderRadius: '6px',
                                             border: '1px solid #e5e7eb'
@@ -934,10 +953,10 @@ export default function Checklist({ onModalStateChange }) {
                                             viewBox="0 0 24 24"
                                             fill="none"
                                             stroke="currentColor"
-                                            style={{ 
-                                              width: 16, 
-                                              height: 16, 
-                                              transform: typeExpanded ? 'rotate(90deg)' : 'rotate(0deg)', 
+                                            style={{
+                                              width: 16,
+                                              height: 16,
+                                              transform: typeExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
                                               transition: 'transform 0.18s ease',
                                               color: '#6b7280'
                                             }}
@@ -953,15 +972,15 @@ export default function Checklist({ onModalStateChange }) {
                                           const rows = list.map((s, idx) => {
                                             let checklist = s.checklist;
                                             if (typeof checklist === 'string') {
-                                                try { checklist = JSON.parse(checklist); } catch(e) { checklist = null; }
+                                              try { checklist = JSON.parse(checklist); } catch (e) { checklist = null; }
                                             }
-                                            
+
                                             const isVerifiedOrCompleted = s.status === 'Completed' || s.status === 'Verified' || s.status === 'Approved';
-                                            checklist = { 
-                                                ...defaultChecklistFor(isVerifiedOrCompleted), 
-                                                ...(checklist || {}) 
+                                            checklist = {
+                                              ...defaultChecklistFor(isVerifiedOrCompleted),
+                                              ...(checklist || {})
                                             };
-                                            
+
                                             const allMandatoryChecked = checklist && typeof checklist === 'object' && Object.values(checklist).every(item => item && (item.type === 'optional' || item.checked));
                                             const rowStatus = allMandatoryChecked ? 'Verified' : 'Pending';
 
@@ -971,7 +990,7 @@ export default function Checklist({ onModalStateChange }) {
                                                 <div className="table-cell">
                                                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                     <div style={{ width: 40, height: 40, borderRadius: 20, background: '#ebf5ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                      <span style={{ color: '#2563eb', fontWeight: 700 }}>{(s.name||'').charAt(0)}</span>
+                                                      <span style={{ color: '#2563eb', fontWeight: 700 }}>{(s.name || '').charAt(0)}</span>
                                                     </div>
                                                     <div>
                                                       <div style={{ fontWeight: 600, color: '#111827' }}>{s.name}</div>

@@ -735,40 +735,17 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
             return;
         }
 
-        // Check if supervisor has vacancy for the selected type
+        // Check if supervisor has total available vacancy
         const supervisor = modal.data;
-        let hasVacancy = false;
-        let vacancyField = '';
-
-        switch (selectedScholarType) {
-            case 'Full Time':
-                hasVacancy = (supervisor.vacancyFullTime || 0) > 0;
-                vacancyField = 'Full Time';
-                break;
-            case 'Part Time Internal':
-                hasVacancy = (supervisor.vacancyPartTimeInternal || 0) > 0;
-                vacancyField = 'Part Time Internal';
-                break;
-            case 'Part Time External':
-                hasVacancy = (supervisor.vacancyPartTimeExternal || 0) > 0;
-                vacancyField = 'Part Time External';
-                break;
-            case 'Part Time Industry':
-                hasVacancy = (supervisor.vacancyPartTimeIndustry || 0) > 0;
-                vacancyField = 'Part Time Industry';
-                break;
-            default:
-                alert('Invalid scholar type selected');
-                return;
-        }
+        const hasVacancy = (supervisor.availableVacancy || 0) > 0;
 
         if (!hasVacancy) {
-            alert(`No vacancy available for ${vacancyField} scholars. Please check supervisor capacity.`);
+            alert(`No available vacancy for this supervisor. Currently guiding ${supervisor.currentlyGuiding} of ${supervisor.maxStudents} scholars.`);
             return;
         }
 
         try {
-            // Prepare assignment data - just need supervisor_id and scholar_id
+            // Prepare assignment data
             const assignmentData = {
                 supervisor_id: modal.data.id,
                 scholar_id: scholarData.id || scholarId,
@@ -777,7 +754,6 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
 
             console.log('💾 Assigning scholar to supervisor:', assignmentData);
 
-            // This will update examination_records with supervisor_name and supervisor_status = "Admitted"
             const { data, error } = await assignScholarToSupervisor(assignmentData);
 
             if (error) {
@@ -789,11 +765,9 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
             console.log('✅ Assignment saved:', data);
             toast.success(`Scholar ${scholarData.registered_name || scholarData.name} assigned as ${selectedScholarType}!`);
 
-            // Reset state
             setSelectedScholar(null);
             setSelectedScholarType('');
 
-            // Reload data
             await loadAssignments();
             await loadSupervisors();
 

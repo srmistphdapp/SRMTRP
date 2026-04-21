@@ -451,19 +451,25 @@ export const assignScholarToSupervisor = async (assignmentData) => {
       return { data: null, error };
     }
 
-    // Increment the appropriate current_*_scholars count based on scholar type
-    const scholarType = assignmentData.scholar_type;
-    let updateField = {};
+    // Increment current_full_time_scholars as the unified "currently guiding" counter
+    // Available vacancy = max_full_time_scholars - current_full_time_scholars
+    const totalCurrentlyGuiding = (supervisor.current_full_time_scholars || 0) +
+      (supervisor.current_part_time_internal_scholars || 0) +
+      (supervisor.current_part_time_external_scholars || 0) +
+      (supervisor.current_part_time_industry_scholars || 0);
+    const totalMax = (supervisor.max_full_time_scholars || 0) +
+      (supervisor.max_part_time_internal_scholars || 0) +
+      (supervisor.max_part_time_external_scholars || 0) +
+      (supervisor.max_part_time_industry_scholars || 0);
 
-    if (scholarType === 'Full Time') {
-      updateField.current_full_time_scholars = (supervisor.current_full_time_scholars || 0) + 1;
-    } else if (scholarType === 'Part Time Internal') {
-      updateField.current_part_time_internal_scholars = (supervisor.current_part_time_internal_scholars || 0) + 1;
-    } else if (scholarType === 'Part Time External') {
-      updateField.current_part_time_external_scholars = (supervisor.current_part_time_external_scholars || 0) + 1;
-    } else if (scholarType === 'Part Time Industry') {
-      updateField.current_part_time_industry_scholars = (supervisor.current_part_time_industry_scholars || 0) + 1;
+    if (totalCurrentlyGuiding >= totalMax) {
+      return { data: null, error: { message: 'No available vacancy for this supervisor.' } };
     }
+
+    // Increment current_full_time_scholars to represent one more scholar being guided
+    const updateField = {
+      current_full_time_scholars: (supervisor.current_full_time_scholars || 0) + 1
+    };
 
     // Update supervisor's current count
     const { error: updateError } = await supabaseAdmin
@@ -473,9 +479,8 @@ export const assignScholarToSupervisor = async (assignmentData) => {
 
     if (updateError) {
       console.error('Error updating supervisor count:', updateError);
-      // Don't return error here - assignment was successful, just log the count update issue
     } else {
-      console.log('✅ Updated supervisor count:', updateField);
+      console.log('✅ Updated supervisor count (currently guiding +1):', updateField);
     }
 
     console.log('✅ Scholar assigned successfully:', data);
@@ -590,31 +595,20 @@ export const unassignScholar = async (scholarId) => {
         .single();
 
       if (!supError && supervisor) {
-        let updateField = {};
+        // Decrement current_full_time_scholars as the unified "currently guiding" counter
+        const updateField = {
+          current_full_time_scholars: Math.max(0, (supervisor.current_full_time_scholars || 0) - 1)
+        };
 
-        // Determine which field to decrement based on scholar type
-        if (scholarType && scholarType.toLowerCase().includes('full')) {
-          updateField.current_full_time_scholars = Math.max(0, (supervisor.current_full_time_scholars || 0) - 1);
-        } else if (scholarType && scholarType.toLowerCase().includes('internal')) {
-          updateField.current_part_time_internal_scholars = Math.max(0, (supervisor.current_part_time_internal_scholars || 0) - 1);
-        } else if (scholarType && scholarType.toLowerCase().includes('external')) {
-          updateField.current_part_time_external_scholars = Math.max(0, (supervisor.current_part_time_external_scholars || 0) - 1);
-        } else if (scholarType && scholarType.toLowerCase().includes('industry')) {
-          updateField.current_part_time_industry_scholars = Math.max(0, (supervisor.current_part_time_industry_scholars || 0) - 1);
-        }
+        const { error: updateError } = await supabaseAdmin
+          .from('supervisors')
+          .update(updateField)
+          .eq('id', supervisor.id);
 
-        // Update supervisor's current count
-        if (Object.keys(updateField).length > 0) {
-          const { error: updateError } = await supabaseAdmin
-            .from('supervisors')
-            .update(updateField)
-            .eq('id', supervisor.id);
-
-          if (updateError) {
-            console.error('Error updating supervisor count:', updateError);
-          } else {
-            console.log('✅ Decremented supervisor count:', updateField);
-          }
+        if (updateError) {
+          console.error('Error updating supervisor count:', updateError);
+        } else {
+          console.log('✅ Decremented supervisor count (currently guiding -1):', updateField);
         }
       }
     }

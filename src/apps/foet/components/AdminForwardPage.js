@@ -101,10 +101,12 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
       return;
     }
 
-    let scholars = [...adminScholarsData].map(s => ({
-      ...s,
-      status: getScholarStatus(s)
-    }));
+    let scholars = [...adminScholarsData]
+      .filter(s => (s.dept_review || '').toLowerCase() !== 'query')
+      .map(s => ({
+        ...s,
+        status: getScholarStatus(s)
+      }));
 
     // Apply active filters
     if (activeFilters.type !== 'All Types') {
@@ -654,7 +656,6 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
               <th>CERTIFICATES</th>
               <th>DEPARTMENT REVIEW</th>
               <th>REJECT REASON</th>
-              <th>QUERIES</th>
               <th>STATUS</th>
               <th>TRANSFER</th>
             </tr>
@@ -706,15 +707,6 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                         <span className="no-reason"></span>
                       )}
                     </td>
-                    <td className="reason-column">
-                      {scholar.dept_review === 'Query' && scholar.dept_query ? (
-                        <span className="reason-text">
-                          {scholar.dept_query}
-                        </span>
-                      ) : (
-                        <span className="no-reason"></span>
-                      )}
-                    </td>
                     <td className="text-center"><span className={`status-badge ${getStatusInfo(scholar).className}`}>{getStatusInfo(scholar).text}</span></td>
                     <td className="text-center">
                       <button
@@ -756,7 +748,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
               })
             ) : (
               <tr>
-                <td colSpan="16" className="text-center" style={{ padding: '4rem 2rem' }}>
+                <td colSpan="15" className="text-center" style={{ padding: '4rem 2rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                     <svg
                       width="64"
@@ -1440,7 +1432,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
       )}
 
       {/* Download Selection Modal */}
-      <DownloadSelectionModal 
+      <DownloadSelectionModal
         show={showDownloadModal}
         onClose={() => setShowDownloadModal(false)}
         onDownload={performDownload}

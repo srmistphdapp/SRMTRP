@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { FaSearch, FaFilter, FaDownload } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import { useAppContext } from '../contexts/AppContext';
-import { checkDepartmentResultsPublished } from '../services/departmentScholarService';
 import { supabase } from '../../../supabaseClient';
 
 export default function Results() {
@@ -19,21 +18,44 @@ export default function Results() {
   // Check if department results are published and fetch examination records
   const checkDeptResultStatus = async () => {
     try {
-      if (!currentUser?.department || !currentUser?.departmentCode) {
+      if (!currentUser?.department) {
         return { isPublished: false, records: [] };
       }
 
-      const { data: isPublished, error } = await checkDepartmentResultsPublished(
-        currentUser.department, 
-        currentUser.departmentCode
-      );
-      
-      if (error) {
-        console.error('❌ Error checking dept_result status:', error);
-        return { isPublished: false, records: [] };
+      // Check if any examination record for this department has been published (dept_result starts with "Published_To_")
+      const { data, error } = await supabase
+        .from('examination_records')
+        .select('dept_result, department')
+        .ilike('department', `%${currentUser.department}%`)
+        .ilike('dept_result', 'Published_To_%')
+        .limit(1);
+
+      if (!error && data && data.length > 0) {
+        return { isPublished: true, records: [] };
       }
 
-      return { isPublished, records: [] };
+      // Fallback: check via scholar_applications for records with NULL department in examination_records
+      const { data: saData } = await supabase
+        .from('scholar_applications')
+        .select('application_no')
+        .ilike('department', `%${currentUser.department}%`)
+        .limit(50);
+
+      if (saData && saData.length > 0) {
+        const appNos = saData.map(s => s.application_no).filter(Boolean);
+        const { data: examData } = await supabase
+          .from('examination_records')
+          .select('dept_result')
+          .in('application_no', appNos)
+          .ilike('dept_result', 'Published_To_%')
+          .limit(1);
+
+        if (examData && examData.length > 0) {
+          return { isPublished: true, records: [] };
+        }
+      }
+
+      return { isPublished: false, records: [] };
     } catch (err) {
       console.error('❌ Exception checking dept_result status:', err);
       return { isPublished: false, records: [] };
@@ -43,37 +65,58 @@ export default function Results() {
   // Fetch examination records from examination_records table
   const fetchExaminationRecords = async () => {
     try {
-      if (!currentUser?.department || !currentUser?.departmentCode) {
+      if (!currentUser?.department) {
         return { data: [], error: 'Department information not available' };
       }
 
-      console.log(`🔍 Fetching examination records for department: ${currentUser.department} (${currentUser.departmentCode})`);
+      console.log(`🔍 Fetching examination records for department: ${currentUser.department}`);
 
-      const expectedDeptResult = `Published_To_${currentUser.departmentCode}`;
-      console.log(`📋 Looking for dept_result = "${expectedDeptResult}"`);
-
+      // Fetch all examination records for this department that have been published (dept_result starts with "Published_To_")
       const { data, error } = await supabase
         .from('examination_records')
         .select('*')
         .ilike('department', `%${currentUser.department}%`)
-        .eq('dept_result', expectedDeptResult) // Filter by exact dept_result value like "Published_To_CSE"
-        .order('total_marks', { ascending: false }); // Order by total_marks descending for ranking
+        .ilike('dept_result', 'Published_To_%')
+        .order('total_marks', { ascending: false });
 
       if (error) {
         console.error('❌ Error fetching examination records:', error);
         return { data: [], error };
       }
 
-      console.log(`✅ Found ${data?.length || 0} examination records with dept_result = "${expectedDeptResult}"`);
-      
-      if (data && data.length > 0) {
-        console.log(`📋 Sample records:`, data.slice(0, 3).map(r => ({ 
-          name: r.registered_name, 
-          dept_result: r.dept_result,
-          interview_marks: r.interview_marks 
-        })));
+      // Also try fetching by scholar_applications in case department is NULL in examination_records
+      const appNosFromExam = new Set((data || []).map(r => r.application_no).filter(Boolean));
+
+      // Fetch any examination_records where dept_result is published but department is NULL,
+      // and cross-reference with scholar_applications for this department
+      const { data: nullDeptData } = await supabase
+        .from('examination_records')
+        .select('*')
+        .is('department', null)
+        .ilike('dept_result', 'Published_To_%');
+
+      if (nullDeptData && nullDeptData.length > 0) {
+        const missingAppNos = nullDeptData.map(r => r.application_no).filter(Boolean);
+        if (missingAppNos.length > 0) {
+          const { data: scholars } = await supabase
+            .from('scholar_applications')
+            .select('application_no, department, faculty')
+            .in('application_no', missingAppNos)
+            .ilike('department', `%${currentUser.department}%`);
+
+          const matchedAppNos = new Set((scholars || []).map(s => s.application_no));
+          const extraRecords = nullDeptData
+            .filter(r => matchedAppNos.has(r.application_no) && !appNosFromExam.has(r.application_no))
+            .map(r => {
+              const sa = (scholars || []).find(s => s.application_no === r.application_no);
+              return { ...r, department: r.department || sa?.department };
+            });
+
+          data.push(...extraRecords);
+        }
       }
-      
+
+      console.log(`✅ Found ${data?.length || 0} published examination records for department: ${currentUser.department}`);
       return { data: data || [], error: null };
     } catch (err) {
       console.error('❌ Exception fetching examination records:', err);
@@ -92,7 +135,7 @@ export default function Results() {
 
       try {
         setLoading(true);
-        
+
         // First check if department results are published
         const { isPublished } = await checkDeptResultStatus();
         setIsResultsPublished(isPublished);
@@ -114,39 +157,39 @@ export default function Results() {
           console.log(`📊 Setting ${data?.length || 0} scholars from examination records`);
           if (data && data.length > 0) {
             console.log(`📋 Scholar program_types in data:`, [...new Set(data.map(s => s.program_type))]);
-            console.log(`📋 Sample scholars:`, data.slice(0, 3).map(s => ({ 
-              name: s.registered_name, 
+            console.log(`📋 Sample scholars:`, data.slice(0, 3).map(s => ({
+              name: s.registered_name,
               program_type: s.program_type,
-              dept_result: s.dept_result 
+              dept_result: s.dept_result
             })));
-            
+
             // Validate and clean scholar types
             const cleanedData = data.map(scholar => {
               let cleanedType = scholar.program_type; // Use program_type column
-              
+
               // Handle null/undefined types - DON'T default to Full Time
               if (!cleanedType) {
                 console.log(`⚠️ Scholar ${scholar.registered_name} has no program_type - keeping as null for debugging`);
                 cleanedType = null; // Keep as null so we can identify the issue
               }
-              
+
               // Normalize type names
               if (typeof cleanedType === 'string') {
                 cleanedType = cleanedType.trim();
-                
+
                 // Log any unusual types
-                if (!['Full Time', 'Part Time Internal', 'Part Time External', 'Part Time External (Industry)', 'Part Time External-Industry'].includes(cleanedType) && 
-                    !isPartTimeScholar(cleanedType)) {
+                if (!['Full Time', 'Part Time Internal', 'Part Time External', 'Part Time External (Industry)', 'Part Time External-Industry'].includes(cleanedType) &&
+                  !isPartTimeScholar(cleanedType)) {
                   console.log(`⚠️ Unusual program_type found: "${cleanedType}" for scholar ${scholar.registered_name}`);
                 }
               }
-              
+
               return {
                 ...scholar,
                 type: cleanedType // Keep as 'type' for internal use, but source from program_type
               };
             });
-            
+
             setScholars(cleanedData);
           } else {
             setScholars([]);
@@ -193,18 +236,18 @@ export default function Results() {
   // Comprehensive Part Time detection function
   const isPartTimeScholar = (scholarType) => {
     console.log(`🔍 isPartTimeScholar called with: "${scholarType}" (${typeof scholarType})`);
-    
+
     if (!scholarType || typeof scholarType !== 'string') {
       console.log(`   - Returning false: not a string or null/undefined`);
       return false;
     }
-    
+
     const type = scholarType.trim();
     const typeLower = type.toLowerCase();
-    
+
     console.log(`   - Trimmed type: "${type}"`);
     console.log(`   - Lowercase type: "${typeLower}"`);
-    
+
     // Check for all Part Time variations
     const isPartTime = (
       // Exact matches
@@ -212,26 +255,26 @@ export default function Results() {
       type === 'Part Time External' ||
       type === 'Part Time External (Industry)' ||
       type === 'Part Time External-Industry' ||
-      
+
       // Short code matches
       typeLower === 'pti' ||
       typeLower === 'pte' ||
       typeLower === 'pte(industry)' ||
       typeLower === 'pte (industry)' ||
       typeLower === 'pte-industry' ||
-      
+
       // Contains matches (for variations)
       typeLower.includes('part time') ||
       typeLower.includes('parttime') ||
-      
+
       // Handle hyphen vs parentheses variations
       typeLower.includes('external-industry') ||
       typeLower.includes('external (industry)') ||
       typeLower.includes('external(industry)')
     );
-    
+
     console.log(`   - isPartTime result: ${isPartTime}`);
-    
+
     return isPartTime;
   };
 
@@ -265,39 +308,39 @@ export default function Results() {
   // Get examination records by type with ranking
   const getRankedScholarsByType = (type) => {
     console.log(`🔍 getRankedScholarsByType called with type: "${type}"`);
-    
+
     const matchingScholars = filteredScholars.filter(record => {
       const recordType = record.type;
-      
+
       // DEBUG: Log every scholar being checked for Full Time
       if (type === 'Full Time') {
         console.log(`🔍 Checking scholar "${record.registered_name}" with type: "${recordType}" (${typeof recordType})`);
-        
+
         // For Full Time, ONLY accept exact match "Full Time" and exclude any part-time variants
         const isExactFullTime = recordType === 'Full Time';
         const isNotPartTime = !isPartTimeScholar(recordType);
         const finalMatch = isExactFullTime && isNotPartTime;
-        
+
         console.log(`   - isExactFullTime: ${isExactFullTime}`);
         console.log(`   - isNotPartTime: ${isNotPartTime}`);
         console.log(`   - finalMatch: ${finalMatch}`);
-        
+
         if (recordType === null || recordType === undefined) {
           console.log(`🚨 PROBLEM: Scholar "${record.registered_name}" has null/undefined type!`);
         }
-        
+
         if (recordType !== 'Full Time' && recordType !== null && recordType !== undefined) {
           console.log(`⚠️ Excluding "${recordType}" from Full Time (not exact match "Full Time")`);
         }
-        
+
         if (isPartTimeScholar(recordType)) {
           console.log(`⚠️ Excluding "${recordType}" from Full Time (detected as Part Time)`);
         }
-        
+
         if (finalMatch) {
           console.log(`✅ INCLUDING "${record.registered_name}" in Full Time list`);
         }
-        
+
         return finalMatch;
       } else {
         // For other types, use exact match
@@ -305,49 +348,49 @@ export default function Results() {
         return isMatch;
       }
     });
-    
+
     console.log(`📊 Found ${matchingScholars.length} scholars for type "${type}"`);
     if (matchingScholars.length > 0) {
       console.log(`📋 Scholar types found:`, matchingScholars.map(s => s.type));
     }
-    
+
     return matchingScholars
       .map(record => {
         // Check if written marks or interview marks are absent
         const writtenMarks = record.written_marks;
         const interviewMarks = record.interview_marks;
         const totalMarks = record.total_marks;
-        
+
         // Check for absent variations in any mark field
-        const isWrittenAbsent = typeof writtenMarks === 'string' && 
+        const isWrittenAbsent = typeof writtenMarks === 'string' &&
           ['a', 'ab', 'absent'].includes(writtenMarks.toLowerCase().trim());
-        const isInterviewAbsent = typeof interviewMarks === 'string' && 
+        const isInterviewAbsent = typeof interviewMarks === 'string' &&
           ['a', 'ab', 'absent'].includes(interviewMarks.toLowerCase().trim());
-        const isTotalAbsent = typeof totalMarks === 'string' && 
+        const isTotalAbsent = typeof totalMarks === 'string' &&
           ['a', 'ab', 'absent'].includes(totalMarks.toLowerCase().trim());
-        
+
         // If any mark is absent, show as absent
         if (isWrittenAbsent || isInterviewAbsent || isTotalAbsent) {
-          return { 
-            ...record, 
-            written: 'Absent', 
-            interview: 'Absent', 
-            total: 'Absent', 
+          return {
+            ...record,
+            written: 'Absent',
+            interview: 'Absent',
+            total: 'Absent',
             qualified: false,
             isAbsent: true
           };
         }
-        
+
         // Otherwise, process as numeric marks
         const writtenNum = Math.round(parseFloat(writtenMarks)) || 0;
         const interviewNum = Math.round(parseFloat(interviewMarks)) || 0;
         const totalNum = Math.round(parseFloat(totalMarks)) || (writtenNum + interviewNum);
-        
-        return { 
-          ...record, 
-          written: writtenNum, 
-          interview: interviewNum, 
-          total: totalNum, 
+
+        return {
+          ...record,
+          written: writtenNum,
+          interview: interviewNum,
+          total: totalNum,
           qualified: totalNum >= 60,
           isAbsent: false
         };
@@ -368,15 +411,15 @@ export default function Results() {
   // Get Part Time scholars with all sub-types (Internal, External, Industry)
   const getPartTimeScholars = () => {
     console.log(`🔍 getPartTimeScholars called`);
-    
+
     const partTimeScholars = filteredScholars.filter(record => {
       const recordType = record.type;
       const isPartTime = isPartTimeScholar(recordType);
-      
+
       // DEBUG: Log every scholar being checked for Part Time
       console.log(`🔍 Checking scholar "${record.registered_name}" with type: "${recordType}" (${typeof recordType})`);
       console.log(`   - isPartTime: ${isPartTime}`);
-      
+
       if (isPartTime) {
         console.log(`✅ INCLUDING "${record.registered_name}" in Part Time list`);
       } else if (recordType) {
@@ -384,52 +427,52 @@ export default function Results() {
       } else {
         console.log(`🚨 PROBLEM: Scholar "${record.registered_name}" has null/undefined type!`);
       }
-      
+
       return isPartTime;
     });
-    
+
     console.log(`📊 Found ${partTimeScholars.length} Part Time scholars`);
     if (partTimeScholars.length > 0) {
       console.log(`📋 Part Time scholar types:`, partTimeScholars.map(s => s.type));
     }
-    
+
     return partTimeScholars
       .map(record => {
         // Check if written marks or interview marks are absent
         const writtenMarks = record.written_marks;
         const interviewMarks = record.interview_marks;
         const totalMarks = record.total_marks;
-        
+
         // Check for absent variations in any mark field
-        const isWrittenAbsent = typeof writtenMarks === 'string' && 
+        const isWrittenAbsent = typeof writtenMarks === 'string' &&
           ['a', 'ab', 'absent'].includes(writtenMarks.toLowerCase().trim());
-        const isInterviewAbsent = typeof interviewMarks === 'string' && 
+        const isInterviewAbsent = typeof interviewMarks === 'string' &&
           ['a', 'ab', 'absent'].includes(interviewMarks.toLowerCase().trim());
-        const isTotalAbsent = typeof totalMarks === 'string' && 
+        const isTotalAbsent = typeof totalMarks === 'string' &&
           ['a', 'ab', 'absent'].includes(totalMarks.toLowerCase().trim());
-        
+
         // If any mark is absent, show as absent
         if (isWrittenAbsent || isInterviewAbsent || isTotalAbsent) {
-          return { 
-            ...record, 
-            written: 'Absent', 
-            interview: 'Absent', 
-            total: 'Absent', 
+          return {
+            ...record,
+            written: 'Absent',
+            interview: 'Absent',
+            total: 'Absent',
             qualified: false,
             isAbsent: true
           };
         }
-        
+
         // Otherwise, process as numeric marks
         const writtenNum = Math.round(parseFloat(writtenMarks)) || 0;
         const interviewNum = Math.round(parseFloat(interviewMarks)) || 0;
         const totalNum = Math.round(parseFloat(totalMarks)) || (writtenNum + interviewNum);
-        
-        return { 
-          ...record, 
-          written: writtenNum, 
-          interview: interviewNum, 
-          total: totalNum, 
+
+        return {
+          ...record,
+          written: writtenNum,
+          interview: interviewNum,
+          total: totalNum,
           qualified: totalNum >= 60,
           isAbsent: false
         };
@@ -458,7 +501,7 @@ export default function Results() {
       if (scholarType === 'Part Time') {
         // For Part Time, create separate sheets for each sub-type
         const partTimeScholars = getPartTimeScholars();
-        
+
         if (partTimeScholars.length === 0) {
           setDownloadModal({
             show: true,
@@ -507,7 +550,7 @@ export default function Results() {
           const internalData = sortAndRankScholars(partTimeInternal);
           const internalWs = XLSX.utils.json_to_sheet(internalData);
           internalWs['!cols'] = [
-            { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, 
+            { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 },
             { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
           ];
           XLSX.utils.book_append_sheet(wb, internalWs, 'Part Time Internal');
@@ -517,7 +560,7 @@ export default function Results() {
           const academicData = sortAndRankScholars(partTimeExternalAcademic);
           const academicWs = XLSX.utils.json_to_sheet(academicData);
           academicWs['!cols'] = [
-            { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, 
+            { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 },
             { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
           ];
           XLSX.utils.book_append_sheet(wb, academicWs, 'Part Time External-Academic');
@@ -527,7 +570,7 @@ export default function Results() {
           const industryData = sortAndRankScholars(partTimeExternalIndustry);
           const industryWs = XLSX.utils.json_to_sheet(industryData);
           industryWs['!cols'] = [
-            { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, 
+            { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 },
             { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
           ];
           XLSX.utils.book_append_sheet(wb, industryWs, 'Part Time External-Industry');
@@ -537,7 +580,7 @@ export default function Results() {
         const allPartTimeData = sortAndRankScholars(partTimeScholars);
         const summaryWs = XLSX.utils.json_to_sheet(allPartTimeData);
         summaryWs['!cols'] = [
-          { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, 
+          { wch: 8 }, { wch: 25 }, { wch: 20 }, { wch: 20 },
           { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }
         ];
         XLSX.utils.book_append_sheet(wb, summaryWs, 'All Part Time');
@@ -546,11 +589,11 @@ export default function Results() {
         const currentDate = new Date().toISOString().split('T')[0];
         const departmentName = currentUser?.department?.replace(/ /g, '_') || 'Department';
         const filename = `${departmentName}_Part_Time_Rankings_${currentDate}.xlsx`;
-        
+
         XLSX.writeFile(wb, filename);
-        
+
         console.log(`✅ Successfully downloaded Part Time rankings with separate sheets: ${filename}`);
-        
+
         setDownloadModal({
           show: true,
           message: `Successfully downloaded Part Time rankings with separate sheets for each type!`,
@@ -562,22 +605,22 @@ export default function Results() {
         // For Full Time and other types, use the existing logic
         const getRankingData = (type) => {
           let scholarData = getRankedScholarsByType(type);
-          
+
           return scholarData.map((record, index) => {
-              let rowData = {
-                'Rank': index + 1,
-                'Name': record.registered_name || 'N/A',
-                'Application Number': record.application_no || 'N/A',
-              };
-              rowData = {
-                ...rowData,
-                'Written Marks': record.written === 'Absent' ? 'Absent' : (record.written || 0),
-                'Interview Marks': record.interview === 'Absent' ? 'Absent' : (record.interview || 0),
-                'Total Marks': record.total === 'Absent' ? 'Absent' : (record.total || 0),
-                'Status': record.isAbsent ? 'Absent' : ((record.total || 0) >= 60 ? 'Qualified' : 'Not Qualified')
-              };
-              return rowData;
-            });
+            let rowData = {
+              'Rank': index + 1,
+              'Name': record.registered_name || 'N/A',
+              'Application Number': record.application_no || 'N/A',
+            };
+            rowData = {
+              ...rowData,
+              'Written Marks': record.written === 'Absent' ? 'Absent' : (record.written || 0),
+              'Interview Marks': record.interview === 'Absent' ? 'Absent' : (record.interview || 0),
+              'Total Marks': record.total === 'Absent' ? 'Absent' : (record.total || 0),
+              'Status': record.isAbsent ? 'Absent' : ((record.total || 0) >= 60 ? 'Qualified' : 'Not Qualified')
+            };
+            return rowData;
+          });
         };
 
         const data = getRankingData(scholarType);
@@ -605,7 +648,7 @@ export default function Results() {
 
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.json_to_sheet(data);
-        
+
         // Set column widths
         ws['!cols'] = [
           { wch: 8 },  // Rank
@@ -616,20 +659,20 @@ export default function Results() {
           { wch: 15 }, // Total Marks
           { wch: 15 }  // Status
         ];
-        
+
         XLSX.utils.book_append_sheet(wb, ws, `${scholarType} Rankings`);
 
         // Create filename
         const currentDate = new Date().toISOString().split('T')[0];
         const departmentName = currentUser?.department?.replace(/ /g, '_') || 'Department';
         const scholarTypeFormatted = scholarType.replace(/ /g, '_');
-        
+
         const filename = `${departmentName}_${scholarTypeFormatted}_Rankings_${currentDate}.xlsx`;
-        
+
         XLSX.writeFile(wb, filename);
-        
+
         console.log(`✅ Successfully downloaded: ${filename}`);
-        
+
         setDownloadModal({
           show: true,
           message: `Successfully downloaded ${scholarType} rankings!`,
@@ -637,7 +680,7 @@ export default function Results() {
           isError: false
         });
       }
-      
+
     } catch (error) {
       console.error('❌ Error downloading rankings:', error);
       setDownloadModal({
@@ -680,55 +723,55 @@ export default function Results() {
   console.log(`🔍 Results Debug - Total scholars: ${scholars.length}`);
   console.log(`🔍 Full Time scholars: ${fullTimeScholars.length}`);
   console.log(`🔍 Part Time scholars: ${partTimeScholars.length}`);
-  
+
   if (scholars.length > 0) {
     const allTypes = [...new Set(scholars.map(s => s.type))];
     console.log(`🔍 All unique types in data:`, allTypes);
-    
+
     // Check for any scholars that might be misclassified
     const unclassifiedScholars = scholars.filter(s => {
       const isInFullTime = fullTimeScholars.some(ft => ft.id === s.id);
       const isInPartTime = partTimeScholars.some(pt => pt.id === s.id);
       return !isInFullTime && !isInPartTime;
     });
-    
+
     if (unclassifiedScholars.length > 0) {
-      console.log(`⚠️ Unclassified scholars (${unclassifiedScholars.length}):`, 
-        unclassifiedScholars.map(s => ({ 
-          name: s.registered_name, 
-          type: s.type, 
+      console.log(`⚠️ Unclassified scholars (${unclassifiedScholars.length}):`,
+        unclassifiedScholars.map(s => ({
+          name: s.registered_name,
+          type: s.type,
           id: s.id,
-          application_no: s.application_no 
+          application_no: s.application_no
         })));
     }
-    
+
     // Additional debugging: Check if any Part Time scholars are in Full Time list
-    const partTimeInFullTime = fullTimeScholars.filter(ft => 
+    const partTimeInFullTime = fullTimeScholars.filter(ft =>
       isPartTimeScholar(ft.type)
     );
-    
+
     if (partTimeInFullTime.length > 0) {
-      console.log(`🚨 PROBLEM: Part Time scholars found in Full Time list:`, 
-        partTimeInFullTime.map(s => ({ 
-          name: s.registered_name, 
-          type: s.type, 
+      console.log(`🚨 PROBLEM: Part Time scholars found in Full Time list:`,
+        partTimeInFullTime.map(s => ({
+          name: s.registered_name,
+          type: s.type,
           id: s.id,
-          application_no: s.application_no 
+          application_no: s.application_no
         })));
     }
-    
+
     // Additional debugging: Check if any Full Time scholars are in Part Time list
-    const fullTimeInPartTime = partTimeScholars.filter(pt => 
+    const fullTimeInPartTime = partTimeScholars.filter(pt =>
       pt.type === 'Full Time' && !isPartTimeScholar(pt.type)
     );
-    
+
     if (fullTimeInPartTime.length > 0) {
-      console.log(`🚨 PROBLEM: Full Time scholars found in Part Time list:`, 
-        fullTimeInPartTime.map(s => ({ 
-          name: s.registered_name, 
-          type: s.type, 
+      console.log(`🚨 PROBLEM: Full Time scholars found in Part Time list:`,
+        fullTimeInPartTime.map(s => ({
+          name: s.registered_name,
+          type: s.type,
           id: s.id,
-          application_no: s.application_no 
+          application_no: s.application_no
         })));
     }
   }
@@ -828,7 +871,7 @@ export default function Results() {
                   </button>
                 </div>
               </div>
-              
+
               <div>
                 <table className="w-full">
                   <thead className="bg-gray-50">
@@ -936,7 +979,7 @@ export default function Results() {
                   </button>
                 </div>
               </div>
-              
+
               <div>
                 <table className="w-full">
                   <thead className="bg-gray-50">
@@ -1037,9 +1080,9 @@ export default function Results() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Scholar Type</label>
-                <select 
-                  value={filter.type} 
-                  onChange={(e) => handleFilterChange('type', e.target.value)} 
+                <select
+                  value={filter.type}
+                  onChange={(e) => handleFilterChange('type', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">All Types</option>
@@ -1075,16 +1118,16 @@ export default function Results() {
                 </div>
               )}
             </div>
-            
+
             <div className="text-center">
               <h3 className={`text-lg font-semibold mb-2 ${downloadModal.isError ? 'text-red-800' : 'text-green-800'}`}>
                 {downloadModal.isError ? 'Download Failed' : 'Download Successful'}
               </h3>
-              
+
               <p className="text-gray-600 mb-4">
                 {downloadModal.message}
               </p>
-              
+
               {!downloadModal.isError && downloadModal.filename && (
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
                   <p className="text-sm text-gray-700">
@@ -1095,15 +1138,14 @@ export default function Results() {
                   </p>
                 </div>
               )}
-              
+
               <div className="flex justify-center">
                 <button
                   onClick={() => setDownloadModal({ show: false, message: '', filename: '', isError: false })}
-                  className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                    downloadModal.isError 
-                      ? 'bg-red-600 hover:bg-red-700 text-white' 
-                      : 'bg-green-600 hover:bg-green-700 text-white'
-                  }`}
+                  className={`px-6 py-2 rounded-lg font-medium transition-colors ${downloadModal.isError
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                    }`}
                 >
                   {downloadModal.isError ? 'Try Again' : 'OK'}
                 </button>

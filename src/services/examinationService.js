@@ -165,8 +165,16 @@ export const addExaminationRecord = async (recordData) => {
         application_no: scholar.application_no,
         registered_name: scholar.registered_name,
         faculty: scholar.faculty,
+        department: scholar.department,
+        institution: scholar.institution,
         program: scholar.program,
         program_type: scholar.program_type,
+        type: scholar.type,
+        mobile_number: scholar.mobile_number,
+        email: scholar.email,
+        gender: scholar.gender,
+        date_of_birth: scholar.date_of_birth,
+        nationality: scholar.nationality,
         written_marks: 0,
         written_marks_100: null,
         interview_marks: 0,
@@ -194,7 +202,7 @@ const getOrCreateExamRecord = async (scholarId) => {
   // Get the scholar's application_no
   const { data: scholar, error: scholarError } = await supabase
     .from('scholar_applications')
-    .select('application_no, registered_name, faculty, program, program_type, type')
+    .select('application_no, registered_name, faculty, department, institution, program, program_type, type, mobile_number, email, gender, date_of_birth, nationality')
     .eq('id', scholarId)
     .maybeSingle();
 
@@ -220,8 +228,16 @@ const getOrCreateExamRecord = async (scholarId) => {
       application_no: scholar.application_no,
       registered_name: scholar.registered_name || 'Unknown',
       faculty: scholar.faculty,
+      department: scholar.department,
+      institution: scholar.institution,
       program: scholar.program,
       program_type: scholar.program_type || scholar.type || 'Full Time',
+      type: scholar.type,
+      mobile_number: scholar.mobile_number,
+      email: scholar.email,
+      gender: scholar.gender,
+      date_of_birth: scholar.date_of_birth,
+      nationality: scholar.nationality,
       written_marks: 0,
       interview_marks: 0,
       total_marks: null,

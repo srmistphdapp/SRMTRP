@@ -471,10 +471,43 @@ const HallTicket = ({ isSidebarMinimized, onFullscreenChange, onModalStateChange
 
   const markAsGenerated = async (id) => {
     try {
+      // Fetch full scholar data first
+      const { data: scholar } = await supabase
+        .from('scholar_applications')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+
       await supabase
         .from('scholar_applications')
-        .update({ status: 'Generated' }) // Set some generated flag conceptually 
+        .update({ status: 'Generated' })
         .eq('id', id);
+
+      // Upsert examination_records with full scholar data so no columns are NULL
+      if (scholar) {
+        await supabase
+          .from('examination_records')
+          .upsert([{
+            application_no: scholar.application_no,
+            registered_name: scholar.registered_name,
+            faculty: scholar.faculty,
+            department: scholar.department,
+            institution: scholar.institution,
+            program: scholar.program,
+            program_type: scholar.program_type,
+            type: scholar.type,
+            mobile_number: scholar.mobile_number,
+            email: scholar.email,
+            gender: scholar.gender,
+            date_of_birth: scholar.date_of_birth,
+            nationality: scholar.nationality,
+            written_marks: 0,
+            interview_marks: 0,
+            total_marks: null,
+            status: 'pending',
+            current_owner: 'director',
+          }], { onConflict: 'application_no', ignoreDuplicates: false });
+      }
 
       setScholars(prev => prev.map(s => s.id === id ? { ...s, hall_ticket_generated: true } : s));
     } catch (error) {

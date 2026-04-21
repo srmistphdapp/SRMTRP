@@ -219,29 +219,27 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
             let filteredData = data;
             if (scholarType && data) {
                 filteredData = data.filter(scholar => {
-                    const scholarTypeField = (scholar.type || scholar.program_type || '').toLowerCase();
-                    const searchType = scholarType.toLowerCase();
+                    // Use program_type as the ONLY authoritative field for scholar type
+                    const scholarTypeField = (scholar.program_type || '').trim();
 
-                    // Match the type - handle variations
+                    // Exact match with the selected type
                     if (scholarType === 'Full Time') {
-                        return scholarTypeField.includes('full') || scholarTypeField === 'ft';
+                        return scholarTypeField === 'Full Time' || scholarTypeField === 'FT';
                     } else if (scholarType === 'Part Time Internal') {
-                        return scholarTypeField.includes('part') && scholarTypeField.includes('internal');
+                        return scholarTypeField === 'Part Time Internal' || scholarTypeField === 'PTI';
                     } else if (scholarType === 'Part Time External') {
-                        // Match both "Part Time External" and "Part Time External (Industry)"
-                        return scholarTypeField.includes('part') &&
-                            scholarTypeField.includes('external') &&
-                            !scholarTypeField.includes('industry');
+                        // Exact match "Part Time External" but NOT "Part Time External (Industry)"
+                        return scholarTypeField === 'Part Time External' || scholarTypeField === 'PTE';
                     } else if (scholarType === 'Part Time Industry') {
-                        // Match "Part Time External (Industry)"
-                        return scholarTypeField.includes('part') &&
-                            (scholarTypeField.includes('industry') ||
-                                (scholarTypeField.includes('external') && scholarTypeField.includes('industry')));
+                        // Match "Part Time External (Industry)" or "Part Time Industry"
+                        return scholarTypeField === 'Part Time External (Industry)' ||
+                            scholarTypeField === 'PTE(Industry)' ||
+                            scholarTypeField === 'Part Time Industry';
                     }
                     return false;
                 });
                 console.log(`🔍 Filtered to ${filteredData.length} scholars of type "${scholarType}"`);
-                console.log('📋 Scholar types found:', filteredData.map(s => s.type || s.program_type));
+                console.log('📋 Scholar types found:', filteredData.map(s => s.program_type || s.type));
             }
 
             // Populate the scholar dropdown
@@ -1374,10 +1372,10 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                         disabled={!isDepartmentSelected}
                                     >
                                         <option value="">Choose the type of scholar...</option>
-                                        <option value="Full Time" disabled={(modal.data.vacancyFullTime || 0) <= 0}>Full Time</option>
-                                        <option value="Part Time Internal" disabled={(modal.data.vacancyPartTimeInternal || 0) <= 0}>Part Time Internal</option>
-                                        <option value="Part Time External" disabled={(modal.data.vacancyPartTimeExternal || 0) <= 0}>Part Time External</option>
-                                        <option value="Part Time Industry" disabled={(modal.data.vacancyPartTimeIndustry || 0) <= 0}>Part Time Industry</option>
+                                        <option value="Full Time">Full Time</option>
+                                        <option value="Part Time Internal">Part Time Internal</option>
+                                        <option value="Part Time External">Part Time External</option>
+                                        <option value="Part Time Industry">Part Time Industry</option>
                                     </select>
                                     <p className="text-xs text-gray-500 mt-1">
                                         Select type first - only scholars of this type will be shown

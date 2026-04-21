@@ -7,7 +7,7 @@ export const fetchDirectorAdminScholars = async () => {
     const { data, error } = await supabase
       .from('scholar_applications')
       .select('*')
-      .eq('current_owner', 'director')
+      .or('current_owner.eq.director,current_owner.eq.research_coordinator,current_owner.eq.admin')
       .order('id', { ascending: false });
 
     if (error) {
@@ -692,7 +692,10 @@ export const forwardScholarToRC = async (id) => {
     // Only update status — do NOT touch faculty_status
     const { data, error } = await supabase
       .from('scholar_applications')
-      .update({ status: forwardedStatus })
+      .update({
+        status: forwardedStatus,
+        current_owner: 'research_coordinator'
+      })
       .eq('id', id)
       .select();
 

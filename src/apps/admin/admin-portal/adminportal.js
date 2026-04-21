@@ -31,6 +31,7 @@ import Checklist from './components/Checklist'; // ✅ NEW
 import VerifiedScholars from './components/VerifiedScholars';
 import ScholarManagement from './components/ScholarManagement';
 import HallTicket from './components/HallTicket';
+import TransferredScholars from './components/TransferredScholars';
 
 const AdminPortal = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -261,6 +262,7 @@ const AdminPortal = () => {
       'workflow',
       'verifiedScholars',
       'hallTicket',
+      'transferredScholars',      
       'checklist', // ✅ NEW
     ];
 
@@ -333,6 +335,13 @@ const AdminPortal = () => {
           <ScholarManagement
             appData={appData}
             onFullscreenChange={(isFs) => setIsFullscreen(isFs)}
+            onModalStateChange={handleModalStateChange}
+          />
+        );
+        break;
+      case 'transferredScholars':
+        content = (
+          <TransferredScholars
             onModalStateChange={handleModalStateChange}
           />
         );
@@ -476,8 +485,7 @@ const AdminPortal = () => {
 
                 <TabButton
                   id="scholarManagement"
-                  active={activeTab === 'uploadedScholars' || activeTab === 'verifiedScholars'}
-                  onClick={() => {
+                  active={activeTab === 'uploadedScholars' || activeTab === 'verifiedScholars' || activeTab === 'transferredScholars'}                  onClick={() => {
                     if (isSidebarMinimized) {
                       setActiveTab('verifiedScholars');
                     } else {
@@ -516,6 +524,19 @@ const AdminPortal = () => {
                     >
                       <span className={`w-2 h-2 rounded-full ${activeTab === 'verifiedScholars' ? 'bg-white' : 'bg-green-500'}`}></span>
                       Verified Scholars
+                    </button>
+                    <button
+                      onClick={() => {
+                        setActiveTab('transferredScholars');
+                        setScholarSubmenuOpen(true);
+                      }}
+                      className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2 ${activeTab === 'transferredScholars'
+                        ? 'bg-purple-600 text-white font-semibold shadow-md'
+                        : 'text-gray-600 hover:bg-gray-100'
+                        }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${activeTab === 'transferredScholars' ? 'bg-white' : 'bg-purple-500'}`}></span>
+                      Transferred Scholars
                     </button>
 
                   </div>

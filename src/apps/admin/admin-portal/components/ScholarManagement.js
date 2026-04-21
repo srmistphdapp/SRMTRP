@@ -3071,31 +3071,34 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
                       <button
                         onClick={() => openEditModal(scholar)}
                         className="table-action-btn btn-edit"
-                        title="Edit Scholar"
+                        title={isRowLocked(scholar) ? 'Cannot Edit - Already Forwarded/Generated' : 'Edit Scholar'}
+                        disabled={isRowLocked(scholar)}
                         style={{
                           width: '32px',
                           height: '32px',
                           borderRadius: '12px',
-                          backgroundColor: '#3B82F6',
-                          color: 'white',
+                          backgroundColor: isRowLocked(scholar) ? '#9CA3AF' : '#3B82F6',                          color: 'white',
                           border: 'none',
-                          cursor: 'pointer',
-                          opacity: 1,
+                          cursor: isRowLocked(scholar) ? 'not-allowed' : 'pointer',
+                          opacity: isRowLocked(scholar) ? 0.6 : 1,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           transition: 'all 0.2s ease',
-                          boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)'
-                        }}
+                          boxShadow: isRowLocked(scholar) ? 'none' : '0 2px 8px rgba(59, 130, 246, 0.3)'                        }}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = '#2563EB';
-                          e.target.style.transform = 'translateY(-1px)';
-                          e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                          if (!isRowLocked(scholar)) {
+                            e.target.style.backgroundColor = '#2563EB';
+                            e.target.style.transform = 'translateY(-1px)';
+                            e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                          }
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = '#3B82F6';
-                          e.target.style.transform = 'translateY(0)';
-                          e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+                          if (!isRowLocked(scholar)) {
+                            e.target.style.backgroundColor = '#3B82F6';
+                            e.target.style.transform = 'translateY(0)';
+                            e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+                          }
                         }}
                       >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

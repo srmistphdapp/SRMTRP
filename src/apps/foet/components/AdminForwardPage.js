@@ -101,19 +101,20 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
       return;
     }
 
-    let scholars = [...adminScholarsData]
-      .filter(s => (s.dept_review || '').toLowerCase() !== 'query')
-      .map(s => ({
-        ...s,
-        status: getScholarStatus(s)
-      }));
+    let scholars = [...adminScholarsData].map(s => ({
+      ...s,
+      status: getScholarStatus(s)
+    }));
+
+    // Exclude scholars that have an active query raised by the department
+    scholars = scholars.filter(s => !s.dept_query);
 
     // Apply active filters
     if (activeFilters.type !== 'All Types') {
       scholars = scholars.filter(s => {
-        const scholarType = (s.type || '').toLowerCase();
-        if (activeFilters.type === 'Full Time') return scholarType.includes('full time') || scholarType === 'ft';
-        if (activeFilters.type === 'Part Time') return scholarType.includes('part time') || scholarType === 'pt';
+        const programUpper = (s.program || '').toUpperCase();
+        if (activeFilters.type === 'Full Time') return programUpper.includes('FT');
+        if (activeFilters.type === 'Part Time') return programUpper.includes('PT');
         return true;
       });
     }
@@ -124,14 +125,14 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
         const filterValue = activeFilters.departmentReview.toLowerCase();
         if (filterValue === 'approved') return review === 'approved' || review === 'accepted';
         if (filterValue === 'rejected') return review === 'rejected';
-        if (filterValue === 'query') return review === 'query';
         return true;
       });
     }
 
     if (activeFilters.department !== 'All Departments') {
       scholars = scholars.filter(s => {
-        return (s.department || '') === activeFilters.department;
+        const deptFromProgram = (s.program || '').split('(')[0].trim();
+        return deptFromProgram === activeFilters.department;
       });
     }
 
@@ -190,13 +191,13 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
   };
 
   const getUniqueDepartmentReviews = () => {
-    return ['All Reviews', 'Approved', 'Rejected', 'Query'];
+    return ['All Reviews', 'Approved', 'Rejected'];
   };
 
   const getUniqueDepartments = () => {
     const depts = new Set(['All Departments']);
     adminScholarsData.forEach(s => {
-      const dept = (s.department || '').trim();
+      const dept = (s.program || '').split('(')[0].trim();
       if (dept) depts.add(dept);
     });
     return Array.from(depts).sort();
@@ -239,10 +240,10 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
         'Registered Name': scholar.registered_name || '-',
         'Application No': scholar.application_no || '-',
         'Have You Graduated From India?': scholar.graduated_from_india || 'Yes',
-        'Course': scholar.course || '-',
+        'Course': scholar.course || scholar.program || '-',
         'Select Institution': scholar.institution || '-',
         'Department': scholar.department || '-',
-        'Type': scholar.program_type || scholar.type || '-',
+        'Type': scholar.program_type || extractProgramType(scholar.program) || '-',
         'Certificates (Link)': scholar.certificates || '-',
         '1 - Employee Id': scholar.employee_id || '-',
         '1 - Designation': scholar.designation || '-',
@@ -315,7 +316,6 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
         'Title And Abstract Of The Master Degree Thesis And Your Research Interest In 500 Words': scholar.research_interest || '-',
         'Department Review': scholar.dept_review || '-',
         'Reject Reason': scholar.reject_reason || '-',
-        'Queries': (scholar.dept_review === 'Query' ? (scholar.dept_query || '-') : '-'),
         'Status': getScholarStatus(scholar) || '-',
         'User Id': scholar.user_id || '-'
       }));
@@ -372,9 +372,15 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
 
     setTransferLoading(true);
     try {
+      // Store the current institution and department before transfer
+      const currentInstitution = transferringScholar.institution || '';
+      const currentDepartment = transferringScholar.department || '';
+      const transferFromValue = `${currentInstitution} | ${currentDepartment}`;
+
       const updateData = {
         institution: stripFacultyPrefix(transferInstitution),
         department: transferDepartment,
+        transfer_from: transferFromValue,
         status: null,
         faculty_status: null,
         dept_status: null,
@@ -682,7 +688,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                     <td>{scholar.application_no}</td>
                     <td>{scholar.institution || '-'}</td>
                     <td>{scholar.department || '-'}</td>
-                    <td>{scholar.program_type || scholar.type || '-'}</td>
+                    <td>{scholar.program_type || extractProgramType(scholar.program) || '-'}</td>
                     <td>{scholar.mobile_number}</td>
                     <td>{scholar.email}</td>
                     <td>{scholar.gender}</td>
@@ -816,7 +822,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Course:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || selectedScholar.program || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Select Institution:</label>
@@ -828,7 +834,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Type:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || selectedScholar.type || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || extractProgramType(selectedScholar.program) || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Certificates Drive Link:</label>

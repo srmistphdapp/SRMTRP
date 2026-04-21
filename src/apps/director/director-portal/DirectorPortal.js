@@ -34,6 +34,7 @@ import Result from './components/Result';
 import WorkflowScholarAdmin from './components/WorkflowScholarAdmin';
 import WorkflowExamination from './components/WorkflowExamination';
 import PartTimeSplit from './components/PartTimeSplit';
+import TransferredScholars from './components/TransferredScholars';
 
 
 const DirectorPortal = () => {
@@ -246,7 +247,7 @@ const DirectorPortal = () => {
   const renderTabContent = () => {
     const scrollableComponents = [
       'dashboard', 'coordinators', 'departments', 'adminManagement', 'supervisors',
-      'questionPapers', 'result', 'workflowScholarAdmin', 'workflowExamination', 'partTimeSplit', 'scholarManagement', 'verifiedScholars', 'hallTicket'
+      'questionPapers', 'result', 'workflowScholarAdmin', 'workflowExamination', 'partTimeSplit', 'scholarManagement', 'verifiedScholars', 'transferredScholars', 'hallTicket'    
     ];
 
     const needsScroll = scrollableComponents.includes(activeTab);
@@ -280,6 +281,11 @@ const DirectorPortal = () => {
           openModal={openModal}
           isSidebarMinimized={isSidebarMinimized}
           onFullscreenChange={(isFs) => setIsFullscreen(isFs)}
+          onModalStateChange={handleModalStateChange}
+        />;
+        break;
+      case 'transferredScholars':
+        content = <TransferredScholars
           onModalStateChange={handleModalStateChange}
         />;
         break;
@@ -525,8 +531,7 @@ const DirectorPortal = () => {
                 <div className="relative">
                   <TabButton
                     id="scholarManagement"
-                    active={activeTab === 'scholarManagement' || activeTab === 'verifiedScholars'}
-                    onClick={() => {
+                    active={activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'transferredScholars'}                    onClick={() => {
                       if (isSidebarMinimized) {
                         // When minimized, default to Initial view
                         setActiveTab('scholarManagement');
@@ -570,6 +575,19 @@ const DirectorPortal = () => {
                       >
                         <span className={`w-2 h-2 rounded-full ${activeTab === 'verifiedScholars' ? 'bg-white' : 'bg-green-500'}`}></span>
                         Verified Scholars
+                      </button>
+                      <button
+                        onClick={() => {
+                          setActiveTab('transferredScholars');
+                          setScholarSubmenuOpen(true);
+                        }}
+                        className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2 ${activeTab === 'transferredScholars'
+                          ? 'bg-purple-600 text-white font-semibold shadow-md'
+                          : 'text-gray-600 hover:bg-gray-100'
+                          }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${activeTab === 'transferredScholars' ? 'bg-white' : 'bg-purple-500'}`}></span>
+                        Transferred Scholars
                       </button>
 
                     </div>
@@ -692,7 +710,7 @@ const DirectorPortal = () => {
 
           {/* Main Content Area */}
           <main className={`main-content-area ${isFullscreen ? 'content-fullscreen' : hasActiveModal ? 'content-with-sidebar-hidden' : isSidebarMinimized ? 'content-with-sidebar-minimized' : 'content-with-sidebar-expanded'}`}>
-            <div className={`${activeTab === 'examination' ? 'examination-page-wrapper p-4' : activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'hallTicket' || activeTab === 'questionPapers' ? 'fullscreen-page-wrapper p-4' : 'p-4 h-full'}`}>
+            <div className={`${activeTab === 'examination' ? 'examination-page-wrapper p-4' : activeTab === 'scholarManagement' || activeTab === 'verifiedScholars' || activeTab === 'transferredScholars' || activeTab === 'hallTicket' || activeTab === 'questionPapers' ? 'fullscreen-page-wrapper p-4' : 'p-4 h-full'}`}>
               {renderTabContent()}
             </div>
           </main>

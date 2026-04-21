@@ -884,7 +884,7 @@ export const bulkForwardToDirectorForInterview = async (ids) => {
 export const publishFacultyResults = async (facultyName, scholarIds) => {
   try {
     console.log('📢 Publishing results for faculty:', facultyName);
-    console.log('📋 Scholar IDs to publish:', scholarIds);
+    console.log('📋 Application nos to publish:', scholarIds);
 
     if (!scholarIds || scholarIds.length === 0) {
       console.error('No scholars to publish');
@@ -909,23 +909,11 @@ export const publishFacultyResults = async (facultyName, scholarIds) => {
     console.log('Writing to result_dir:', publishStatus);
     console.log('Updating scholars:', scholarIds.length);
 
-    // Get application_nos for these scholar IDs
-    const { data: scholars, error: scholarsError } = await supabase
-      .from('scholar_applications')
-      .select('application_no')
-      .in('id', scholarIds);
-
-    if (scholarsError || !scholars?.length) {
-      return { data: null, error: scholarsError || { message: 'No scholars found' } };
-    }
-
-    const appNos = scholars.map(s => s.application_no).filter(Boolean);
-
-    // Update examination_records by application_no
+    // scholarIds are application_no values — update examination_records directly
     const { data, error, count } = await supabaseAdmin
       .from('examination_records')
       .update({ result_dir: publishStatus })
-      .in('application_no', appNos)
+      .in('application_no', scholarIds)
       .select('id', { count: 'exact' });
 
     if (error) {

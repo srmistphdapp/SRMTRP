@@ -590,27 +590,28 @@ export default function Result({ onModalStateChange }) {
 
   const confirmPublishFaculty = async () => {
     try {
-      // Get all scholar IDs for the faculty being published from currently loaded records
+      // Get all application_nos for the faculty being published from currently loaded records
       const normalizedTarget = normalizeName(facultyToPublish);
-      const scholarIdsToPublish = examRecords
+      const appNosToPublish = examRecords
         .filter(record => {
           const recordFaculty = normalizeName(record.faculty || '');
           return recordFaculty === normalizedTarget ||
             recordFaculty.includes(normalizedTarget) ||
             normalizedTarget.includes(recordFaculty);
         })
-        .map(record => record.id);
+        .map(record => record.application_no)
+        .filter(Boolean);
 
-      console.log(`📋 Publishing ${scholarIdsToPublish.length} scholars for ${facultyToPublish}`);
+      console.log(`📋 Publishing ${appNosToPublish.length} scholars for ${facultyToPublish}`);
 
-      if (scholarIdsToPublish.length === 0) {
+      if (appNosToPublish.length === 0) {
         toast.error('No scholars found to publish for this faculty');
         setShowPublishModal(false);
         setFacultyToPublish(null);
         return;
       }
 
-      const { data, error } = await publishFacultyResults(facultyToPublish, scholarIdsToPublish);
+      const { data, error } = await publishFacultyResults(facultyToPublish, appNosToPublish);
 
       if (error) {
         toast.error(`Failed to publish results: ${error.message}`);

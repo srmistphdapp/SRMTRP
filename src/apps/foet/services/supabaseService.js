@@ -392,6 +392,13 @@ export const fetchFacultyExaminationRecords = async (assignedFaculty) => {
 
     console.log(`Found ${examData?.length || 0} examination records for faculty variations: ${facultyVariations.join(', ')}`);
 
+    // Also fetch examination records with NULL faculty that belong to this faculty via scholar_applications
+    const { data: nullFacultyExams } = await supabase
+      .from('examination_records')
+      .select('*')
+      .is('faculty', null)
+      .order('created_at', { ascending: false });
+
     // Get scholar applications to join with examination records
     const { data: scholarData, error: scholarError } = await supabase
       .from('scholar_applications')
@@ -416,8 +423,34 @@ export const fetchFacultyExaminationRecords = async (assignedFaculty) => {
 
     console.log(`Created scholar maps: ${Object.keys(scholarMapByAppNo).length} by app_no, ${Object.keys(scholarMapById).length} by id`);
 
+    // Merge NULL-faculty exam records that belong to this faculty via scholar_applications
+    const nullFacultyForThisFaculty = (nullFacultyExams || []).filter(examRecord => {
+      const scholar = scholarMapByAppNo[examRecord.application_no];
+      if (!scholar) return false;
+      return facultyVariations.some(fv =>
+        (scholar.faculty || '').toLowerCase() === fv.toLowerCase()
+      );
+    }).map(examRecord => {
+      const scholar = scholarMapByAppNo[examRecord.application_no] || {};
+      return {
+        ...examRecord,
+        faculty: examRecord.faculty || scholar.faculty,
+        department: examRecord.department || scholar.department,
+        type: examRecord.type || scholar.type,
+      };
+    });
+
+    // Combine: faculty-matched records + NULL-faculty records belonging to this faculty
+    const existingAppNos = new Set((examData || []).map(r => r.application_no));
+    const mergedExamData = [
+      ...(examData || []),
+      ...nullFacultyForThisFaculty.filter(r => !existingAppNos.has(r.application_no))
+    ];
+
+    console.log(`After merging NULL-faculty records: ${mergedExamData.length} total (added ${nullFacultyForThisFaculty.filter(r => !existingAppNos.has(r.application_no)).length})`);
+
     // Combine examination records with scholar information
-    const combinedData = examData.map(examRecord => {
+    const combinedData = mergedExamData.map(examRecord => {
       let scholar = {};
       let scholarName = '';
 

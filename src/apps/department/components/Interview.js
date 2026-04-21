@@ -9,10 +9,10 @@ import { useAppContext } from '../contexts/AppContext';
 // If absent for any evaluator, scholar is marked absent overall
 function calcAverage(marks, numEvaluators = 1) {
     if (!marks || !marks.length) return 0;
-    
+
     // Only consider marks up to the number of evaluators in the panel
     const relevantMarks = marks.slice(0, numEvaluators);
-    
+
     // Check if ANY mark is absent - if so, scholar is absent overall
     // Check for: "A", "Ab", "ab", "a" (limited to 2 characters max)
     const hasAnyAbsent = relevantMarks.some(m => {
@@ -22,18 +22,18 @@ function calcAverage(marks, numEvaluators = 1) {
         }
         return false;
     });
-    
+
     if (hasAnyAbsent) return 'Ab'; // Return "Ab" if any mark is absent
-    
+
     // Filter out empty/null values and convert to numbers
     const numericMarks = relevantMarks.filter(m => {
         if (m === '' || m === null || m === undefined) return false;
         return !isNaN(Number(m));
     }).map(m => Number(m));
-    
+
     // If no numeric marks, return 0
     if (numericMarks.length === 0) return 0;
-    
+
     // Calculate average of numeric marks
     const avg = numericMarks.reduce((a, b) => a + b, 0) / numericMarks.length;
     return Math.round(avg); // Return integer average
@@ -46,7 +46,7 @@ function getFacultyInterviewStatus(userDepartment, userFaculty) {
     const engineeringDepartments = ['BME', 'ENGBIO', 'ENGCHEM', 'CIVIL', 'CSE', 'EEE', 'ECE', 'ENGENG', 'ENGMATH', 'MECH', 'ENGPHYS'];
     const scienceDepartments = ['BIO', 'COMM', 'CS', 'EFL', 'FASHION', 'MATH', 'TAMIL', 'VISCOM'];
     const managementDepartments = ['MBA'];
-    
+
     // Helper function to get department short code
     const getDepartmentShortCode = (departmentName) => {
         const departmentMap = {
@@ -76,12 +76,12 @@ function getFacultyInterviewStatus(userDepartment, userFaculty) {
             'Electrical and Electronics Engineering': 'EEE',
             'Management Studies': 'MBA'
         };
-        
+
         return departmentMap[departmentName] || departmentName?.toUpperCase().replace(/[^A-Z]/g, '').substring(0, 6) || 'UNKNOWN';
     };
-    
+
     const departmentCode = getDepartmentShortCode(userDepartment);
-    
+
     // Debug logging
     console.log(`🔍 Faculty Status Debug:`, {
         userDepartment,
@@ -89,7 +89,7 @@ function getFacultyInterviewStatus(userDepartment, userFaculty) {
         departmentCode,
         isMedical: medicalDepartments.includes(departmentCode)
     });
-    
+
     // Determine faculty based on department code first, then fall back to faculty name
     if (medicalDepartments.includes(departmentCode)) {
         console.log(`✅ Medical department detected: ${departmentCode} -> Forwarded_To_Medical`);
@@ -125,7 +125,7 @@ const Interview = () => {
     const { toggleFullScreen, currentUser } = useAppContext();
     const [editingId, setEditingId] = useState(null);
     const [editMarks, setEditMarks] = useState([0, 0, 0]);
-    
+
     // Auto-save functionality with debounce
     const [autoSaveTimeout, setAutoSaveTimeout] = useState(null);
 
@@ -203,7 +203,7 @@ const Interview = () => {
                             record.examiner2_marks || 0,  // Keep original value (could be "Ab" or number)
                             record.examiner3_marks || 0   // Keep original value (could be "Ab" or number)
                         ],
-                        average: record.interview_marks ? 
+                        average: record.interview_marks ?
                             ((() => {
                                 const interviewMark = record.interview_marks;
                                 if (typeof interviewMark === 'string') {
@@ -213,7 +213,7 @@ const Interview = () => {
                                     }
                                 }
                                 return Math.round(parseFloat(interviewMark));
-                            })()) : 
+                            })()) :
                             calcAverage([
                                 record.examiner1_marks || 0,
                                 record.examiner2_marks || 0,
@@ -232,7 +232,7 @@ const Interview = () => {
                     }));
 
                     setExaminationRecords(transformedRecords);
-                    
+
                     // If there are existing panel assignments, reconstruct panels from database
                     const existingPanels = new Map();
                     transformedRecords.forEach(record => {
@@ -246,13 +246,13 @@ const Interview = () => {
                                     const name = parts[0]?.trim();
                                     const designation = parts[1]?.trim();
                                     const affiliation = parts[2]?.trim();
-                                    
+
                                     // Only return evaluator if all required fields are present and not empty
-                                    if (!name || !designation || !affiliation || 
+                                    if (!name || !designation || !affiliation ||
                                         name === '' || designation === '' || affiliation === '') {
                                         return null;
                                     }
-                                    
+
                                     return {
                                         name: name,
                                         designation: designation,
@@ -262,15 +262,15 @@ const Interview = () => {
 
                                 // Only include evaluators that actually exist in the database
                                 const evaluators = [];
-                                
+
                                 // Always include evaluator 1 if it exists
                                 const eval1 = parseEvaluator(record.evaluators.examiner1, 'Evaluator1');
                                 if (eval1) evaluators.push(eval1);
-                                
+
                                 // Only include evaluator 2 if it exists
                                 const eval2 = parseEvaluator(record.evaluators.examiner2, 'Evaluator2');
                                 if (eval2) evaluators.push(eval2);
-                                
+
                                 // Only include evaluator 3 if it exists
                                 const eval3 = parseEvaluator(record.evaluators.examiner3, 'Evaluator3');
                                 if (eval3) evaluators.push(eval3);
@@ -288,14 +288,15 @@ const Interview = () => {
                         const panelsArray = Array.from(existingPanels.values()).sort((a, b) => a.id - b.id);
                         setPanels(panelsArray);
                         setActivePanel(panelsArray[0].id);
-                        
-                        // IMPORTANT: Populate panelScholars state with existing assignments from database
+
+                        // Populate panelScholars with existing assignments from database
                         const initialPanelScholars = {};
                         panelsArray.forEach(panel => {
                             initialPanelScholars[panel.id] = [];
                         });
-                        
-                        // Assign scholars to their existing panels based on database data
+
+                        // Separate assigned and unassigned records
+                        const unassignedRecords = [];
                         transformedRecords.forEach(record => {
                             if (record.assignedPanel) {
                                 const panelId = parseInt(record.assignedPanel);
@@ -310,13 +311,40 @@ const Interview = () => {
                                         panel: panelId
                                     });
                                 }
+                            } else {
+                                unassignedRecords.push(record);
                             }
                         });
-                        
+
+                        // Distribute unassigned records equally across panels
+                        if (unassignedRecords.length > 0) {
+                            const n = panelsArray.length;
+                            const base = Math.floor(unassignedRecords.length / n);
+                            let rem = unassignedRecords.length % n;
+                            let offset = 0;
+                            for (let i = 0; i < n; i++) {
+                                const size = base + (rem > 0 ? 1 : 0);
+                                if (rem > 0) rem--;
+                                unassignedRecords.slice(offset, offset + size).forEach(record => {
+                                    initialPanelScholars[panelsArray[i].id].push({
+                                        id: record.id,
+                                        name: record.name,
+                                        appNo: record.appNo,
+                                        marks: record.marks,
+                                        average: record.average,
+                                        forwarded: record.forwarded,
+                                        panel: panelsArray[i].id
+                                    });
+                                });
+                                offset += size;
+                            }
+                            console.log(`📋 Distributed ${unassignedRecords.length} unassigned records across ${n} panels`);
+                        }
+
                         setPanelScholars(initialPanelScholars);
-                        
+
                         console.log(`✅ Loaded ${panelsArray.length} existing panels from database`);
-                        console.log(`📋 Panel scholar assignments:`, Object.entries(initialPanelScholars).map(([panelId, scholars]) => 
+                        console.log(`📋 Panel scholar assignments:`, Object.entries(initialPanelScholars).map(([panelId, scholars]) =>
                             `Panel ${panelId}: ${scholars.length} scholars`
                         ).join(', '));
                     } else {
@@ -347,14 +375,14 @@ const Interview = () => {
         }
         setRemovePanelModalOpen(true);
     };
-    
+
     const handleConfirmRemovePanel = async () => {
         const removeId = activePanel;
-        
+
         try {
             // Get scholars assigned to this panel
             const scholarsInPanel = panelScholars[removeId] || [];
-            
+
             if (scholarsInPanel.length > 0) {
                 // Get the original scholar IDs from the database
                 const scholarIds = scholarsInPanel
@@ -366,7 +394,7 @@ const Interview = () => {
 
                 if (scholarIds.length > 0) {
                     console.log(`🔄 Removing Panel ${removeId} with ${scholarIds.length} scholars`);
-                    
+
                     const { removeScholarsFromPanel } = await import('../services/departmentScholarService');
                     const { data, error } = await removeScholarsFromPanel(scholarIds);
 
@@ -377,7 +405,7 @@ const Interview = () => {
                     }
 
                     console.log(`✅ Panel ${removeId} removed from database for ${scholarIds.length} scholars`);
-                    
+
                     // Update examination records to reflect the changes
                     setExaminationRecords(prev => prev.map(record => {
                         const updatedRecord = data?.find(d => d.id === (record._originalData?.id || record.id));
@@ -403,11 +431,11 @@ const Interview = () => {
             setPanels(prev => {
                 const remainingPanels = prev.filter(p => p.id !== removeId);
                 const { panels: renumberedPanels, panelScholars: newMap, active: newActive } = renumberPanels(remainingPanels, panelScholars, activePanel);
-                
+
                 // After renumbering, redistribute all scholars among remaining panels
                 if (renumberedPanels.length > 0) {
                     console.log(`🔄 Redistributing scholars after removing Panel ${removeId}`);
-                    
+
                     // Get all scholars from examination records
                     const allScholars = examinationRecords.map(record => ({
                         id: record.id,
@@ -430,18 +458,18 @@ const Interview = () => {
                             fixedScholars.push(scholar);
                             return;
                         }
-                        
+
                         // Check if ALL examiner marks are null (only then can be redistributed)
                         const allExaminerMarksAreNull = (
                             originalData.examiner1_marks === null &&
                             originalData.examiner2_marks === null &&
                             originalData.examiner3_marks === null
                         );
-                        
+
                         // Check if forwarded in backend
-                        const isForwardedInBackend = originalData.faculty_interview && 
+                        const isForwardedInBackend = originalData.faculty_interview &&
                             originalData.faculty_interview.startsWith('Forwarded_To_');
-                        
+
                         if (allExaminerMarksAreNull && !isForwardedInBackend) {
                             redistributableScholars.push(scholar);
                         } else {
@@ -465,7 +493,7 @@ const Interview = () => {
                                 const originalPanel = prev.find(op => op.id === originalPanelId);
                                 return originalPanel && p.evaluators === originalPanel.evaluators;
                             });
-                            
+
                             if (targetPanel && redistributedPanelScholars[targetPanel.id] !== undefined) {
                                 redistributedPanelScholars[targetPanel.id].push({
                                     id: scholar.id,
@@ -488,35 +516,35 @@ const Interview = () => {
                             currentCount: redistributedPanelScholars[panel.id].length,
                             evaluators: panel.evaluators
                         }));
-                        
+
                         // Calculate target size per panel for equal TOTAL distribution
                         const totalScholars = allScholars.length;
                         const targetPerPanel = Math.floor(totalScholars / renumberedPanels.length);
                         const remainder = totalScholars % renumberedPanels.length;
-                        
+
                         // Calculate how many redistributable scholars each panel needs
                         const panelNeeds = renumberedPanels.map((panel, index) => {
                             const targetSize = targetPerPanel + (index < remainder ? 1 : 0);
                             const currentSize = currentPanelSizes[index].currentCount;
                             const needsMore = Math.max(0, targetSize - currentSize);
-                            
+
                             return {
                                 panelId: panel.id,
                                 panel: panel,
                                 needsMore: needsMore
                             };
                         });
-                        
+
                         // Distribute redistributable scholars based on panel needs
                         let redistributableIndex = 0;
-                        
+
                         for (const panelNeed of panelNeeds) {
                             if (panelNeed.needsMore > 0 && redistributableIndex < redistributableScholars.length) {
                                 const scholarsToAssign = redistributableScholars.slice(
-                                    redistributableIndex, 
+                                    redistributableIndex,
                                     redistributableIndex + panelNeed.needsMore
                                 );
-                                
+
                                 // Add to panel scholars mapping
                                 scholarsToAssign.forEach(scholar => {
                                     redistributedPanelScholars[panelNeed.panelId].push({
@@ -529,7 +557,7 @@ const Interview = () => {
                                         panel: panelNeed.panelId
                                     });
                                 });
-                                
+
                                 redistributableIndex += scholarsToAssign.length;
                             }
                         }
@@ -541,15 +569,15 @@ const Interview = () => {
                 } else {
                     setPanelScholars({});
                 }
-                
+
                 setActivePanel(newActive);
                 return renumberedPanels;
             });
 
             setRemovePanelModalOpen(false);
-            setMessageBox({ 
-                open: true, 
-                message: `Panel ${removeId} removed successfully! Scholars with saved marks kept their evaluator data.` 
+            setMessageBox({
+                open: true,
+                message: `Panel ${removeId} removed successfully! Scholars with saved marks kept their evaluator data.`
             });
 
         } catch (err) {
@@ -565,7 +593,9 @@ const Interview = () => {
         setAddPanelModalOpen(true);
     };
 
-    // Automatic redistribution function
+    // REMOVED: redistributeScholarsAutomatically caused stale-closure overwrites of panelScholars
+    // after initial load. Panel redistribution is now handled inline in handleSaveNewPanel
+    // and handleConfirmRemovePanel. The initial load handles all assignment on mount.
     const redistributeScholarsAutomatically = useCallback(async () => {
         if (panels.length === 0 || examinationRecords.length === 0) {
             return;
@@ -573,7 +603,7 @@ const Interview = () => {
 
         try {
             console.log('🔄 Automatic redistribution triggered');
-            
+
             // Get ALL scholars and categorize them for redistribution
             const allScholars = examinationRecords.map(record => ({
                 id: record.id,
@@ -596,18 +626,18 @@ const Interview = () => {
                     fixedScholars.push(scholar);
                     return;
                 }
-                
+
                 // Check if ALL examiner marks are null (only then can be redistributed)
                 const allExaminerMarksAreNull = (
                     originalData.examiner1_marks === null &&
                     originalData.examiner2_marks === null &&
                     originalData.examiner3_marks === null
                 );
-                
+
                 // Check if forwarded in backend
-                const isForwardedInBackend = originalData.faculty_interview && 
+                const isForwardedInBackend = originalData.faculty_interview &&
                     originalData.faculty_interview.startsWith('Forwarded_To_');
-                
+
                 if (allExaminerMarksAreNull && !isForwardedInBackend) {
                     redistributableScholars.push(scholar);
                     console.log(`🔄 Scholar ${scholar.name} can be redistributed (all marks null, not forwarded)`);
@@ -647,52 +677,52 @@ const Interview = () => {
             // Then, redistribute the redistributable scholars to achieve equal TOTAL distribution
             if (redistributableScholars.length > 0) {
                 console.log(`🔄 Redistributing ${redistributableScholars.length} scholars among ${panels.length} panels for equal TOTAL distribution`);
-                
+
                 // Calculate current panel sizes (including fixed scholars)
                 const currentPanelSizes = panels.map(panel => ({
                     id: panel.id,
                     currentCount: newPanelScholars[panel.id].length,
                     evaluators: panel.evaluators
                 }));
-                
+
                 console.log(`📋 Current panel sizes (fixed scholars only):`, currentPanelSizes.map(p => `Panel ${p.id}: ${p.currentCount} scholars`).join(', '));
-                
+
                 // Calculate target size per panel for equal TOTAL distribution
                 const totalScholars = allScholars.length;
                 const targetPerPanel = Math.floor(totalScholars / panels.length);
                 const remainder = totalScholars % panels.length;
-                
+
                 console.log(`🎯 Target TOTAL distribution: ${targetPerPanel} scholars per panel, ${remainder} panels get +1 extra`);
                 console.log(`📊 Total scholars to distribute: ${totalScholars}`);
-                
+
                 // Calculate how many redistributable scholars each panel needs
                 const panelNeeds = panels.map((panel, index) => {
                     const targetSize = targetPerPanel + (index < remainder ? 1 : 0);
                     const currentSize = currentPanelSizes[index].currentCount;
                     const needsMore = Math.max(0, targetSize - currentSize);
-                    
+
                     console.log(`🔄 Panel ${panel.id}: current=${currentSize}, target=${targetSize}, needs=${needsMore}`);
-                    
+
                     return {
                         panelId: panel.id,
                         panel: panel,
                         needsMore: needsMore
                     };
                 });
-                
+
                 // Distribute redistributable scholars based on panel needs
                 let redistributableIndex = 0;
-                
+
                 for (const panelNeed of panelNeeds) {
                     if (panelNeed.needsMore > 0 && redistributableIndex < redistributableScholars.length) {
                         const scholarsToAssign = redistributableScholars.slice(
-                            redistributableIndex, 
+                            redistributableIndex,
                             redistributableIndex + panelNeed.needsMore
                         );
-                        
-                        console.log(`🔄 Panel ${panelNeed.panelId} gets ${scholarsToAssign.length} redistributable scholars:`, 
+
+                        console.log(`🔄 Panel ${panelNeed.panelId} gets ${scholarsToAssign.length} redistributable scholars:`,
                             scholarsToAssign.map(s => s.name));
-                        
+
                         // Add to panel scholars mapping
                         scholarsToAssign.forEach(scholar => {
                             newPanelScholars[panelNeed.panelId].push({
@@ -705,14 +735,14 @@ const Interview = () => {
                                 panel: panelNeed.panelId
                             });
                         });
-                        
+
                         // Update database for this panel
                         if (scholarsToAssign.length > 0) {
                             try {
                                 const scholarIds = scholarsToAssign.map(s => s._originalData?.id || s.id).filter(Boolean);
-                                
+
                                 console.log(`🔄 Updating database: Assigning ${scholarIds.length} scholars to Panel ${panelNeed.panelId}`);
-                                
+
                                 const { assignScholarsToPanel } = await import('../services/departmentScholarService');
                                 const { data, error } = await assignScholarsToPanel(scholarIds, panelNeed.panelId, panelNeed.panel.evaluators);
 
@@ -725,7 +755,7 @@ const Interview = () => {
                                 console.error(`❌ Exception assigning scholars to Panel ${panelNeed.panelId}:`, err);
                             }
                         }
-                        
+
                         redistributableIndex += scholarsToAssign.length;
                     }
                 }
@@ -733,7 +763,7 @@ const Interview = () => {
                 // Update examination records to reflect the new panel assignments
                 setExaminationRecords(prev => {
                     console.log('🔄 Updating examination records with new panel assignments...');
-                    
+
                     return prev.map(record => {
                         // Find which panel this scholar was assigned to
                         for (const [panelId, assignedScholars] of Object.entries(newPanelScholars)) {
@@ -741,7 +771,7 @@ const Interview = () => {
                                 const targetPanel = panels.find(p => p.id === parseInt(panelId));
                                 if (targetPanel) {
                                     console.log(`🔄 Updating ${record.name} assignment to Panel ${targetPanel.id}`);
-                                    
+
                                     return {
                                         ...record,
                                         assignedPanel: targetPanel.id.toString(),
@@ -770,7 +800,7 @@ const Interview = () => {
 
             // Update panel scholars state
             setPanelScholars(newPanelScholars);
-            
+
             // Log final distribution
             console.log('🔄 Final panel distribution after automatic redistribution:');
             Object.entries(newPanelScholars).forEach(([panelId, scholars]) => {
@@ -784,27 +814,8 @@ const Interview = () => {
         }
     }, [panels, examinationRecords]);
 
-    // Automatic redistribution when panels or examination records change
-    useEffect(() => {
-        // Add a small delay to ensure all state updates are complete
-        const timer = setTimeout(() => {
-            redistributeScholarsAutomatically();
-        }, 100);
-        
-        return () => clearTimeout(timer);
-    }, [redistributeScholarsAutomatically]);
-
-    // Additional trigger when panels length changes
-    useEffect(() => {
-        if (panels.length > 0 && examinationRecords.length > 0) {
-            console.log('🔄 Panels or records changed, triggering redistribution');
-            const timer = setTimeout(() => {
-                redistributeScholarsAutomatically();
-            }, 200);
-            
-            return () => clearTimeout(timer);
-        }
-    }, [panels.length, examinationRecords.length, redistributeScholarsAutomatically]);
+    // NOTE: Redistribution useEffects removed — they caused stale-closure overwrites.
+    // Redistribution is handled inline in handleSaveNewPanel / handleConfirmRemovePanel.
 
     const handleNewEvalChange = (index, field, value) => {
         setNewPanelEvaluators(prev => prev.map((e, i) => i === index ? { ...e, [field]: value } : e));
@@ -850,11 +861,11 @@ const Interview = () => {
 
     const handleSaveNewPanel = async () => {
         // Validate that all evaluators have complete information
-        const invalid = newPanelEvaluators.some(ev => 
-            !ev.name || !ev.designation || !ev.affiliation || 
+        const invalid = newPanelEvaluators.some(ev =>
+            !ev.name || !ev.designation || !ev.affiliation ||
             !ev.name.toString().trim() || !ev.designation.toString().trim() || !ev.affiliation.toString().trim()
         );
-        
+
         if (invalid) {
             setMessageBox({ open: true, message: 'Please fill all evaluator Name, Designation and Affiliation fields before creating a panel.' });
             return;
@@ -865,14 +876,14 @@ const Interview = () => {
             const name = ev.name.toString().trim().toLowerCase();
             const designation = ev.designation.toString().trim().toLowerCase();
             const affiliation = ev.affiliation.toString().trim().toLowerCase();
-            
+
             // Check for common placeholder patterns
             return name.includes('test') || name.includes('placeholder') ||
-                   designation.includes('test') || designation.includes('placeholder') ||
-                   affiliation.includes('test') || affiliation.includes('placeholder') ||
-                   name.length < 2 || designation.length < 2 || affiliation.length < 2;
+                designation.includes('test') || designation.includes('placeholder') ||
+                affiliation.includes('test') || affiliation.includes('placeholder') ||
+                name.length < 2 || designation.length < 2 || affiliation.length < 2;
         });
-        
+
         if (hasPlaceholderData) {
             setMessageBox({ open: true, message: 'Please enter real evaluator information. Avoid placeholder or test data.' });
             return;
@@ -880,13 +891,13 @@ const Interview = () => {
 
         try {
             const nextId = (panels.length > 0 ? Math.max(...panels.map(p => p.id)) : 0) + 1;
-            
+
             console.log(`🔍 Creating Panel ${nextId} - Current examination records:`, examinationRecords.length);
             console.log(`🔍 Current panel scholars:`, panelScholars);
-            
+
             // Create new panel object first
             const newPanel = { id: nextId, evaluators: [...newPanelEvaluators] };
-            
+
             // Update panels state
             setPanels(prev => [...prev, newPanel]);
 
@@ -912,18 +923,18 @@ const Interview = () => {
                     fixedScholars.push(scholar);
                     return;
                 }
-                
+
                 // Check if ALL examiner marks are null (only then can be redistributed)
                 const allExaminerMarksAreNull = (
                     originalData.examiner1_marks === null &&
                     originalData.examiner2_marks === null &&
                     originalData.examiner3_marks === null
                 );
-                
+
                 // Check if forwarded in backend
-                const isForwardedInBackend = originalData.faculty_interview && 
+                const isForwardedInBackend = originalData.faculty_interview &&
                     originalData.faculty_interview.startsWith('Forwarded_To_');
-                
+
                 if (allExaminerMarksAreNull && !isForwardedInBackend) {
                     redistributableScholars.push(scholar);
                     console.log(`🔄 Scholar ${scholar.name} can be redistributed (all marks null, not forwarded)`);
@@ -939,7 +950,7 @@ const Interview = () => {
 
             // Get all panels (including the new one)
             const allPanels = [...panels, newPanel];
-            
+
             // Initialize panel scholars mapping
             const newPanelScholars = {};
             allPanels.forEach(panel => {
@@ -968,32 +979,32 @@ const Interview = () => {
             // Then, redistribute the redistributable scholars to achieve equal TOTAL distribution
             if (redistributableScholars.length > 0) {
                 console.log(`🔄 Redistributing ${redistributableScholars.length} scholars among ${allPanels.length} panels for equal TOTAL distribution`);
-                
+
                 // Calculate current panel sizes (including fixed scholars)
                 const currentPanelSizes = allPanels.map(panel => ({
                     id: panel.id,
                     currentCount: newPanelScholars[panel.id].length, // Fixed scholars already placed
                     evaluators: panel.evaluators
                 }));
-                
+
                 console.log(`📋 Current panel sizes (fixed scholars only):`, currentPanelSizes.map(p => `Panel ${p.id}: ${p.currentCount} scholars`).join(', '));
-                
+
                 // Calculate target size per panel for equal TOTAL distribution
                 const totalScholars = allScholars.length;
                 const targetPerPanel = Math.floor(totalScholars / allPanels.length);
                 const remainder = totalScholars % allPanels.length;
-                
+
                 console.log(`🎯 Target TOTAL distribution: ${targetPerPanel} scholars per panel, ${remainder} panels get +1 extra`);
                 console.log(`📊 Total scholars to distribute: ${totalScholars}`);
-                
+
                 // Calculate how many redistributable scholars each panel needs
                 const panelNeeds = allPanels.map((panel, index) => {
                     const targetSize = targetPerPanel + (index < remainder ? 1 : 0);
                     const currentSize = currentPanelSizes[index].currentCount;
                     const needsMore = Math.max(0, targetSize - currentSize); // Can't be negative
-                    
+
                     console.log(`🔄 Panel ${panel.id}: current=${currentSize}, target=${targetSize}, needs=${needsMore}`);
-                    
+
                     return {
                         panelId: panel.id,
                         panel: panel,
@@ -1002,20 +1013,20 @@ const Interview = () => {
                         needsMore: needsMore
                     };
                 });
-                
+
                 // Distribute redistributable scholars based on panel needs
                 let redistributableIndex = 0;
-                
+
                 for (const panelNeed of panelNeeds) {
                     if (panelNeed.needsMore > 0 && redistributableIndex < redistributableScholars.length) {
                         const scholarsToAssign = redistributableScholars.slice(
-                            redistributableIndex, 
+                            redistributableIndex,
                             redistributableIndex + panelNeed.needsMore
                         );
-                        
-                        console.log(`🔄 Panel ${panelNeed.panelId} gets ${scholarsToAssign.length} redistributable scholars:`, 
+
+                        console.log(`🔄 Panel ${panelNeed.panelId} gets ${scholarsToAssign.length} redistributable scholars:`,
                             scholarsToAssign.map(s => s.name));
-                        
+
                         // Add to panel scholars mapping
                         scholarsToAssign.forEach(scholar => {
                             newPanelScholars[panelNeed.panelId].push({
@@ -1028,14 +1039,14 @@ const Interview = () => {
                                 panel: panelNeed.panelId
                             });
                         });
-                        
+
                         // Update database for this panel
                         if (scholarsToAssign.length > 0) {
                             try {
                                 const scholarIds = scholarsToAssign.map(s => s._originalData?.id || s.id).filter(Boolean);
-                                
+
                                 console.log(`🔄 Updating database: Assigning ${scholarIds.length} scholars to Panel ${panelNeed.panelId}`);
-                                
+
                                 const { assignScholarsToPanel } = await import('../services/departmentScholarService');
                                 const { data, error } = await assignScholarsToPanel(scholarIds, panelNeed.panelId, panelNeed.panel.evaluators);
 
@@ -1052,7 +1063,7 @@ const Interview = () => {
                                 return;
                             }
                         }
-                        
+
                         redistributableIndex += scholarsToAssign.length;
                     }
                 }
@@ -1060,7 +1071,7 @@ const Interview = () => {
                 // Update examination records to reflect the new panel assignments
                 setExaminationRecords(prev => {
                     console.log('🔄 Updating examination records with new panel assignments...');
-                    
+
                     return prev.map(record => {
                         // Find which panel this scholar was assigned to
                         for (const [panelId, assignedScholars] of Object.entries(newPanelScholars)) {
@@ -1068,7 +1079,7 @@ const Interview = () => {
                                 const targetPanel = allPanels.find(p => p.id === parseInt(panelId));
                                 if (targetPanel) {
                                     console.log(`🔄 Updating ${record.name} assignment to Panel ${targetPanel.id}`);
-                                    
+
                                     return {
                                         ...record,
                                         assignedPanel: targetPanel.id.toString(),
@@ -1099,13 +1110,13 @@ const Interview = () => {
 
             // Update panel scholars state
             setPanelScholars(newPanelScholars);
-            
+
             // Log final distribution
             console.log('🔄 Final panel distribution:');
             Object.entries(newPanelScholars).forEach(([panelId, scholars]) => {
                 console.log(`   Panel ${panelId}: ${scholars.length} scholars (${scholars.map(s => s.name).join(', ')})`);
             });
-            
+
             // Set active panel
             setActivePanel(nextId);
 
@@ -1130,11 +1141,11 @@ const Interview = () => {
 
     const handleSaveEditPanel = async () => {
         // Validate that all evaluators have complete information
-        const invalid = editPanelEvaluators.some(ev => 
-            !ev.name || !ev.designation || !ev.affiliation || 
+        const invalid = editPanelEvaluators.some(ev =>
+            !ev.name || !ev.designation || !ev.affiliation ||
             !ev.name.toString().trim() || !ev.designation.toString().trim() || !ev.affiliation.toString().trim()
         );
-        
+
         if (invalid) {
             setMessageBox({ open: true, message: 'Please fill all evaluator Name, Designation and Affiliation fields before saving.' });
             return;
@@ -1145,14 +1156,14 @@ const Interview = () => {
             const name = ev.name.toString().trim().toLowerCase();
             const designation = ev.designation.toString().trim().toLowerCase();
             const affiliation = ev.affiliation.toString().trim().toLowerCase();
-            
+
             // Check for common placeholder patterns
             return name.includes('test') || name.includes('placeholder') ||
-                   designation.includes('test') || designation.includes('placeholder') ||
-                   affiliation.includes('test') || affiliation.includes('placeholder') ||
-                   name.length < 2 || designation.length < 2 || affiliation.length < 2;
+                designation.includes('test') || designation.includes('placeholder') ||
+                affiliation.includes('test') || affiliation.includes('placeholder') ||
+                name.length < 2 || designation.length < 2 || affiliation.length < 2;
         });
-        
+
         if (hasPlaceholderData) {
             setMessageBox({ open: true, message: 'Please enter real evaluator information. Avoid placeholder or test data.' });
             return;
@@ -1161,7 +1172,7 @@ const Interview = () => {
         try {
             // Get scholars assigned to this panel
             const scholarsInPanel = panelScholars[activePanel] || [];
-            
+
             if (scholarsInPanel.length > 0) {
                 // Get the original scholar IDs from the database
                 const scholarIds = scholarsInPanel
@@ -1173,7 +1184,7 @@ const Interview = () => {
 
                 if (scholarIds.length > 0) {
                     console.log(`🔄 Updating Panel ${activePanel} evaluators for ${scholarIds.length} scholars`);
-                    
+
                     const { assignScholarsToPanel } = await import('../services/departmentScholarService');
                     const { data, error } = await assignScholarsToPanel(scholarIds, activePanel, editPanelEvaluators);
 
@@ -1184,7 +1195,7 @@ const Interview = () => {
                     }
 
                     console.log(`✅ Panel ${activePanel} evaluators updated in database`);
-                    
+
                     // Update examination records to reflect the changes
                     setExaminationRecords(prev => prev.map(record => {
                         const updatedRecord = data?.find(d => d.id === (record._originalData?.id || record.id));
@@ -1205,16 +1216,16 @@ const Interview = () => {
             }
 
             // Update local panel state
-            setPanels(prev => prev.map(panel => 
-                panel.id === activePanel 
+            setPanels(prev => prev.map(panel =>
+                panel.id === activePanel
                     ? { ...panel, evaluators: [...editPanelEvaluators] }
                     : panel
             ));
 
             setEditPanelModalOpen(false);
-            setMessageBox({ 
-                open: true, 
-                message: `Panel ${activePanel} evaluators updated successfully!` 
+            setMessageBox({
+                open: true,
+                message: `Panel ${activePanel} evaluators updated successfully!`
             });
 
         } catch (err) {
@@ -1235,14 +1246,14 @@ const Interview = () => {
         for (let i = 0; i < newPanels.length; i++) {
             if (!Array.isArray(newMap[i + 1])) newMap[i + 1] = [];
         }
-        
-        let newActive = null; 
+
+        let newActive = null;
         if (newPanels.length > 0) {
             const oldActiveIndex = rawPanels.findIndex(p => p.id === oldActive);
             if (oldActiveIndex !== -1) {
-                 newActive = oldActiveIndex > 0 ? oldActiveIndex : 1;
+                newActive = oldActiveIndex > 0 ? oldActiveIndex : 1;
             } else {
-                 newActive = 1;
+                newActive = 1;
             }
         }
         return { panels: newPanels, panelScholars: newMap, active: newActive };
@@ -1262,7 +1273,7 @@ const Interview = () => {
         try {
             console.log('🔄 handleSave called for scholar ID:', id);
             console.log('🔄 Current editMarks:', editMarks);
-            
+
             // Find the examination record to get the original ID
             const record = examinationRecords.find(r => r.id === id);
             if (!record) {
@@ -1300,12 +1311,12 @@ const Interview = () => {
                 // For any other string, keep as is
                 return m;
             });
-            
+
             console.log('🔄 Processed marks:', marks);
-            
+
             const averageMarks = calcAverage(marks, numEvaluators);
             console.log('🔄 Calculated average:', averageMarks);
-            
+
             // Only update the evaluator columns that are actually used
             const updates = {
                 examiner1_marks: numEvaluators >= 1 ? (marks[0] || 0) : null,  // Only if 1+ evaluators
@@ -1318,33 +1329,33 @@ const Interview = () => {
 
             // Save to examination_records table with retry logic
             const { updateExaminationRecord } = await import('../services/departmentScholarService');
-            
+
             let saveAttempts = 0;
             const maxAttempts = 3;
             let saveResult = null;
-            
+
             while (saveAttempts < maxAttempts) {
                 saveAttempts++;
                 console.log(`🔄 Save attempt ${saveAttempts}/${maxAttempts} for scholar ${databaseId}`);
-                
+
                 try {
                     saveResult = await updateExaminationRecord(databaseId, updates);
-                    
+
                     if (saveResult.error) {
                         console.error(`❌ Save attempt ${saveAttempts} failed:`, saveResult.error);
-                        
+
                         // If it's a network error, retry
-                        if (saveResult.error.message?.includes('fetch') || 
+                        if (saveResult.error.message?.includes('fetch') ||
                             saveResult.error.message?.includes('network') ||
                             saveResult.error.message?.includes('Failed to fetch')) {
-                            
+
                             if (saveAttempts < maxAttempts) {
                                 console.log(`🔄 Network error detected, retrying in ${saveAttempts}s...`);
                                 await new Promise(resolve => setTimeout(resolve, saveAttempts * 1000));
                                 continue;
                             }
                         }
-                        
+
                         // If it's not a network error or we've exhausted retries, break
                         break;
                     } else {
@@ -1355,19 +1366,19 @@ const Interview = () => {
                 } catch (err) {
                     console.error(`❌ Exception on save attempt ${saveAttempts}:`, err);
                     saveResult = { data: null, error: err };
-                    
+
                     // If it's a network error, retry
-                    if (err.message?.includes('fetch') || 
+                    if (err.message?.includes('fetch') ||
                         err.message?.includes('network') ||
                         err.message?.includes('Failed to fetch')) {
-                        
+
                         if (saveAttempts < maxAttempts) {
                             console.log(`🔄 Network exception detected, retrying in ${saveAttempts}s...`);
                             await new Promise(resolve => setTimeout(resolve, saveAttempts * 1000));
                             continue;
                         }
                     }
-                    
+
                     break;
                 }
             }
@@ -1377,14 +1388,14 @@ const Interview = () => {
                 console.error('❌ Full error details:', saveResult.error);
                 console.error('❌ Database ID that failed:', databaseId);
                 console.error('❌ Updates that failed:', updates);
-                
+
                 // Show user-friendly error message
-                const errorMessage = saveResult.error.message?.includes('fetch') || 
-                                   saveResult.error.message?.includes('network') ||
-                                   saveResult.error.message?.includes('Failed to fetch')
+                const errorMessage = saveResult.error.message?.includes('fetch') ||
+                    saveResult.error.message?.includes('network') ||
+                    saveResult.error.message?.includes('Failed to fetch')
                     ? 'Network connection issue. Please check your internet connection and try again.'
                     : `Failed to save marks: ${saveResult.error.message || saveResult.error}`;
-                
+
                 setMessageBox({ open: true, message: errorMessage });
                 return;
             }
@@ -1398,8 +1409,8 @@ const Interview = () => {
             }));
 
             // Update examination records state
-            setExaminationRecords(prev => 
-                prev.map(r => 
+            setExaminationRecords(prev =>
+                prev.map(r =>
                     r.id === id ? { ...r, marks: marks, average: calcAverage(marks, numEvaluators) } : r
                 )
             );
@@ -1422,7 +1433,7 @@ const Interview = () => {
         if (autoSaveTimeout) {
             clearTimeout(autoSaveTimeout);
         }
-        
+
         // If immediate save requested (like from Enter key), save right away
         if (immediate) {
             handleSave(id);
@@ -1453,13 +1464,13 @@ const Interview = () => {
             // No auto-save - only save on Enter or blur
             return;
         }
-        
+
         // For text input, limit to maximum 2 characters
         if (isNaN(Number(val))) {
             if (val.length > 2) {
                 return; // Don't allow more than 2 characters for text
             }
-            
+
             // Allow any variation of absent: "A", "Ab", "ab", "a"
             const lowerVal = val.toLowerCase().trim();
             if (lowerVal === 'a' || lowerVal === 'ab') {
@@ -1467,13 +1478,13 @@ const Interview = () => {
                 // No auto-save - only save on Enter or blur
                 return;
             }
-            
+
             // For any other text input up to 2 characters
             setEditMarks(m => m.map((x, i) => (i === idx ? val : x)));
             // No auto-save - only save on Enter or blur
             return;
         }
-        
+
         // For numeric input, allow multi-digit numbers and validate range
         const numVal = Number(val);
         if (!isNaN(numVal)) {
@@ -1484,7 +1495,7 @@ const Interview = () => {
             }
             return;
         }
-        
+
         // For any other alphanumeric input, allow it (but limit to 2 characters)
         if (val.length <= 2) { // Limit text input to 2 characters max
             setEditMarks(m => m.map((x, i) => (i === idx ? val : x)));
@@ -1498,17 +1509,17 @@ const Interview = () => {
         if ((e.key === 'Enter' || e.keyCode === 13 || e.which === 13) && editingId) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             console.log('🔄 Enter key detected - triggering immediate save for scholar:', editingId);
             console.log('🔄 Key details:', { key: e.key, keyCode: e.keyCode, which: e.which });
             console.log('🔄 Current marks to save:', editMarks);
-            
+
             // Clear any pending auto-save timeout
             if (autoSaveTimeout) {
                 clearTimeout(autoSaveTimeout);
                 setAutoSaveTimeout(null);
             }
-            
+
             // Trigger immediate save with a small delay to ensure the input value is captured
             setTimeout(() => {
                 handleSave(editingId);
@@ -1518,7 +1529,7 @@ const Interview = () => {
 
         // Allowed keys: Backspace, Tab, Escape, Arrow keys, Delete
         const allowedKeys = ['Backspace', 'Tab', 'Escape', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Delete'];
-        
+
         // If it's a control key combination (Ctrl+A, Ctrl+C etc), allow it
         if (e.ctrlKey || e.metaKey) {
             return;
@@ -1544,7 +1555,7 @@ const Interview = () => {
     };
     const handleConfirmForward = async () => {
         if (!consentChecked) return;
-        
+
         try {
             // Find the scholar record to get the original database ID
             const scholar = (panelScholars[activePanel] || []).find(v => v.id === forwardModal.id);
@@ -1564,8 +1575,8 @@ const Interview = () => {
             // Update database - set faculty_interview with faculty-specific status
             const { forwardScholarInterview } = await import('../services/departmentScholarService');
             const { data, error } = await forwardScholarInterview(
-                originalScholarId, 
-                currentUser?.department, 
+                originalScholarId,
+                currentUser?.department,
                 currentUser?.faculty || 'Faculty of Engineering & Technology'
             );
 
@@ -1585,13 +1596,13 @@ const Interview = () => {
 
             // Determine faculty-specific forwarded status based on department
             const facultyInterviewStatus = getFacultyInterviewStatus(
-                currentUser?.department, 
+                currentUser?.department,
                 currentUser?.faculty || 'Faculty of Engineering & Technology'
             );
 
             // Update examination records state
-            setExaminationRecords(prev => 
-                prev.map(r => 
+            setExaminationRecords(prev =>
+                prev.map(r =>
                     r.id === forwardModal.id ? { ...r, forwarded: true, _originalData: { ...r._originalData, faculty_interview: facultyInterviewStatus } } : r
                 )
             );
@@ -1618,11 +1629,11 @@ const Interview = () => {
     };
     const handleConfirmForwardAll = async () => {
         if (!consentAllChecked) return;
-        
+
         try {
             const scholarsInPanel = panelScholars[activePanel] || [];
             const unforwardedScholars = scholarsInPanel.filter(v => !v.forwarded);
-            
+
             if (unforwardedScholars.length === 0) {
                 setMessageBox({ open: true, message: 'No scholars to forward in this panel.' });
                 return;
@@ -1644,8 +1655,8 @@ const Interview = () => {
             // Update database - set faculty_interview with faculty-specific status for all scholars
             const { forwardMultipleScholarInterviews } = await import('../services/departmentScholarService');
             const { data, error } = await forwardMultipleScholarInterviews(
-                scholarIds, 
-                currentUser?.department, 
+                scholarIds,
+                currentUser?.department,
                 currentUser?.faculty || 'Faculty of Engineering & Technology'
             );
 
@@ -1663,15 +1674,15 @@ const Interview = () => {
 
             // Determine faculty-specific forwarded status based on department
             const facultyInterviewStatus = getFacultyInterviewStatus(
-                currentUser?.department, 
+                currentUser?.department,
                 currentUser?.faculty || 'Faculty of Engineering & Technology'
             );
 
             // Update examination records state
-            setExaminationRecords(prev => 
+            setExaminationRecords(prev =>
                 prev.map(r => {
                     const shouldUpdate = unforwardedScholars.some(scholar => scholar.id === r.id);
-                    return shouldUpdate 
+                    return shouldUpdate
                         ? { ...r, forwarded: true, _originalData: { ...r._originalData, faculty_interview: facultyInterviewStatus } }
                         : r;
                 })
@@ -1721,10 +1732,10 @@ const Interview = () => {
     const filteredInterview = (panelScholars[activePanel] || []).filter(v => {
         // Name filter
         const nameMatch = !filterName || v.name.toLowerCase().includes(filterName.toLowerCase());
-        
+
         // Application number filter
         const appNoMatch = !filterAppNo || v.appNo.toLowerCase().includes(filterAppNo.toLowerCase());
-        
+
         // Status filter
         let statusMatch = true;
         if (filterStatus !== 'All') {
@@ -1738,7 +1749,7 @@ const Interview = () => {
                 statusMatch = !v.forwarded && v.marks && v.marks.some(m => (typeof m === 'number' && m > 0) || m === 'Ab');
             }
         }
-        
+
         return nameMatch && appNoMatch && statusMatch;
     });
 
@@ -2091,7 +2102,7 @@ const Interview = () => {
                     <div className="text-center">
                         <div className="text-red-500 text-6xl mb-4">⚠️</div>
                         <p className="text-red-600 mb-4">{error}</p>
-                        <button 
+                        <button
                             onClick={() => window.location.reload()}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
                         >
@@ -2172,7 +2183,7 @@ const Interview = () => {
                         <p className="text-gray-600 text-sm mb-4">
                             Showing all scholars from examination records for interview management.
                         </p>
-                        
+
                         {currentPanel && Array.isArray(currentPanel.evaluators) && (
                             <div className="mb-6 border rounded-lg p-4 bg-gray-50">
                                 <div className="flex justify-between items-center mb-3">
@@ -2247,10 +2258,10 @@ const Interview = () => {
                                                             const numEvaluators = currentPanel ? currentPanel.evaluators.length : 1;
                                                             return Array.from({ length: numEvaluators }, (_, i) => (
                                                                 <td key={i} className="p-1 text-center">
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className="w-20 text-center border rounded px-2 py-1" 
-                                                                        value={editMarks[i]} 
+                                                                    <input
+                                                                        type="text"
+                                                                        className="w-20 text-center border rounded px-2 py-1"
+                                                                        value={editMarks[i]}
                                                                         onChange={e => handleMarkChange(i, e.target.value)}
                                                                         onKeyDown={preventNonAlphanumericInput}
                                                                         onKeyUp={(e) => {
@@ -2260,13 +2271,13 @@ const Interview = () => {
                                                                                 e.stopPropagation();
                                                                                 console.log('🔄 Enter key detected via onKeyUp for scholar:', editingId);
                                                                                 console.log('🔄 KeyUp details:', { key: e.key, keyCode: e.keyCode, which: e.which });
-                                                                                
+
                                                                                 // Clear any pending auto-save timeout
                                                                                 if (autoSaveTimeout) {
                                                                                     clearTimeout(autoSaveTimeout);
                                                                                     setAutoSaveTimeout(null);
                                                                                 }
-                                                                                
+
                                                                                 // Trigger immediate save with small delay to ensure input value is captured
                                                                                 setTimeout(() => {
                                                                                     handleSave(editingId);
@@ -2280,13 +2291,13 @@ const Interview = () => {
                                                                                 e.stopPropagation();
                                                                                 console.log('🔄 Enter key detected via onKeyPress for scholar:', editingId);
                                                                                 console.log('🔄 KeyPress details:', { key: e.key, charCode: e.charCode, which: e.which });
-                                                                                
+
                                                                                 // Clear any pending auto-save timeout
                                                                                 if (autoSaveTimeout) {
                                                                                     clearTimeout(autoSaveTimeout);
                                                                                     setAutoSaveTimeout(null);
                                                                                 }
-                                                                                
+
                                                                                 // Trigger immediate save with small delay to ensure input value is captured
                                                                                 setTimeout(() => {
                                                                                     handleSave(editingId);
@@ -2298,10 +2309,10 @@ const Interview = () => {
                                                                             setTimeout(() => {
                                                                                 // Check if the new focused element is still within the same row's input fields
                                                                                 const activeElement = document.activeElement;
-                                                                                const isStillInSameRow = activeElement && 
-                                                                                    activeElement.tagName === 'INPUT' && 
+                                                                                const isStillInSameRow = activeElement &&
+                                                                                    activeElement.tagName === 'INPUT' &&
                                                                                     activeElement.closest('tr') === e.target.closest('tr');
-                                                                                
+
                                                                                 // Only save if we're not moving to another input in the same row
                                                                                 if (!isStillInSameRow && editingId) {
                                                                                     console.log('🔄 Input blur - truly leaving row, triggering save for scholar:', editingId);
@@ -2334,11 +2345,11 @@ const Interview = () => {
                                                             const numEvaluators = currentPanel ? currentPanel.evaluators.length : 1;
                                                             return Array.from({ length: numEvaluators }, (_, i) => (
                                                                 <td key={i} className="p-1 text-center">
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className="w-20 text-center border rounded px-2 py-1 cursor-pointer hover:bg-gray-50" 
-                                                                        value={v.marks[i] === 0 ? '' : (v.marks[i] || '')} 
-                                                                        onClick={() => handleEdit(v)} 
+                                                                    <input
+                                                                        type="text"
+                                                                        className="w-20 text-center border rounded px-2 py-1 cursor-pointer hover:bg-gray-50"
+                                                                        value={v.marks[i] === 0 ? '' : (v.marks[i] || '')}
+                                                                        onClick={() => handleEdit(v)}
                                                                         readOnly
                                                                         placeholder="0"
                                                                     />
@@ -2372,15 +2383,15 @@ const Interview = () => {
                                                                 const currentPanel = panels.find(p => p.id === activePanel);
                                                                 const numEvaluators = currentPanel ? currentPanel.evaluators.length : 1;
                                                                 const avg = isEditing ? calcAverage(editMarks, numEvaluators) : calcAverage(v.marks, numEvaluators);
-                                                                
+
                                                                 if (avg === 'Ab') {
                                                                     return <span className="text-red-600 font-semibold">Ab</span>;
                                                                 }
-                                                                
+
                                                                 // Color coding: Green for pass (≥15), Red for fail (<15)
                                                                 const isPass = typeof avg === 'number' && avg >= 15;
                                                                 const colorClass = isPass ? 'text-green-600' : 'text-red-600';
-                                                                
+
                                                                 return <span className={`${colorClass} font-semibold`}>{avg}</span>;
                                                             })()}
                                                         </span>
@@ -2407,7 +2418,7 @@ const Interview = () => {
                     </div>
                 )}
             </div>
-            
+
             {filterModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content max-w-md w-full">
@@ -2531,30 +2542,30 @@ const Interview = () => {
                                     <div className="grid grid-cols-3 gap-4 items-center">
                                         <div>
                                             <label className="block text-sm font-bold">Name</label>
-                                            <input 
-                                                value={ev.name} 
-                                                onChange={e => handleNewEvalChange(idx, 'name', e.target.value)} 
-                                                className="w-full border rounded px-3 py-2" 
+                                            <input
+                                                value={ev.name}
+                                                onChange={e => handleNewEvalChange(idx, 'name', e.target.value)}
+                                                className="w-full border rounded px-3 py-2"
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold">Designation</label>
-                                            <input 
-                                                value={ev.designation} 
+                                            <input
+                                                value={ev.designation}
                                                 onChange={e => {
                                                     // Allow only alphabetic characters, spaces, and common punctuation
                                                     const value = e.target.value.replace(/[^a-zA-Z\s\-\.]/g, '');
                                                     handleNewEvalChange(idx, 'designation', value);
-                                                }} 
-                                                className="w-full border rounded px-3 py-2" 
+                                                }}
+                                                className="w-full border rounded px-3 py-2"
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold">Affiliation</label>
-                                            <input 
-                                                value={ev.affiliation} 
-                                                onChange={e => handleNewEvalChange(idx, 'affiliation', e.target.value)} 
-                                                className="w-full border rounded px-3 py-2" 
+                                            <input
+                                                value={ev.affiliation}
+                                                onChange={e => handleNewEvalChange(idx, 'affiliation', e.target.value)}
+                                                className="w-full border rounded px-3 py-2"
                                             />
                                         </div>
                                     </div>
@@ -2612,30 +2623,30 @@ const Interview = () => {
                                     <div className="grid grid-cols-3 gap-4 items-center">
                                         <div>
                                             <label className="block text-sm font-bold">Name</label>
-                                            <input 
-                                                value={ev.name} 
-                                                onChange={e => handleEditEvalChange(idx, 'name', e.target.value)} 
-                                                className="w-full border rounded px-3 py-2" 
+                                            <input
+                                                value={ev.name}
+                                                onChange={e => handleEditEvalChange(idx, 'name', e.target.value)}
+                                                className="w-full border rounded px-3 py-2"
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold">Designation</label>
-                                            <input 
-                                                value={ev.designation} 
+                                            <input
+                                                value={ev.designation}
                                                 onChange={e => {
                                                     // Allow only alphabetic characters, spaces, and common punctuation
                                                     const value = e.target.value.replace(/[^a-zA-Z\s\-\.]/g, '');
                                                     handleEditEvalChange(idx, 'designation', value);
-                                                }} 
-                                                className="w-full border rounded px-3 py-2" 
+                                                }}
+                                                className="w-full border rounded px-3 py-2"
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold">Affiliation</label>
-                                            <input 
-                                                value={ev.affiliation} 
-                                                onChange={e => handleEditEvalChange(idx, 'affiliation', e.target.value)} 
-                                                className="w-full border rounded px-3 py-2" 
+                                            <input
+                                                value={ev.affiliation}
+                                                onChange={e => handleEditEvalChange(idx, 'affiliation', e.target.value)}
+                                                className="w-full border rounded px-3 py-2"
                                             />
                                         </div>
                                     </div>

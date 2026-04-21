@@ -2612,16 +2612,6 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
               </button>
 
               <button
-                onClick={handleBulkForwardToDirector}
-                className="flex items-center gap-2 px-5 py-2.5 bg-purple-500/80 hover:bg-purple-600 rounded-xl transition-all duration-200 font-medium backdrop-blur-sm border border-purple-400/30 hover:scale-105"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Fwd to Director
-              </button>
-
-              <button
                 onClick={handleBulkDelete}
                 className="flex items-center gap-2 px-5 py-2.5 bg-red-500/90 hover:bg-red-600 rounded-xl transition-all duration-200 font-medium backdrop-blur-sm border border-red-400/30 hover:scale-105"
               >

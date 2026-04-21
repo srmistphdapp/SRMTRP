@@ -1241,179 +1241,104 @@ export const checkDepartmentResultsPublished = async (departmentName, department
  */
 export const fetchExaminationRecordsForInterview = async (departmentName, institution = 'Faculty of Engineering & Technology') => {
   try {
-    console.log(`🔍 INTERVIEW FETCH: Fetching examination records`);
-    console.log(`📋 Input - Department: "${departmentName}", Institution: "${institution}"`);
+    console.log(`🔍 INTERVIEW FETCH: department="${departmentName}", institution="${institution}"`);
 
-    // Import centralized department mapping functions from foet
-    const { getDepartmentFromProgram, getFacultyFromDepartment, DEPARTMENT_TO_FACULTY } = await import('../../foet/utils/departmentMapping.js');
+    // ── Step 1: Find matching scholar_applications by department + faculty ──────
+    // examination_records.department / institution are often NULL (populated from
+    // Excel uploads that don't carry those columns).  scholar_applications always
+    // has the correct department / faculty values, so we filter there first and
+    // then pull the matching examination_records via application_no.
 
-    // Generate department code from department name
-    const departmentCode = getDepartmentShortCode(departmentName, institution);
-    console.log(`📋 Generated department code: ${departmentCode}`);
+    const deptNorm = (departmentName || '').toLowerCase().replace(/^department of /i, '').trim();
+    const facultyNorm = (institution || '').toLowerCase().trim();
 
-    // First, get all records to see what's available
-    const { data: allRecords, error: countError } = await supabase
-      .from('examination_records')
-      .select('*');
-
-    if (countError) {
-      console.error('❌ Error accessing examination_records table:', countError);
-      return { data: null, error: countError };
+    // Build faculty keyword for matching (handles "Faculty of Engineering & Technology" etc.)
+    let facultyKeyword = '';
+    if (facultyNorm.includes('engineering') || facultyNorm.includes('technology')) {
+      facultyKeyword = 'engineering';
+    } else if (facultyNorm.includes('science') || facultyNorm.includes('humanities')) {
+      facultyKeyword = 'science';
+    } else if (facultyNorm.includes('medical') || facultyNorm.includes('health')) {
+      facultyKeyword = 'medical';
+    } else if (facultyNorm.includes('management')) {
+      facultyKeyword = 'management';
     }
 
-    console.log(`📊 Total records in examination_records table: ${allRecords?.length || 0}`);
+    // Fetch all scholar_applications that match this faculty group
+    // We use ilike on faculty column (which is reliably populated)
+    const { data: matchingScholars, error: scholarError } = await supabase
+      .from('scholar_applications')
+      .select('id, application_no, registered_name, department, faculty, institution, program, program_type, type')
+      .ilike('faculty', `%${facultyKeyword}%`);
 
-    if (!allRecords || allRecords.length === 0) {
-      console.log(`⚠️ No records found in examination_records table`);
+    if (scholarError) {
+      console.error('❌ Error fetching scholar_applications:', scholarError);
+      return { data: null, error: scholarError };
+    }
+
+    console.log(`📊 scholar_applications matching faculty "${facultyKeyword}": ${matchingScholars?.length || 0}`);
+
+    if (!matchingScholars || matchingScholars.length === 0) {
       return { data: [], error: null };
     }
 
-    // DIAGNOSTIC: Show ALL unique values
-    const uniqueInstitutions = [...new Set(allRecords.map(r => r.institution).filter(Boolean))];
-    const uniqueDepartments = [...new Set(allRecords.map(r => r.department).filter(Boolean))];
-    const uniqueTypes = [...new Set(allRecords.map(r => r.type).filter(Boolean))];
-
-    console.log(`📋 ===== DATABASE DIAGNOSTIC =====`);
-    console.log(`📋 Unique INSTITUTIONS (${uniqueInstitutions.length}):`, uniqueInstitutions);
-    console.log(`📋 Unique DEPARTMENTS (${uniqueDepartments.length}):`, uniqueDepartments);
-    console.log(`📋 Unique TYPES:`, uniqueTypes);
-    console.log(`📋 ===== USER REQUEST =====`);
-    console.log(`📋 Looking for - Institution: "${institution}"`);
-    console.log(`📋 Looking for - Department: "${departmentName}"`);
-    console.log(`📋 Looking for - Department Code: "${departmentCode}"`);
-
-    // STEP 1: Filter by INSTITUTION FIRST (highest priority)
-    console.log(`\n🔍 STEP 1: Filter by Institution`);
-
-    // Map user's faculty to database institution values
-    let targetInstitution = null;
-    const cleanInstitution = institution.replace('Faculty of ', '').trim().toLowerCase();
-
-    if (cleanInstitution.includes('science') || cleanInstitution.includes('humanities')) {
-      targetInstitution = 'Science And Humanities';
-    } else if (cleanInstitution.includes('engineering') || cleanInstitution.includes('technology')) {
-      targetInstitution = 'Engineering And Technology';
-    } else if (cleanInstitution.includes('medical') || cleanInstitution.includes('health')) {
-      targetInstitution = 'Medical And Health Sciences';
-    } else if (cleanInstitution.includes('management')) {
-      targetInstitution = 'Management';
-    }
-
-    console.log(`📋 Institution mapping: "${institution}" -> "${targetInstitution}"`);
-
-    // FALLBACK: If no exact institution match, try case-insensitive substring match
-    let institutionFilteredRecords = [];
-    if (targetInstitution) {
-      institutionFilteredRecords = allRecords.filter(record =>
-        record.institution === targetInstitution
-      );
-      console.log(`📊 Exact match - Records in "${targetInstitution}": ${institutionFilteredRecords.length}`);
-
-      // If exact match failed, try case-insensitive
-      if (institutionFilteredRecords.length === 0) {
-        console.warn(`⚠️ No exact institution match. Trying case-insensitive match...`);
-        institutionFilteredRecords = allRecords.filter(record =>
-          record.institution && record.institution.toLowerCase().includes(cleanInstitution.split(' ')[0])
-        );
-        console.log(`📊 Case-insensitive match found: ${institutionFilteredRecords.length} records`);
-        if (institutionFilteredRecords.length > 0) {
-          console.log(`📋 Matched institution values:`, [...new Set(institutionFilteredRecords.map(r => r.institution))]);
-        }
-      }
-    } else {
-      console.log(`⚠️ No institution mapping found, using all records as fallback`);
-      institutionFilteredRecords = allRecords;
-    }
-
-    if (institutionFilteredRecords.length > 0) {
-      console.log(`📋 Sample from institution-filtered records:`, institutionFilteredRecords.slice(0, 2).map(r => ({
-        department: r.department,
-        institution: r.institution,
-        type: r.type,
-        name: r.registered_name || r.name
-      })));
-    }
-
-    // STEP 2: Filter by DEPARTMENT using centralized mapping (prefer explicit `department` column)
-    console.log(`\n🔍 STEP 2: Filter by Department within Institution`);
-
-    const targetDeptCode = departmentCode;
-
-    // STRATEGY 1: Try exact department code match
-    let finalRecords = institutionFilteredRecords.filter(record => {
-      // If there's an explicit department column on the record, try to match
-      if (record.department && typeof record.department === 'string' && record.department.trim() !== '') {
-        try {
-          const recDeptCode = getDepartmentShortCode(record.department, institution);
-          if (recDeptCode && targetDeptCode && recDeptCode === targetDeptCode) {
-            console.log(`✅ Department match: "${record.department}" -> ${recDeptCode}`);
-            return true;
-          }
-        } catch (e) {
-          console.warn(`⚠️ getDepartmentShortCode error for "${record.department}":`, e.message);
-        }
-      }
-
-      // Fallback: use department text match if code match failed
-      if (record.department && typeof record.department === 'string' && record.department.trim() !== '') {
-        const recDeptNorm = record.department.toLowerCase().replace(/department of /g, '').trim();
-        const targetNorm = (departmentName || '').toLowerCase().replace(/department of /g, '').trim();
-        if (recDeptNorm.includes(targetNorm) || targetNorm.includes(recDeptNorm)) {
-          return true;
-        }
-      }
-
-      return false;
+    // Filter by department (client-side, tolerant matching)
+    const deptMatchedScholars = matchingScholars.filter(s => {
+      const sd = (s.department || '').toLowerCase().replace(/^department of /i, '').trim();
+      return sd === deptNorm || sd.includes(deptNorm) || deptNorm.includes(sd);
     });
 
-    console.log(`📊 Records matching department code "${targetDeptCode}": ${finalRecords.length}`);
+    console.log(`📊 After department filter "${deptNorm}": ${deptMatchedScholars.length} scholars`);
 
-    // STRATEGY 2: If no department match, try text-based matching as fallback
-    if (finalRecords.length === 0) {
-      console.warn(`⚠️ No department code match found. Trying text-based matching...`);
-
-      const deptNameNormalized = (departmentName || '').toLowerCase().replace(/department of /g, '').trim();
-
-      finalRecords = institutionFilteredRecords.filter(record => {
-        // Try explicit department field only
-        if (record.department) {
-          const recDeptNorm = record.department.toLowerCase().replace(/department of /g, '').trim();
-          if (recDeptNorm.includes(deptNameNormalized) || deptNameNormalized.includes(recDeptNorm)) {
-            console.log(`✅ Text match (dept): "${record.department}" includes "${deptNameNormalized}"`);
-            return true;
-          }
-        }
-        return false;
-      });
-
-      console.log(`📊 Text-based match found: ${finalRecords.length} records`);
+    if (deptMatchedScholars.length === 0) {
+      console.warn(`⚠️ No scholars matched department. Returning empty list.`);
+      return { data: [], error: null };
     }
 
-    // STRATEGY 3: If still no match, return ALL records from the institution as last resort
-    if (finalRecords.length === 0) {
-      console.warn(`⚠️ Still no department match. Using all records from institution as fallback`);
-      finalRecords = institutionFilteredRecords;
-      console.log(`📊 Using fallback: ${finalRecords.length} records from institution`);
+    // Build a map: application_no -> scholar data (for enriching exam records)
+    const scholarByAppNo = {};
+    deptMatchedScholars.forEach(s => {
+      if (s.application_no) scholarByAppNo[s.application_no] = s;
+    });
+
+    const appNos = deptMatchedScholars.map(s => s.application_no).filter(Boolean);
+
+    // ── Step 2: Fetch examination_records for those application_nos ───────────
+    const { data: examRecords, error: examError } = await supabase
+      .from('examination_records')
+      .select('*')
+      .in('application_no', appNos);
+
+    if (examError) {
+      console.error('❌ Error fetching examination_records:', examError);
+      return { data: null, error: examError };
     }
 
-    if (finalRecords.length > 0) {
-      console.log(`📋 Final matching records (first 3):`, finalRecords.slice(0, 3).map(r => ({
-        id: r.id,
-        department: r.department,
-        institution: r.institution,
-        type: r.type,
-        name: r.registered_name || r.name
-      })));
-    }
+    console.log(`📊 examination_records found for those app_nos: ${examRecords?.length || 0}`);
+
+    // ── Step 3: Enrich exam records with scholar data (fills NULL columns) ────
+    const enriched = (examRecords || []).map(rec => {
+      const scholar = scholarByAppNo[rec.application_no] || {};
+      return {
+        ...rec,
+        // Fill NULL fields from scholar_applications
+        registered_name: rec.registered_name || scholar.registered_name,
+        department: rec.department || scholar.department,
+        institution: rec.institution || scholar.institution,
+        faculty: rec.faculty || scholar.faculty,
+        program: rec.program || scholar.program,
+        program_type: rec.program_type || scholar.program_type,
+        type: rec.type || scholar.type,
+        // Attach scholar id for reference
+        _scholar_id: scholar.id,
+      };
+    });
 
     // Sort by creation date (newest first)
-    finalRecords.sort((a, b) =>
-      new Date(b.created_at || 0) - new Date(a.created_at || 0)
-    );
+    enriched.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
-    console.log(`✅ Final result: ${finalRecords.length} examination records returned`);
-
-    return { data: finalRecords, error: null };
+    console.log(`✅ Final result: ${enriched.length} examination records returned`);
+    return { data: enriched, error: null };
   } catch (err) {
     console.error('❌ Exception fetching examination records for interview:', err);
     return { data: null, error: err };

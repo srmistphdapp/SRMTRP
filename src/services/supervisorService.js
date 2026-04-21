@@ -280,20 +280,36 @@ export const getQualifiedScholarsByFacultyDept = async (facultyName, departmentN
         return false;
       }
 
-      // 6. MUST match faculty (exact match)
-      const facultyMatch = record.faculty === facultyName;
+      // 6. MUST match faculty — normalize before comparing to handle variations like:
+      //    "Faculty of Medical & Health Science"  (examination_records)
+      //    "Faculty of Medical and Health Sciences" (departments table)
+      const normalizeFaculty = (s) => (s || '')
+        .toLowerCase()
+        .replace(/\s*&\s*/g, ' and ')   // & → and
+        .replace(/sciences\b/g, 'science') // plural → singular
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      const facultyMatch = normalizeFaculty(record.faculty) === normalizeFaculty(facultyName);
       if (!facultyMatch) {
         return false;
       }
 
-      // 7. MUST match department - check BOTH department AND program fields
-      // Some records have department="null" but the actual department is in the program field
+      // 7. MUST match department - check department column, program field, AND the
+      //    bracket content of the program field (e.g. "Ph.d.- Medical Imaging Technology [...]")
+      //    because department column is often empty in examination_records.
       const recordDept = record.department || '';
       const recordProgram = record.program || '';
 
-      // Check if department name appears in either field (case-insensitive)
-      const deptMatch = recordDept.toLowerCase().includes(departmentName.toLowerCase()) ||
-        recordProgram.toLowerCase().includes(departmentName.toLowerCase());
+      // Also extract the subject/discipline part before the bracket in program field
+      // e.g. "Ph.d.- Medical Imaging Technology [part Time External...]" → "Medical Imaging Technology"
+      const programSubject = recordProgram.replace(/\[.*\]/g, '').replace(/^Ph\.?d\.?[-–\s]*/i, '').trim();
+
+      const deptLower = departmentName.toLowerCase();
+      const deptMatch = recordDept.toLowerCase().includes(deptLower) ||
+        recordProgram.toLowerCase().includes(deptLower) ||
+        programSubject.toLowerCase().includes(deptLower) ||
+        deptLower.includes(programSubject.toLowerCase());
 
       if (!deptMatch) {
         return false;
@@ -333,8 +349,9 @@ export const getQualifiedScholarsByFacultyDept = async (facultyName, departmentN
     } else {
       console.log(`❌ No completed scholars found. Debugging...`);
 
-      // Debug 1: Check all scholars in this faculty
-      const scholarsInFaculty = allScholars.filter(s => s.faculty === facultyName);
+      // Debug 1: Check all scholars in this faculty (use same normalization)
+      const normFaculty = (s) => (s || '').toLowerCase().replace(/\s*&\s*/g, ' and ').replace(/sciences\b/g, 'science').replace(/\s+/g, ' ').trim();
+      const scholarsInFaculty = allScholars.filter(s => normFaculty(s.faculty) === normFaculty(facultyName));
       console.log(`📊 Total scholars in "${facultyName}": ${scholarsInFaculty.length}`);
 
       // Debug 2: Check scholars with all marks completed

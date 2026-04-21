@@ -528,7 +528,7 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
               <th>REGISTERED NAME</th>
               <th>APPLICATION NO</th>
               <th>SELECT INSTITUTION</th>
-              <th>SELECT PROGRAM</th>
+              <th>DEPARTMENT</th>
               <th>TYPE</th>
               <th>MOBILE NUMBER</th>
               <th>EMAIL ID</th>

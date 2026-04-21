@@ -1645,7 +1645,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ position: 'sticky', left: '95px', zIndex: 25, background: '#f9fafb', width: '160px', minWidth: '160px', maxWidth: '160px', padding: '12px 8px', whiteSpace: 'nowrap' }}>REGISTERED NAME</th>
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ position: 'sticky', left: '255px', zIndex: 25, background: '#f9fafb', width: '140px', minWidth: '140px', maxWidth: '140px', padding: '12px 8px', whiteSpace: 'nowrap' }}>APPLICATION NO</th>
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ position: 'sticky', left: '395px', zIndex: 25, background: '#f9fafb', width: '180px', minWidth: '180px', maxWidth: '180px', padding: '12px 8px', whiteSpace: 'nowrap', boxShadow: '2px 0 5px -2px rgba(0,0,0,0.15)' }}>SELECT INSTITUTION</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[250px]">SELECT PROGRAM</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[250px]">DEPARTMENT</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">TYPE</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">MOBILE NUMBER</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]">EMAIL ID</th>
@@ -1655,7 +1655,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">INTERVIEW MARKS</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">TOTAL MARKS</th>
                 <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">STATUS</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '180px', width: '180px' }}>ACTIONS</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '80px', width: '80px' }}>ACTIONS</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -1679,7 +1679,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                     <td className="text-sm font-medium text-gray-900 text-left" style={{ position: 'sticky', left: '95px', zIndex: 20, backgroundColor: selectedScholars.includes(item.id) ? '#eff6ff' : '#ffffff', width: '160px', minWidth: '160px', maxWidth: '160px', padding: '12px 8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.registered_name || item.name}</td>
                     <td className="text-sm font-medium text-left" style={{ position: 'sticky', left: '255px', zIndex: 20, backgroundColor: selectedScholars.includes(item.id) ? '#eff6ff' : '#ffffff', width: '140px', minWidth: '140px', maxWidth: '140px', padding: '12px 8px', whiteSpace: 'nowrap' }}>{item.application_no || item.id}</td>
                     <td className="text-sm text-gray-900 text-left" style={{ position: 'sticky', left: '395px', zIndex: 20, backgroundColor: selectedScholars.includes(item.id) ? '#eff6ff' : '#ffffff', width: '180px', minWidth: '180px', maxWidth: '180px', padding: '12px 8px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', boxShadow: '2px 0 5px -2px rgba(0,0,0,0.15)' }}>{item.faculty}</td>
-                    <td className="px-4 py-3 text-sm text-gray-900 min-w-[250px] whitespace-normal text-left">{item.program || item.faculty}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900 min-w-[250px] whitespace-normal text-left">{item.department || '-'}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-left">{item.program_type || item.type || item.programType}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-left">{item.mobile_number || item.mobile}</td>
                     <td className="px-4 py-3 text-sm text-gray-900 min-w-[200px] whitespace-normal break-all text-left">{item.email}</td>
@@ -1908,45 +1908,11 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                         {item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'Pending'}
                       </span>
                     </td>
-                    <td className="px-6 py-3 whitespace-nowrap text-center text-sm bg-white" style={{ minWidth: '180px', width: '180px' }}>
+                    <td className="px-6 py-3 whitespace-nowrap text-center text-sm bg-white" style={{ minWidth: '80px', width: '80px' }}>
                       <div className="examination-actions">
                         <button onClick={() => { setViewingScholar(item); setIsViewModalOpen(true); }} className="examination-action-btn view" title="View Details">
                           <svg fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                          </svg>
-                        </button>
-                        <button onClick={() => handleEdit(item)} className="examination-action-btn edit" title="Edit Scholar" disabled={item.status?.toLowerCase().includes('forwarded')}>
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleForward(item)}
-                          className="examination-action-btn forward"
-                          title={item.status?.toLowerCase().includes('forwarded') ? 'Already forwarded' : 'Forward to Faculty'}
-                          disabled={item.status?.toLowerCase().includes('forwarded')}
-                        >
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleForwardToDirector(item)}
-                          className={`examination-action-btn ${item.director_interview === 'Forwarded to Director' ? 'forward' : 'forward'}`}
-                          style={{ backgroundColor: item.director_interview === 'Forwarded to Director' ? '#6b7280' : '#8b5cf6' }}
-                          title={item.director_interview === 'Forwarded to Director' ? 'Already forwarded to director' : 'Forward to Director for Interview'}
-                        >
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => { if (window.confirm(`Delete ${item.registered_name || item.name}?`)) deleteExaminationRecord(item.id).then(() => loadExaminationRecords()); }}
-                          className="examination-action-btn delete"
-                          title="Delete Record"
-                        >
-                          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
                       </div>

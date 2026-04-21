@@ -372,13 +372,17 @@ const AdminForwardPage = ({ onBackToDepartment, activeToggle, onToggleChange }) 
 
     setTransferLoading(true);
     try {
-      // Store the current institution and department before transfer
+      // Store the current faculty, institution and department before transfer
+      const currentFaculty = transferringScholar.faculty || '';
       const currentInstitution = transferringScholar.institution || '';
       const currentDepartment = transferringScholar.department || '';
-      const transferFromValue = `${currentInstitution} | ${currentDepartment}`;
+      const transferFromValue = currentFaculty
+        ? `${currentFaculty} | ${currentInstitution} | ${currentDepartment}`
+        : `${currentInstitution} | ${currentDepartment}`;
 
       const updateData = {
         institution: stripFacultyPrefix(transferInstitution),
+        faculty: transferInstitution,
         department: transferDepartment,
         transfer_from: transferFromValue,
         status: null,

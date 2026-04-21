@@ -10,7 +10,7 @@ export default function TransferredScholars({ onModalStateChange }) {
   const [filter, setFilter] = useState({ faculty: '', department: '', type: '' });
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [viewingScholar, setViewingScholar] = useState(null);
-  
+
   // Forward functionality states
   const [selectedScholars, setSelectedScholars] = useState([]);
   const [showForwardModal, setShowForwardModal] = useState(false);
@@ -58,7 +58,7 @@ export default function TransferredScholars({ onModalStateChange }) {
     // Search filter
     if (search && search.trim()) {
       const searchTerm = search.toLowerCase();
-      const matchesSearch = 
+      const matchesSearch =
         scholar.registered_name?.toLowerCase().includes(searchTerm) ||
         scholar.application_no?.toLowerCase().includes(searchTerm);
       if (!matchesSearch) return false;
@@ -234,11 +234,10 @@ export default function TransferredScholars({ onModalStateChange }) {
     <div className="p-6">
       {/* Message Toast */}
       {messageText && (
-        <div className={`fixed top-20 right-6 z-50 px-6 py-3 rounded-lg shadow-lg ${
-          messageType === 'success' ? 'bg-green-500' :
+        <div className={`fixed top-20 right-6 z-50 px-6 py-3 rounded-lg shadow-lg ${messageType === 'success' ? 'bg-green-500' :
           messageType === 'error' ? 'bg-red-500' :
-          'bg-blue-500'
-        } text-white font-medium`}>
+            'bg-blue-500'
+          } text-white font-medium`}>
           {messageText}
         </div>
       )}
@@ -274,9 +273,8 @@ export default function TransferredScholars({ onModalStateChange }) {
               placeholder="Search by name or application number..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className={`pl-10 pr-10 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                search && search.trim() ? 'border-blue-300 bg-blue-50' : 'border-gray-300'
-              }`}
+              className={`pl-10 pr-10 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${search && search.trim() ? 'border-blue-300 bg-blue-50' : 'border-gray-300'
+                }`}
             />
             {search && (
               <button
@@ -346,58 +344,57 @@ export default function TransferredScholars({ onModalStateChange }) {
                   const isForwarded = scholar.status?.toLowerCase().includes('forwarded');
                   const displayStatus = isForwarded ? scholar.status : 'Transferred';
                   return (
-                  <tr key={scholar.id} className="hover:bg-gray-50" style={isForwarded ? { opacity: 0.6 } : {}}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <input
-                        type="checkbox"
-                        checked={selectedScholars.includes(scholar.id)}
-                        onChange={() => handleSelectScholar(scholar.id)}
-                        disabled={isForwarded}
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        style={{ cursor: isForwarded ? 'not-allowed' : 'pointer' }}
-                      />
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {scholar.application_no}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {scholar.registered_name}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {scholar.transfer_from || '-'}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {[scholar.institution, scholar.department].filter(Boolean).join(' | ') || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {scholar.type || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        isForwarded ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
-                      }`}>
-                        {displayStatus}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                      <button
-                        onClick={() => handleViewScholar(scholar)}
-                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
-                      >
-                        <FaEye className="w-4 h-4" />
-                        View
-                      </button>
-                      {!isForwarded && (
+                    <tr key={scholar.id} className="hover:bg-gray-50" style={isForwarded ? { opacity: 0.6 } : {}}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedScholars.includes(scholar.id)}
+                          onChange={() => handleSelectScholar(scholar.id)}
+                          disabled={isForwarded}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          style={{ cursor: isForwarded ? 'not-allowed' : 'pointer' }}
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {scholar.application_no}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {scholar.registered_name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {scholar.transfer_from || '-'}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {[scholar.faculty, scholar.institution, scholar.department].filter(Boolean).join(' | ') || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {scholar.type || '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${isForwarded ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
+                          }`}>
+                          {displayStatus}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                         <button
-                          onClick={() => handleForward(scholar)}
-                          className="text-green-600 hover:text-green-800 font-medium flex items-center gap-1"
+                          onClick={() => handleViewScholar(scholar)}
+                          className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
                         >
-                          <FaPaperPlane className="w-4 h-4" />
-                          Forward
+                          <FaEye className="w-4 h-4" />
+                          View
                         </button>
-                      )}
-                    </td>
-                  </tr>
+                        {!isForwarded && (
+                          <button
+                            onClick={() => handleForward(scholar)}
+                            className="text-green-600 hover:text-green-800 font-medium flex items-center gap-1"
+                          >
+                            <FaPaperPlane className="w-4 h-4" />
+                            Forward
+                          </button>
+                        )}
+                      </td>
+                    </tr>
                   );
                 })
               )}
@@ -436,7 +433,7 @@ export default function TransferredScholars({ onModalStateChange }) {
                 <div>
                   <label className="text-sm font-medium text-gray-500">Transferred To</label>
                   <p className="text-gray-900">
-                    {[viewingScholar.institution, viewingScholar.department].filter(Boolean).join(' | ') || '-'}
+                    {[viewingScholar.faculty, viewingScholar.institution, viewingScholar.department].filter(Boolean).join(' | ') || '-'}
                   </p>
                 </div>
                 <div>

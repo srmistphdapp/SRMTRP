@@ -663,7 +663,7 @@ export const forwardScholarToRC = async (id) => {
   try {
     const { data: scholar, error: fetchError } = await supabase
       .from('scholar_applications')
-      .select('institution')
+      .select('institution, faculty')
       .eq('id', id)
       .single();
 
@@ -672,20 +672,19 @@ export const forwardScholarToRC = async (id) => {
       return { data: null, error: fetchError };
     }
 
-    const institution = (scholar.institution || '').toLowerCase();
+    // Use faculty first (more reliable), fall back to institution
+    const institutionStr = ((scholar.faculty || scholar.institution || '')).toLowerCase();
 
     let forwardedStatus = 'Forwarded';
 
     // Medical must be checked BEFORE science/technology to avoid misclassifying
-    // "Medical and Health Sciences" (contains 'science') or
-    // "Anaesthesia Technology" / "Renal Dialysis Technology" (contains 'technology')
-    if (institution.includes('medical') || institution.includes('health')) {
+    if (institutionStr.includes('medical') || institutionStr.includes('health')) {
       forwardedStatus = 'Forwarded to Medical';
-    } else if (institution.includes('engineering') || institution.includes('technology')) {
+    } else if (institutionStr.includes('engineering') || institutionStr.includes('technology')) {
       forwardedStatus = 'Forwarded to Engineering';
-    } else if (institution.includes('science') || institution.includes('humanities')) {
+    } else if (institutionStr.includes('science') || institutionStr.includes('humanities')) {
       forwardedStatus = 'Forwarded to Science';
-    } else if (institution.includes('management')) {
+    } else if (institutionStr.includes('management')) {
       forwardedStatus = 'Forwarded to Management';
     }
 

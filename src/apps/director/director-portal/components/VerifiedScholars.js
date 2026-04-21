@@ -990,7 +990,7 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
   };
 
   const toggleColumnSelection = (colKey) => {
-    setSelectedColumns(prev => 
+    setSelectedColumns(prev =>
       prev.includes(colKey) ? prev.filter(k => k !== colKey) : [...prev, colKey]
     );
   };
@@ -1597,7 +1597,10 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
         type.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesFaculty = selectedFaculty === '' || faculty === selectedFaculty;
+      const scholarFaculty = scholar.faculty || scholar.institution || '';
+      const matchesFaculty = selectedFaculty === '' ||
+        scholarFaculty.toLowerCase().includes(selectedFaculty.toLowerCase()) ||
+        selectedFaculty.toLowerCase().includes(scholarFaculty.toLowerCase());
       const matchesDepartment = selectedDepartment === '' ||
         (department && department.toLowerCase().includes(selectedDepartment.toLowerCase()));
       const matchesType = selectedType === '' || (scholar.type || '') === selectedType;
@@ -3502,8 +3505,8 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
                             }
                           }}
                           className={`text-xs px-3 py-1.5 rounded-md transition-all font-medium flex items-center gap-1.5
-                            ${isAllInCategorySelected 
-                              ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                            ${isAllInCategorySelected
+                              ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                               : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'}`}
                         >
                           {isAllInCategorySelected ? (
@@ -3539,19 +3542,18 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
                                   onChange={() => toggleColumnSelection(col.key)}
                                   className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500/30 focus:outline-none checked:bg-blue-500 checked:border-blue-500 transition-all cursor-pointer"
                                 />
-                                <svg 
-                                  className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" 
-                                  fill="none" 
-                                  viewBox="0 0 24 24" 
-                                  stroke="currentColor" 
+                                <svg
+                                  className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
                                   strokeWidth="3"
                                 >
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                               </div>
-                              <span className={`text-sm leading-tight select-none pt-0.5 ${
-                                selectedColumns.includes(col.key) ? 'text-blue-800 font-medium' : 'text-gray-700'
-                              }`}>
+                              <span className={`text-sm leading-tight select-none pt-0.5 ${selectedColumns.includes(col.key) ? 'text-blue-800 font-medium' : 'text-gray-700'
+                                }`}>
                                 {col.label}
                               </span>
                             </label>
@@ -3575,11 +3577,10 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
               <button
                 onClick={confirmDownloadExcel}
                 disabled={selectedColumns.length === 0}
-                className={`px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-sm ${
-                  selectedColumns.length > 0
+                className={`px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-sm ${selectedColumns.length > 0
                     ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-md'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
+                  }`}
               >
                 <FaDownload className={selectedColumns.length > 0 ? "animate-bounce-subtle" : ""} />
                 Export {selectedColumns.length > 0 ? `(${selectedColumns.length})` : ''}

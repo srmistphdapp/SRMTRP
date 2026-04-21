@@ -1587,7 +1587,12 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
         type.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesFaculty = selectedFaculty === '' || faculty === selectedFaculty;
+      const scholarFaculty = scholar.faculty || scholar.institution || '';
+      const matchesFaculty = selectedFaculty === '' ||
+        scholarFaculty.toLowerCase().includes(selectedFaculty.toLowerCase()) ||
+        selectedFaculty.toLowerCase().includes(scholarFaculty.toLowerCase());
+      const matchesDepartment = selectedDepartment === '' ||
+        (department && department.toLowerCase().includes(selectedDepartment.toLowerCase()));
       const matchesType = selectedType === '' || (scholar.type || '') === selectedType;
 
       // Status Filtering (Approved / Rejected based on dept_review)
@@ -1601,7 +1606,7 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
         }
       }
 
-      return matchesSearch && matchesFaculty && matchesType && matchesStatus;
+      return matchesSearch && matchesFaculty && matchesDepartment && matchesType && matchesStatus;
     });
 
     // Apply sorting using sortConfig

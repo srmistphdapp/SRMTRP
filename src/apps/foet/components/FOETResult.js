@@ -449,6 +449,27 @@ export default function FOETResult() {
   const filteredDepartments = faculty.departments.filter(dept => {
     if (filter.department && dept.name !== filter.department) return false;
 
+    // Apply type filter: only show department if it has scholars of the selected type
+    if (filter.type) {
+      const hasMatchingType = examinationsData.some(record => {
+        const departmentMatch = record.department === dept.name ||
+          record.department?.toLowerCase().includes(dept.name.toLowerCase());
+        const programType = record.program_type || record.type || '';
+        let typeMatch = false;
+        if (filter.type === 'Full Time') {
+          typeMatch = programType === 'Full Time';
+        } else if (filter.type === 'Part Time') {
+          typeMatch = programType === 'Part Time Internal' ||
+            programType === 'Part Time External' ||
+            programType === 'Part Time External (Industry)' ||
+            programType === 'Part Time';
+        }
+        const isPublished = record.result_dir && record.result_dir.toLowerCase().includes('publish');
+        return departmentMatch && typeMatch && isPublished;
+      });
+      if (!hasMatchingType) return false;
+    }
+
     if (search && search.trim()) {
       const searchTerm = search.toLowerCase().trim();
       // Use examination records data instead of static data

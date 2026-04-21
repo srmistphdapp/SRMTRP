@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaChevronRight, FaSearch, FaFilter, FaDownload, FaEye } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
-import { 
-  fetchExaminationResultsRecords 
+import {
+  fetchExaminationResultsRecords
 } from '../../../../services/examinationService';
 import { publishFacultyResults } from '../../../../services/examinationService';
 import { supabase } from '../../../../supabaseClient';
@@ -20,16 +20,16 @@ const facultyColors = {
 // Example: "Ph.d. - Mechanical Engineering (ph.d. - Ft - E And T)" => "Mechanical Engineering"
 const extractDepartmentFromProgram = (program) => {
   if (!program) return null;
-  
+
   // Match pattern: "Ph.d. - DEPARTMENT_NAME (..."
   // or "M.Tech - DEPARTMENT_NAME (..."
   // or any degree - DEPARTMENT_NAME (...)
   const match = program.match(/^[^-]+-\s*([^(]+)\s*\(/);
-  
+
   if (match && match[1]) {
     return match[1].trim();
   }
-  
+
   // Fallback: if no match, return null
   return null;
 };
@@ -105,7 +105,7 @@ export default function Result({ onModalStateChange }) {
       const facultiesArray = Object.values(grouped);
       setFaculties(facultiesArray);
       setDepartments(departmentsData || []);
-      
+
       console.log('🏫 Faculties loaded:', facultiesArray.length);
       console.log('🏢 Departments loaded:', departmentsData?.length || 0);
       console.log('📝 Department names:', departmentsData?.map(d => d.department_name).join(', '));
@@ -129,7 +129,7 @@ export default function Result({ onModalStateChange }) {
 
   const loadExaminationRecords = async () => {
     setLoading(true);
-    
+
     try {
       // Fetch ALL examination records first to see what we have
       const { data, error } = await supabase
@@ -142,22 +142,53 @@ export default function Result({ onModalStateChange }) {
         setExamRecords([]);
       } else {
         console.log('📊 TOTAL RECORDS FETCHED:', data?.length || 0);
-        
+
         if (data && data.length > 0) {
           // Log first record to see structure
           console.log('📋 FIRST RECORD STRUCTURE:', data[0]);
           console.log('📋 FIRST RECORD KEYS:', Object.keys(data[0]));
         }
 
+        // For records missing faculty/department, fetch from scholar_applications by application_no
+        const missingAppNos = (data || [])
+          .filter(r => !r.faculty || !r.department)
+          .map(r => r.application_no)
+          .filter(Boolean);
+
+        let scholarMap = {};
+        if (missingAppNos.length > 0) {
+          const { data: scholars } = await supabase
+            .from('scholar_applications')
+            .select('application_no, faculty, department, program, program_type, type, institution')
+            .in('application_no', missingAppNos);
+          (scholars || []).forEach(s => { scholarMap[s.application_no] = s; });
+          console.log(`📚 Fetched ${Object.keys(scholarMap).length} scholar_applications records to fill missing faculty/dept`);
+        }
+
+        // Merge: fill NULL faculty/department from scholar_applications
+        const mergedData = (data || []).map(record => {
+          const sa = scholarMap[record.application_no];
+          if (!sa) return record;
+          return {
+            ...record,
+            faculty: record.faculty || sa.faculty,
+            department: record.department || sa.department,
+            program: record.program || sa.program,
+            program_type: record.program_type || sa.program_type || sa.type,
+            type: record.type || sa.type,
+            institution: record.institution || sa.institution,
+          };
+        });
+
         // Filter records where:
         // 1. Written marks are entered AND forwarded to director
         // 2. Interview marks are entered
         // 3. Total marks are calculated
-        const recordsWithMarks = (data || []).filter(record => {
+        const recordsWithMarks = (mergedData || []).filter(record => {
           // Check if forwarded to director
-          const isForwardedToDirector = record.director_interview === 'Forwarded to Director' || 
-                                        record.status?.toLowerCase().includes('forwarded');
-          
+          const isForwardedToDirector = record.director_interview === 'Forwarded to Director' ||
+            record.status?.toLowerCase().includes('forwarded');
+
           // Must be forwarded to director
           if (!isForwardedToDirector) {
             console.log(`❌ NOT FORWARDED ${record.application_no}:`, {
@@ -166,17 +197,17 @@ export default function Result({ onModalStateChange }) {
             });
             return false;
           }
-          
+
           // Check if marks are absent
           const isWrittenAbsent = record.written_marks === 'Ab' || record.written_marks === 'AB' || record.written_marks === 'ab';
           const isInterviewAbsent = record.interview_marks === 'Ab' || record.interview_marks === 'AB' || record.interview_marks === 'ab';
           const isTotalAbsent = record.total_marks === 'Absent' || record.total_marks === 'ABSENT' || record.total_marks === 'absent';
-          
+
           // Check if marks are numeric
           const hasWrittenNumeric = record.written_marks != null && record.written_marks !== '' && !isNaN(parseFloat(record.written_marks)) && parseFloat(record.written_marks) >= 0;
           const hasInterviewNumeric = record.interview_marks != null && record.interview_marks !== '' && !isNaN(parseFloat(record.interview_marks)) && parseFloat(record.interview_marks) >= 0;
           const hasTotalNumeric = record.total_marks != null && record.total_marks !== '' && !isNaN(parseFloat(record.total_marks)) && parseFloat(record.total_marks) >= 0;
-          
+
           // Include if both written and interview are absent
           if (isWrittenAbsent && isInterviewAbsent) {
             console.log(`✅ BOTH ABSENT Record ${record.application_no}:`, {
@@ -186,7 +217,7 @@ export default function Result({ onModalStateChange }) {
             });
             return true;
           }
-          
+
           // Include if written is AB but interview is numeric
           if (isWrittenAbsent && hasInterviewNumeric) {
             console.log(`✅ WRITTEN AB, INTERVIEW NUMERIC ${record.application_no}:`, {
@@ -196,7 +227,7 @@ export default function Result({ onModalStateChange }) {
             });
             return true;
           }
-          
+
           // Include if interview is AB but written is numeric
           if (hasWrittenNumeric && isInterviewAbsent) {
             console.log(`✅ WRITTEN NUMERIC, INTERVIEW AB ${record.application_no}:`, {
@@ -206,11 +237,11 @@ export default function Result({ onModalStateChange }) {
             });
             return true;
           }
-          
+
           // Include if all marks are numeric and filled
           const isWrittenForwarded = record.faculty_written && record.faculty_written.includes('Forwarded to');
           const isInterviewForwarded = record.director_interview === 'Forwarded to Director';
-          
+
           if (hasWrittenNumeric && hasInterviewNumeric && hasTotalNumeric && isWrittenForwarded && isInterviewForwarded) {
             console.log(`✅ ALL NUMERIC Record ${record.application_no}:`, {
               written_marks: record.written_marks,
@@ -219,7 +250,7 @@ export default function Result({ onModalStateChange }) {
             });
             return true;
           }
-          
+
           console.log(`❌ INCOMPLETE ${record.application_no}:`, {
             written_marks: record.written_marks,
             interview_marks: record.interview_marks,
@@ -244,16 +275,16 @@ export default function Result({ onModalStateChange }) {
         const recordsWithCalculations = recordsWithDepartment.sort((a, b) => {
           const isAAbsent = a.total_marks === 'Absent' || a.total_marks === 'ABSENT' || a.total_marks === 'absent';
           const isBAbsent = b.total_marks === 'Absent' || b.total_marks === 'ABSENT' || b.total_marks === 'absent';
-          
+
           // Put absent records at the end
           if (isAAbsent && !isBAbsent) return 1;
           if (!isAAbsent && isBAbsent) return -1;
           if (isAAbsent && isBAbsent) return 0;
-          
+
           // Sort numeric values highest first
           return parseFloat(b.total_marks) - parseFloat(a.total_marks);
         });
-        
+
         console.log('✅ RECORDS WITH COMPLETE MARKS:', recordsWithCalculations.length);
         if (recordsWithCalculations.length > 0) {
           console.log('📋 SAMPLE RECORD:', {
@@ -272,7 +303,7 @@ export default function Result({ onModalStateChange }) {
       toast.error('Failed to load examination records');
       setExamRecords([]);
     }
-    
+
     setLoading(false);
   };
 
@@ -289,7 +320,7 @@ export default function Result({ onModalStateChange }) {
 
   // Accordion toggle for faculties
   const toggleFacultyAccordion = id => setExpanded(e => ({ ...e, [`faculty-${id}`]: !e[`faculty-${id}`] }));
-  
+
   // Accordion toggle for departments
   const toggleDepartmentAccordion = (facultyId, deptId) => {
     const key = `dept-${facultyId}-${deptId}`;
@@ -310,9 +341,9 @@ export default function Result({ onModalStateChange }) {
     const normalizedFaculty = normalizeName(facultyName);
     return examRecords.filter(record => {
       const recordFaculty = normalizeName(record.faculty || '');
-      return recordFaculty === normalizedFaculty || 
-             recordFaculty.includes(normalizedFaculty) || 
-             normalizedFaculty.includes(recordFaculty);
+      return recordFaculty === normalizedFaculty ||
+        recordFaculty.includes(normalizedFaculty) ||
+        normalizedFaculty.includes(recordFaculty);
     }).length;
   };
 
@@ -323,12 +354,12 @@ export default function Result({ onModalStateChange }) {
     return examRecords.filter(record => {
       const recordFaculty = normalizeName(record.faculty || '');
       const recordDept = normalizeName(record.department || '');
-      const facultyMatch = recordFaculty === normalizedFaculty || 
-                          recordFaculty.includes(normalizedFaculty) || 
-                          normalizedFaculty.includes(recordFaculty);
-      const deptMatch = recordDept === normalizedDept || 
-                       recordDept.includes(normalizedDept) || 
-                       normalizedDept.includes(recordDept);
+      const facultyMatch = recordFaculty === normalizedFaculty ||
+        recordFaculty.includes(normalizedFaculty) ||
+        normalizedFaculty.includes(recordFaculty);
+      const deptMatch = recordDept === normalizedDept ||
+        recordDept.includes(normalizedDept) ||
+        normalizedDept.includes(recordDept);
       return facultyMatch && deptMatch && (record.program_type || record.type) === type;
     }).length;
   };
@@ -363,25 +394,25 @@ export default function Result({ onModalStateChange }) {
     if (filter.faculty) {
       const normalizedFilter = normalizeName(filter.faculty);
       const recordFaculty = normalizeName(record.faculty || '');
-      const facultyMatch = recordFaculty === normalizedFilter || 
-                          recordFaculty.includes(normalizedFilter) || 
-                          normalizedFilter.includes(recordFaculty);
+      const facultyMatch = recordFaculty === normalizedFilter ||
+        recordFaculty.includes(normalizedFilter) ||
+        normalizedFilter.includes(recordFaculty);
       if (!facultyMatch) return false;
     }
-    
+
     // Department filter - flexible match
     if (filter.department) {
       const normalizedFilter = normalizeName(filter.department);
       const recordDept = normalizeName(record.department || '');
-      const deptMatch = recordDept === normalizedFilter || 
-                       recordDept.includes(normalizedFilter) || 
-                       normalizedFilter.includes(recordDept);
+      const deptMatch = recordDept === normalizedFilter ||
+        recordDept.includes(normalizedFilter) ||
+        normalizedFilter.includes(recordDept);
       if (!deptMatch) return false;
     }
-    
+
     // Type filter
     if (filter.type && (record.program_type || record.type) !== filter.type) return false;
-    
+
     // Search filter - includes name, application number, department, and faculty
     if (search && search.trim()) {
       const searchTerm = search.toLowerCase().trim();
@@ -389,13 +420,13 @@ export default function Result({ onModalStateChange }) {
       const appNo = (record.application_no || '').toLowerCase();
       const department = (record.department || '').toLowerCase();
       const faculty = (record.faculty || '').toLowerCase();
-      
-      return name.includes(searchTerm) || 
-             appNo.includes(searchTerm) || 
-             department.includes(searchTerm) || 
-             faculty.includes(searchTerm);
+
+      return name.includes(searchTerm) ||
+        appNo.includes(searchTerm) ||
+        department.includes(searchTerm) ||
+        faculty.includes(searchTerm);
     }
-    
+
     return true;
   });
 
@@ -407,41 +438,43 @@ export default function Result({ onModalStateChange }) {
   const groupedByFaculty = faculties.map(faculty => {
     const facultyDepartments = departments.filter(d => d.faculty === faculty.name);
     const deptNames = facultyDepartments.map(d => d.department_name);
-    
+
     const normalizedFacultyName = normalizeName(faculty.name);
     const normalizedDeptNames = deptNames.map(d => normalizeName(d));
-    
+
     // STEP 1: First match by FACULTY field directly
     const facultyRecords = filteredRecords.filter(r => {
       const recordFaculty = normalizeName(r.faculty || r.institution || '');
-      return recordFaculty === normalizedFacultyName || 
-             recordFaculty.includes(normalizedFacultyName) || 
-             normalizedFacultyName.includes(recordFaculty);
+      if (!recordFaculty) return false; // skip scholars with no faculty
+      return recordFaculty === normalizedFacultyName ||
+        recordFaculty.includes(normalizedFacultyName) ||
+        normalizedFacultyName.includes(recordFaculty);
     });
-    
+
     console.log(`🏫 Faculty: ${faculty.name} → ${facultyRecords.length} scholars matched by faculty field`);
     if (facultyRecords.length > 0) {
       console.log(`   📝 Scholar departments:`, [...new Set(facultyRecords.map(r => r.department))]);
     }
-    
+
     // STEP 2: Group matched scholars by department
     const departmentGroups = facultyDepartments.map(dept => {
       const normalizedConfiguredDept = normalizeName(dept.department_name);
       const deptRecords = facultyRecords.filter(r => {
         const recordDept = normalizeName(r.department || '');
-        return recordDept === normalizedConfiguredDept || 
-               recordDept.includes(normalizedConfiguredDept) || 
-               normalizedConfiguredDept.includes(recordDept);
+        if (!recordDept) return false; // skip scholars with no department
+        return recordDept === normalizedConfiguredDept ||
+          recordDept.includes(normalizedConfiguredDept) ||
+          normalizedConfiguredDept.includes(recordDept);
       });
-      
+
       if (deptRecords.length === 0) return null;
-      
+
       // Group by type
       const fullTime = deptRecords.filter(r => (r.program_type || r.type) === 'Full Time');
       const partTimeInternal = deptRecords.filter(r => (r.program_type || r.type) === 'Part Time Internal');
       const partTimeExternal = deptRecords.filter(r => (r.program_type || r.type) === 'Part Time External');
       const partTimeIndustry = deptRecords.filter(r => (r.program_type || r.type) === 'Part Time External (Industry)');
-      
+
       return {
         id: dept.id,
         name: dept.department_name,
@@ -453,33 +486,33 @@ export default function Result({ onModalStateChange }) {
         hasRecords: true
       };
     }).filter(dept => dept !== null);
-    
+
     // STEP 3: Check for scholars that matched faculty but NOT any department
     // These are scholars whose department field doesn't match any configured department
     const matchedInDepts = departmentGroups.reduce((acc, dg) => {
       return acc + dg.fullTime.length + dg.partTimeInternal.length + dg.partTimeExternal.length + dg.partTimeIndustry.length;
     }, 0);
-    
+
     const unmatchedScholars = facultyRecords.length - matchedInDepts;
     if (unmatchedScholars > 0) {
       console.log(`   ⚠️ ${unmatchedScholars} scholars matched faculty but NOT any configured department`);
       const unmatchedRecords = facultyRecords.filter(r => {
         const recordDept = normalizeName(r.department || '');
-        return !normalizedDeptNames.some(configuredDept => 
-          recordDept === configuredDept || 
-          recordDept.includes(configuredDept) || 
+        return !normalizedDeptNames.some(configuredDept =>
+          recordDept === configuredDept ||
+          recordDept.includes(configuredDept) ||
           configuredDept.includes(recordDept)
         );
       });
       console.log(`   📝 Their departments:`, [...new Set(unmatchedRecords.map(r => r.department))]);
-      
+
       // Add unmatched scholars as "Other / Unassigned" department
       if (unmatchedRecords.length > 0) {
         const fullTime = unmatchedRecords.filter(r => (r.program_type || r.type) === 'Full Time');
         const partTimeInternal = unmatchedRecords.filter(r => (r.program_type || r.type) === 'Part Time Internal');
         const partTimeExternal = unmatchedRecords.filter(r => (r.program_type || r.type) === 'Part Time External');
         const partTimeIndustry = unmatchedRecords.filter(r => (r.program_type || r.type) === 'Part Time External (Industry)');
-        
+
         departmentGroups.push({
           id: `unassigned-${faculty.id}`,
           name: unmatchedRecords[0]?.department || 'Other / Unassigned',
@@ -492,7 +525,7 @@ export default function Result({ onModalStateChange }) {
         });
       }
     }
-    
+
     return {
       ...faculty,
       departments: departmentGroups,
@@ -504,23 +537,23 @@ export default function Result({ onModalStateChange }) {
   function showRankListModal(facultyName, deptName, scholarType) {
     const normalizedFaculty = normalizeName(facultyName || '');
     const normalizedDeptName = normalizeName(deptName);
-    
+
     const rows = examRecords
       .filter(r => {
         // Match by faculty first
         const recordFaculty = normalizeName(r.faculty || r.institution || '');
-        const facultyMatch = recordFaculty === normalizedFaculty || 
-                            recordFaculty.includes(normalizedFaculty) || 
-                            normalizedFaculty.includes(recordFaculty);
-        
+        const facultyMatch = recordFaculty === normalizedFaculty ||
+          recordFaculty.includes(normalizedFaculty) ||
+          normalizedFaculty.includes(recordFaculty);
+
         // Then match by department
         const recordDept = normalizeName(r.department || '');
-        const deptMatch = recordDept === normalizedDeptName || 
-                         recordDept.includes(normalizedDeptName) || 
-                         normalizedDeptName.includes(recordDept);
-        
+        const deptMatch = recordDept === normalizedDeptName ||
+          recordDept.includes(normalizedDeptName) ||
+          normalizedDeptName.includes(recordDept);
+
         const typeMatch = (r.program_type || r.type) === scholarType;
-        
+
         return facultyMatch && deptMatch && typeMatch;
       })
       .map((r, index) => {
@@ -528,7 +561,7 @@ export default function Result({ onModalStateChange }) {
         const isInterviewAbsent = r.interview_marks === 'Ab' || r.interview_marks === 'AB' || r.interview_marks === 'ab';
         const isTotalAbsent = r.total_marks === 'Absent' || r.total_marks === 'ABSENT' || r.total_marks === 'absent';
         const isAbsent = isTotalAbsent || (isWrittenAbsent && isInterviewAbsent);
-        
+
         return {
           rank: index + 1,
           name: r.registered_name || r.name,
@@ -541,7 +574,7 @@ export default function Result({ onModalStateChange }) {
           qualified: isAbsent ? false : (parseFloat(r.total_marks) >= 60)
         };
       });
-    
+
     setModal({ facultyName, deptName, scholarType, rows });
   }
 
@@ -562,23 +595,23 @@ export default function Result({ onModalStateChange }) {
       const scholarIdsToPublish = examRecords
         .filter(record => {
           const recordFaculty = normalizeName(record.faculty || '');
-          return recordFaculty === normalizedTarget || 
-                 recordFaculty.includes(normalizedTarget) || 
-                 normalizedTarget.includes(recordFaculty);
+          return recordFaculty === normalizedTarget ||
+            recordFaculty.includes(normalizedTarget) ||
+            normalizedTarget.includes(recordFaculty);
         })
         .map(record => record.id);
-      
+
       console.log(`📋 Publishing ${scholarIdsToPublish.length} scholars for ${facultyToPublish}`);
-      
+
       if (scholarIdsToPublish.length === 0) {
         toast.error('No scholars found to publish for this faculty');
         setShowPublishModal(false);
         setFacultyToPublish(null);
         return;
       }
-      
+
       const { data, error } = await publishFacultyResults(facultyToPublish, scholarIdsToPublish);
-      
+
       if (error) {
         toast.error(`Failed to publish results: ${error.message}`);
         console.error('Publish error:', error);
@@ -591,7 +624,7 @@ export default function Result({ onModalStateChange }) {
       toast.error('An error occurred while publishing results');
       console.error('Publish exception:', err);
     }
-    
+
     setShowPublishModal(false);
     setFacultyToPublish(null);
   };
@@ -606,27 +639,27 @@ export default function Result({ onModalStateChange }) {
   const checkPublishedFaculties = async () => {
     try {
       const fullyPublished = new Set();
-      
+
       faculties.forEach(faculty => {
         const normalizedFacultyName = normalizeName(faculty.name);
-        
+
         // Match by faculty field directly (same logic as display grouping)
         const facultyScholars = examRecords.filter(r => {
           const recordFaculty = normalizeName(r.faculty || r.institution || '');
-          return recordFaculty === normalizedFacultyName || 
-                 recordFaculty.includes(normalizedFacultyName) || 
-                 normalizedFacultyName.includes(recordFaculty);
+          return recordFaculty === normalizedFacultyName ||
+            recordFaculty.includes(normalizedFacultyName) ||
+            normalizedFacultyName.includes(recordFaculty);
         });
-        
+
         if (facultyScholars.length === 0) return;
-        
+
         // Count how many are published
-        const publishedCount = facultyScholars.filter(s => 
+        const publishedCount = facultyScholars.filter(s =>
           s.result_dir && s.result_dir.includes('Published')
         ).length;
-        
+
         console.log(`📊 ${faculty.name}: ${publishedCount}/${facultyScholars.length} available scholars published`);
-        
+
         if (publishedCount === facultyScholars.length) {
           fullyPublished.add(faculty.name);
         }
@@ -643,23 +676,23 @@ export default function Result({ onModalStateChange }) {
   function downloadRankings(facultyName, deptName, scholarType) {
     const normalizedFaculty = normalizeName(facultyName || '');
     const normalizedDeptName = normalizeName(deptName);
-    
+
     const data = examRecords
       .filter(r => {
         // Match by faculty first
         const recordFaculty = normalizeName(r.faculty || r.institution || '');
-        const facultyMatch = recordFaculty === normalizedFaculty || 
-                            recordFaculty.includes(normalizedFaculty) || 
-                            normalizedFaculty.includes(recordFaculty);
-        
+        const facultyMatch = recordFaculty === normalizedFaculty ||
+          recordFaculty.includes(normalizedFaculty) ||
+          normalizedFaculty.includes(recordFaculty);
+
         // Then match by department
         const recordDept = normalizeName(r.department || '');
-        const deptMatch = recordDept === normalizedDeptName || 
-                         recordDept.includes(normalizedDeptName) || 
-                         normalizedDeptName.includes(recordDept);
-        
+        const deptMatch = recordDept === normalizedDeptName ||
+          recordDept.includes(normalizedDeptName) ||
+          normalizedDeptName.includes(recordDept);
+
         const typeMatch = (r.program_type || r.type) === scholarType;
-        
+
         return facultyMatch && deptMatch && typeMatch;
       })
       .map((r, index) => ({
@@ -671,8 +704,8 @@ export default function Result({ onModalStateChange }) {
         'Written Marks': r.written_marks,
         'Viva Marks': r.interview_marks,
         'Total Marks': r.total_marks,
-        'Status': r.total_marks === 'Absent' || r.total_marks === 'ABSENT' || r.total_marks === 'absent' 
-          ? 'Absent' 
+        'Status': r.total_marks === 'Absent' || r.total_marks === 'ABSENT' || r.total_marks === 'absent'
+          ? 'Absent'
           : (parseFloat(r.total_marks) >= 60 ? 'Qualified' : 'Not Qualified')
       }));
 
@@ -776,7 +809,7 @@ export default function Result({ onModalStateChange }) {
               <div
                 className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
               >
-                <div 
+                <div
                   className="flex items-center gap-3 flex-1"
                   onClick={() => toggleFacultyAccordion(faculty.id)}
                 >
@@ -792,11 +825,10 @@ export default function Result({ onModalStateChange }) {
                     handlePublishFaculty(faculty.name);
                   }}
                   disabled={publishedFaculties.has(faculty.name)}
-                  className={`px-4 py-2 rounded-md transition-colors flex items-center gap-2 text-sm font-medium ${
-                    publishedFaculties.has(faculty.name)
-                      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                      : 'bg-green-600 text-white hover:bg-green-700'
-                  }`}
+                  className={`px-4 py-2 rounded-md transition-colors flex items-center gap-2 text-sm font-medium ${publishedFaculties.has(faculty.name)
+                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                    }`}
                   title={publishedFaculties.has(faculty.name) ? 'Results already published for this faculty' : 'Publish results for this faculty'}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
@@ -847,7 +879,7 @@ export default function Result({ onModalStateChange }) {
                               </div>
                             </div>
                           )}
-                          
+
                           {/* Part Time Internal */}
                           {dept.partTimeInternal && dept.partTimeInternal.length > 0 && (
                             <div className="flex items-center justify-between bg-gray-50 p-3 rounded">
@@ -871,7 +903,7 @@ export default function Result({ onModalStateChange }) {
                               </div>
                             </div>
                           )}
-                          
+
                           {/* Part Time External */}
                           {dept.partTimeExternal && dept.partTimeExternal.length > 0 && (
                             <div className="flex items-center justify-between bg-gray-50 p-3 rounded">
@@ -895,7 +927,7 @@ export default function Result({ onModalStateChange }) {
                               </div>
                             </div>
                           )}
-                          
+
                           {/* Part Time External (Industry) */}
                           {dept.partTimeIndustry && dept.partTimeIndustry.length > 0 && (
                             <div className="flex items-center justify-between bg-gray-50 p-3 rounded">
@@ -1057,10 +1089,9 @@ export default function Result({ onModalStateChange }) {
                         </td>
                         <td className="px-4 py-3 text-center">{row.community}</td>
                         <td className="px-4 py-3 text-center">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            isAbsent ? 'bg-red-100 text-red-800' : 
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${isAbsent ? 'bg-red-100 text-red-800' :
                             row.qualified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
+                            }`}>
                             {isAbsent ? 'Absent' : (row.qualified ? 'Qualified' : 'Not Qualified')}
                           </span>
                         </td>

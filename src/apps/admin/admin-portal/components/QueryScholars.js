@@ -44,40 +44,40 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
     { key: 'Application No', label: 'Application No', category: 'Basic Information' },
     { key: 'Form Name', label: 'Form Name', category: 'Basic Information' },
     { key: 'Current Status', label: 'Current Status', category: 'Basic Information' },
-    
+
     { key: 'Registered Name', label: 'Registered Name', category: 'Personal Details' },
     { key: 'Date of Birth', label: 'Date of Birth', category: 'Personal Details' },
     { key: 'Gender', label: 'Gender', category: 'Personal Details' },
     { key: 'Mobile Number', label: 'Mobile Number', category: 'Personal Details' },
     { key: 'Email', label: 'Email', category: 'Personal Details' },
     { key: 'Nationality', label: 'Nationality', category: 'Personal Details' },
-    
+
     { key: 'Institution', label: 'Institution', category: 'Program Info' },
     { key: 'Faculty', label: 'Faculty', category: 'Program Info' },
     { key: 'Department', label: 'Department', category: 'Program Info' },
     { key: 'Program', label: 'Program', category: 'Program Info' },
     { key: 'Program Type', label: 'Program Type', category: 'Program Info' },
-    
+
     { key: 'Department Query', label: 'Department Query', category: 'Query Info' },
     { key: 'Query Resolved', label: 'Query Resolved', category: 'Query Info' },
     { key: 'Query Faculty', label: 'Query Faculty', category: 'Query Info' },
-    
+
     { key: 'UG Degree', label: 'UG Degree', category: 'UG Education' },
     { key: 'UG Specialization', label: 'UG Specialization', category: 'UG Education' },
     { key: 'UG CGPA/Percentage', label: 'UG CGPA/Percentage', category: 'UG Education' },
-    
+
     { key: 'PG Degree', label: 'PG Degree', category: 'PG Education' },
     { key: 'PG Specialization', label: 'PG Specialization', category: 'PG Education' },
     { key: 'PG CGPA/Percentage', label: 'PG CGPA/Percentage', category: 'PG Education' },
-    
+
     { key: 'Exam 1 Name', label: 'Exam 1 Name', category: 'Exams' },
     { key: 'Exam 1 Score', label: 'Exam 1 Score', category: 'Exams' },
     { key: 'Exam 2 Name', label: 'Exam 2 Name', category: 'Exams' },
     { key: 'Exam 2 Score', label: 'Exam 2 Score', category: 'Exams' },
-    
+
     { key: 'Research Interest', label: 'Research Interest', category: 'Research Info' },
     { key: 'Reasons for Applying', label: 'Reasons for Applying', category: 'Research Info' },
-    
+
     { key: 'Status', label: 'Status', category: 'System Info' },
     { key: 'Certificates', label: 'Certificates', category: 'System Info' },
     { key: 'User ID', label: 'User ID', category: 'System Info' },
@@ -185,7 +185,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
 
   // Helper function for download modal
   const toggleColumnSelection = (colKey) => {
-    setSelectedColumns(prev => 
+    setSelectedColumns(prev =>
       prev.includes(colKey) ? prev.filter(k => k !== colKey) : [...prev, colKey]
     );
   };
@@ -208,14 +208,14 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
     const loadScholarsWithQueries = async () => {
       setLoading(true);
       const { data, error } = await fetchScholarsWithQueries();
-      
+
       if (error) {
         console.error('Failed to load scholars with queries:', error);
         setBackToDirectorScholars([]);
       } else if (data) {
         setBackToDirectorScholars(data);
       }
-      
+
       setLoading(false);
     };
 
@@ -261,7 +261,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
 
   // Use backToDirectorScholars instead of filtering from scholarsData
   const verifiedScholars = backToDirectorScholars;
-  
+
   const stats = {
     totalScholars: verifiedScholars.length,
     withQueries: verifiedScholars.filter(s => {
@@ -274,12 +274,12 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       // Count scholars with queries that ARE resolved
       return s.query_resolved === 'Query Resolved';
     }).length,
-    queryRate: verifiedScholars.length > 0 
+    queryRate: verifiedScholars.length > 0
       ? ((verifiedScholars.filter(s => {
-          const hasQuery = s.dept_query && s.dept_query !== '-' && s.dept_query.trim() !== '';
-          const isResolved = s.query_resolved === 'Query Resolved';
-          return hasQuery && !isResolved;
-        }).length / verifiedScholars.length) * 100).toFixed(1)
+        const hasQuery = s.dept_query && s.dept_query !== '-' && s.dept_query.trim() !== '';
+        const isResolved = s.query_resolved === 'Query Resolved';
+        return hasQuery && !isResolved;
+      }).length / verifiedScholars.length) * 100).toFixed(1)
       : 0
   };
 
@@ -288,7 +288,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
+
     // If faculty changes, update both faculty and institution, and clear the program
     if (name === 'faculty') {
       // Convert faculty to shortened institution name
@@ -302,14 +302,14 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       } else if (value.includes('Medical') || value.includes('Health')) {
         institutionName = 'Medical And Health Sciences';
       }
-      
+
       setFormData(prev => ({
         ...prev,
         faculty: value, // Full faculty name for faculty column
         institution: institutionName, // Shortened name for institution column
         program: '' // Clear program when faculty changes
       }));
-    } 
+    }
     // If pgModeOfStudy changes, sync with type field
     else if (name === 'pgModeOfStudy') {
       setFormData(prev => ({
@@ -330,7 +330,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
     else if (name === 'program') {
       // Extract department name from program (e.g., "Ph.d. - Management Studies" -> "Management Studies")
       const departmentName = value.replace('Ph.d. - ', '').trim();
-      
+
       setFormData(prev => ({
         ...prev,
         program: value,
@@ -376,12 +376,12 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
   // Open modal for editing scholar - Fetch complete data from Supabase
   const openEditModal = async (scholar) => {
     setEditingScholar(scholar);
-    
+
     // Fetch complete scholar data from Supabase
     console.log('ðŸ“ Fetching complete scholar data for ID:', scholar.id);
     const { fetchScholarById } = await import('../../../../services/scholarService');
     const { data: fullScholarData, error } = await fetchScholarById(scholar.id);
-    
+
     if (error) {
       console.error('Error fetching complete scholar data:', error);
       // Fallback to using the scholar object from table
@@ -393,7 +393,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       // Fallback to using the scholar object from table
       populateFormData(scholar);
     }
-    
+
     setShowModal(true);
   };
 
@@ -568,7 +568,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
     if (editingScholar) {
       console.log('🔄 Updating scholar in Query Scholars:', editingScholar.id);
       console.log('📝 Form data:', formData);
-      
+
       // Prepare update data for Supabase
       const updateData = {
         application_no: formData.applicationNo,
@@ -659,23 +659,23 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
 
       // Update in Supabase
       const { data, error } = await updateScholar(editingScholar.id, updateData);
-      
+
       if (error) {
         console.error('❌ Error updating scholar:', error);
         showMessage('Error updating scholar', 'error');
         return;
       }
-      
+
       console.log('✅ Scholar updated successfully in database:', data);
       showMessage('Scholar updated successfully!', 'success');
-      
+
       // Update local state
       setBackToDirectorScholars(prev => prev.map(scholar =>
         scholar.id === editingScholar.id
           ? { ...scholar, ...updateData }
           : scholar
       ));
-      
+
       console.log('✅ Local state updated');
       closeModal();
     } else {
@@ -756,7 +756,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
           forwardingScholar.department,
           forwardingScholar.type
         );
-        
+
         // Update in Supabase
         const { error } = await updateScholar(forwardingScholar.id, {
           query_resolved: 'Query Resolved',
@@ -774,16 +774,16 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
         // Update local state
         setBackToDirectorScholars(prev => prev.map(s =>
           s.id === forwardingScholar.id
-            ? { 
-                ...s, 
-                query_resolved: 'Query Resolved',
-                query_faculty: forwardText,
-                status: 'Forwarded', 
-                forwarded_at: new Date().toISOString() 
-              }
+            ? {
+              ...s,
+              query_resolved: 'Query Resolved',
+              query_faculty: forwardText,
+              status: 'Forwarded',
+              forwarded_at: new Date().toISOString()
+            }
             : s
         ));
-        
+
         showMessage(`${forwardingScholar.registered_name || forwardingScholar.name} has been forwarded successfully!`, 'success');
         setShowForwardModal(false);
         setForwardingScholar(null);
@@ -858,7 +858,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       const hasMobile = s.mobile_number || s.mobile;
       const hasInstitution = s.institution;
       const hasDepartment = s.department;
-      
+
       return hasName && hasEmail && hasMobile && hasInstitution && hasDepartment;
     });
 
@@ -870,7 +870,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
     // Show count of eligible vs total
     const totalScholars = getFilteredScholars().length;
     const ineligibleCount = totalScholars - eligibleScholars.length;
-    
+
     if (ineligibleCount > 0) {
       showMessage(`${eligibleScholars.length} eligible scholars will be forwarded. ${ineligibleCount} scholars with incomplete information will be skipped.`, 'info');
     }
@@ -887,7 +887,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       const hasMobile = s.mobile_number || s.mobile;
       const hasInstitution = s.institution;
       const hasDepartment = s.department;
-      
+
       return hasName && hasEmail && hasMobile && hasInstitution && hasDepartment;
     });
 
@@ -901,7 +901,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       // Update all eligible scholars in Supabase
       const updatePromises = eligibleScholars.map(scholar => {
         const forwardText = getForwardText(scholar.institution, scholar.department, scholar.type);
-        
+
         return updateScholar(scholar.id, {
           query_resolved: 'Query Resolved',
           query_faculty: forwardText,
@@ -911,7 +911,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       });
 
       const results = await Promise.all(updatePromises);
-      
+
       // Check for errors
       const errors = results.filter(r => r.error);
       if (errors.length > 0) {
@@ -952,13 +952,13 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
   const handleSelectScholar = (scholarId) => {
     // Find the scholar to check if it's forwarded
     const scholar = getFilteredScholars().find(s => s.id === scholarId);
-    
+
     // Prevent selection of forwarded scholars
     if (scholar && scholar.status === 'Forwarded') {
       showMessage('Cannot select forwarded scholars', 'info');
       return;
     }
-    
+
     setSelectedScholars(prev => {
       if (prev.includes(scholarId)) {
         const newSelection = prev.filter(id => id !== scholarId);
@@ -976,7 +976,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
     const nonForwardedIds = getFilteredScholars()
       .filter(s => s.status !== 'Forwarded')
       .map(s => s.id);
-    
+
     if (selectedScholars.length === nonForwardedIds.length) {
       setSelectedScholars([]);
       setShowBulkActions(false);
@@ -1113,7 +1113,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       // Find all duplicate groups
       const duplicates = [];
       const appNoMap = new Map();
-      
+
       // Group scholars by application number
       backToDirectorScholars.forEach(scholar => {
         const appNo = scholar.application_no || scholar.applicationNo;
@@ -1127,7 +1127,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
           }
         }
       });
-      
+
       // Find scholars to delete (only Pending status in duplicate groups)
       const scholarsToDelete = [];
       appNoMap.forEach((scholars, appNo) => {
@@ -1138,12 +1138,12 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
           scholarsToDelete.push(...pendingScholars);
         }
       });
-      
+
       if (scholarsToDelete.length === 0) {
         showMessage('No pending duplicate scholars found to delete', 'info');
         return;
       }
-      
+
       // Confirm before deleting
       const confirmDelete = window.confirm(
         `Found ${scholarsToDelete.length} pending duplicate scholar(s).\n\n` +
@@ -1151,21 +1151,21 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
         `Scholars with 'Forwarded' status will be kept safe.\n\n` +
         `Do you want to proceed?`
       );
-      
+
       if (!confirmDelete) {
         return;
       }
-      
+
       // Delete the scholars
       const idsToDelete = scholarsToDelete.map(s => s.id);
       setBackToDirectorScholars(prev => prev.filter(s => !idsToDelete.includes(s.id)));
       setScholarsData(prev => prev.filter(s => !idsToDelete.includes(s.id)));
-      
+
       showMessage(`Successfully deleted ${scholarsToDelete.length} pending duplicate scholar(s)`, 'success');
-      
+
       // Close duplicates modal if open
       setShowDuplicatesModal(false);
-      
+
     } catch (error) {
       console.error('Error deleting pending duplicates:', error);
       showMessage('Failed to delete pending duplicates', 'error');
@@ -1188,7 +1188,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
           'Application No': scholar.application_no || scholar.applicationNo || '',
           'Form Name': scholar.form_name || scholar.formName || 'PhD Application Form',
           'Current Status': scholar.status || '',
-          
+
           // Personal Details
           'Registered Name': scholar.registered_name || scholar.name || '',
           'Date of Birth': scholar.date_of_birth || scholar.dateOfBirth || '',
@@ -1196,39 +1196,39 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
           'Mobile Number': scholar.mobile_number || scholar.mobile || scholar.phone || '',
           'Email': scholar.email || scholar.email_id || '',
           'Nationality': scholar.nationality || 'Indian',
-          
+
           // Program Information
           'Institution': scholar.institution || 'SRM Institute of Science and Technology',
           'Faculty': scholar.faculty || '',
           'Department': scholar.department || '',
           'Program': scholar.program || '',
           'Program Type': scholar.type || '',
-          
+
           // Query Information
           'Department Query': scholar.dept_query || '',
           'Query Resolved': scholar.query_resolved || '',
           'Query Faculty': scholar.query_faculty || '',
-          
+
           // UG Education
           'UG Degree': scholar.ug_degree || scholar.ugDegree || '',
           'UG Specialization': scholar.ug_specialization || scholar.ugSpecialization || '',
           'UG CGPA/Percentage': scholar.ug_cgpa || scholar.ugCgpa || scholar.ugMarks || '',
-          
+
           // PG Education
           'PG Degree': scholar.pg_degree || scholar.pgDegree || '',
           'PG Specialization': scholar.pg_specialization || scholar.pgSpecialization || '',
           'PG CGPA/Percentage': scholar.pg_cgpa || scholar.pgCgpa || scholar.pgMarks || '',
-          
+
           // Competitive Exams
           'Exam 1 Name': scholar.exam1_name || scholar.exam1Name || scholar.gateExam || '',
           'Exam 1 Score': scholar.exam1_score || scholar.exam1Score || scholar.gateScore || '',
           'Exam 2 Name': scholar.exam2_name || scholar.exam2Name || scholar.netExam || '',
           'Exam 2 Score': scholar.exam2_score || scholar.exam2Score || scholar.netScore || '',
-          
+
           // Research Information
           'Research Interest': scholar.research_interest || scholar.researchInterest || '',
           'Reasons for Applying': scholar.reasons_for_applying || scholar.reasonsForApplying || '',
-          
+
           // System Info
           'Status': scholar.status || '',
           'Certificates': scholar.certificates || 'Available',
@@ -1611,16 +1611,16 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
 
   // Track modal states and notify parent
   useEffect(() => {
-    const hasModal = showModal || showViewModal || showUploadModal || showFilterModal || 
-                    showHelpModal || showForwardModal || showForwardAllModal || 
-                    showDeleteModal || showDuplicatesModal ||
-                    showDownloadModal; // ensure sidebar hides for downloads
-    
+    const hasModal = showModal || showViewModal || showUploadModal || showFilterModal ||
+      showHelpModal || showForwardModal || showForwardAllModal ||
+      showDeleteModal || showDuplicatesModal ||
+      showDownloadModal; // ensure sidebar hides for downloads
+
     if (onModalStateChange) {
       onModalStateChange(hasModal);
     }
-  }, [showModal, showViewModal, showUploadModal, showFilterModal, showHelpModal, 
-      showForwardModal, showForwardAllModal, showDeleteModal, showDuplicatesModal, showDownloadModal, onModalStateChange]);
+  }, [showModal, showViewModal, showUploadModal, showFilterModal, showHelpModal,
+    showForwardModal, showForwardAllModal, showDeleteModal, showDuplicatesModal, showDownloadModal, onModalStateChange]);
 
   // Filter and sort scholars
   const getFilteredScholars = () => {
@@ -1633,7 +1633,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
       const department = scholar.department || '';
       const type = scholar.type || '';
       const faculty = scholar.institution || scholar.faculty || '';
-      
+
       const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         appNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1642,9 +1642,12 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
         department.toLowerCase().includes(searchTerm.toLowerCase()) ||
         type.toLowerCase().includes(searchTerm.toLowerCase()) ||
         faculty.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesFaculty = selectedFaculty === '' || faculty === selectedFaculty;
-      const matchesDepartment = selectedDepartment === '' || 
+
+      const scholarFaculty = scholar.faculty || scholar.institution || '';
+      const matchesFaculty = selectedFaculty === '' ||
+        scholarFaculty.toLowerCase().includes(selectedFaculty.toLowerCase()) ||
+        selectedFaculty.toLowerCase().includes(scholarFaculty.toLowerCase());
+      const matchesDepartment = selectedDepartment === '' ||
         (department && department.toLowerCase().includes(selectedDepartment.toLowerCase()));
       const matchesType = selectedType === '' || (scholar.type || '') === selectedType;
 
@@ -1779,8 +1782,8 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
           <div className="flex flex-col gap-4 mb-6">
             {/* Forward All and Download Buttons */}
             <div className="flex flex-wrap gap-2">
-              <button 
-                onClick={handleForwardAll} 
+              <button
+                onClick={handleForwardAll}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
                 style={{ fontSize: '16px' }}
               >
@@ -1823,217 +1826,216 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
         </div>
 
         {/* Main Content Area */}
-          <div className="table-responsive">
-            <table className="scholar-table ">
-              <thead>
-                <tr>
-                  <th style={{minWidth: '50px', width: '50px'}}>
+        <div className="table-responsive">
+          <table className="scholar-table ">
+            <thead>
+              <tr>
+                <th style={{ minWidth: '50px', width: '50px' }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedScholars.length === getFilteredScholars().length && getFilteredScholars().length > 0}
+                    onChange={handleSelectAll}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
+                  />
+                </th>
+                <th>S.NO</th>
+                <th>REGISTERED NAME</th>
+                <th>APPLICATION NO</th>
+                <th>SELECT INSTITUTION</th>
+                <th>DEPARTMENT</th>
+                <th>TYPE</th>
+                <th>MOBILE NUMBER</th>
+                <th>EMAIL ID</th>
+                <th>GENDER</th>
+                <th>CERTIFICATES</th>
+                <th>QUERIES</th>
+                <th>QUERY STATUS</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {getFilteredScholars().map((scholar, index) => (
+                <tr key={scholar.id} className={`${selectedScholars.includes(scholar.id) ? 'bg-blue-50' : ''} ${scholar.status === 'Forwarded' ? 'forwarded-scholar' : ''}`}>
+                  <td>
                     <input
                       type="checkbox"
-                      checked={selectedScholars.length === getFilteredScholars().length && getFilteredScholars().length > 0}
-                      onChange={handleSelectAll}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
-                    />
-                  </th>
-                  <th>S.NO</th>
-                  <th>REGISTERED NAME</th>
-                  <th>APPLICATION NO</th>
-                  <th>SELECT INSTITUTION</th>
-                  <th>DEPARTMENT</th>
-                  <th>TYPE</th>
-                  <th>MOBILE NUMBER</th>
-                  <th>EMAIL ID</th>
-                  <th>GENDER</th>
-                  <th>CERTIFICATES</th>
-                  <th>QUERIES</th>
-                  <th>QUERY STATUS</th>
-                  <th>STATUS</th>
-                  <th>ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getFilteredScholars().map((scholar, index) => (
-                  <tr key={scholar.id} className={`${selectedScholars.includes(scholar.id) ? 'bg-blue-50' : ''} ${scholar.status === 'Forwarded' ? 'forwarded-scholar' : ''}`}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedScholars.includes(scholar.id)}
-                        onChange={() => handleSelectScholar(scholar.id)}
-                        disabled={scholar.status === 'Forwarded'}
-                        className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 ${
-                          scholar.status === 'Forwarded' 
-                            ? 'cursor-not-allowed opacity-50 bg-gray-200' 
-                            : 'cursor-pointer'
+                      checked={selectedScholars.includes(scholar.id)}
+                      onChange={() => handleSelectScholar(scholar.id)}
+                      disabled={scholar.status === 'Forwarded'}
+                      className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 ${scholar.status === 'Forwarded'
+                          ? 'cursor-not-allowed opacity-50 bg-gray-200'
+                          : 'cursor-pointer'
                         }`}
-                        title={scholar.status === 'Forwarded' ? 'Cannot select forwarded scholar' : 'Select scholar'}
-                      />
-                    </td>
-                    <td>{index + 1}</td>
-                    <td>{scholar.registered_name || scholar.name}</td>
-                    <td>{scholar.application_no || scholar.applicationNo}</td>
-                    <td>{scholar.institution || 'N/A'}</td>
-                    <td>{scholar.department || 'N/A'}</td>
-                    <td>{scholar.type || 'N/A'}</td>
-                    <td>{scholar.mobile_number || scholar.mobile || '+91 9876543210'}</td>
-                    <td>{scholar.email || scholar.email_id}</td>
-                    <td>{scholar.gender || 'Male'}</td>
-                    <td>
+                      title={scholar.status === 'Forwarded' ? 'Cannot select forwarded scholar' : 'Select scholar'}
+                    />
+                  </td>
+                  <td>{index + 1}</td>
+                  <td>{scholar.registered_name || scholar.name}</td>
+                  <td>{scholar.application_no || scholar.applicationNo}</td>
+                  <td>{scholar.institution || 'N/A'}</td>
+                  <td>{scholar.department || 'N/A'}</td>
+                  <td>{scholar.type || 'N/A'}</td>
+                  <td>{scholar.mobile_number || scholar.mobile || '+91 9876543210'}</td>
+                  <td>{scholar.email || scholar.email_id}</td>
+                  <td>{scholar.gender || 'Male'}</td>
+                  <td>
+                    <button
+                      onClick={() => handleViewCertificates(scholar)}
+                      className="certificate-link"
+                    >
+                      View Docs
+                    </button>
+                  </td>
+                  <td>
+                    {scholar.dept_query || '-'}
+                  </td>
+                  <td>
+                    <span className={`status-pill ${getStatusClass(scholar.query_resolved || scholar.dept_review || 'Pending')}`}>
+                      {scholar.query_resolved || scholar.dept_review || 'Pending'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`status-pill ${scholar.status === 'Forwarded' || (scholar.faculty_forward && scholar.faculty_forward !== 'Back_To_Director') ? 'forwarded' : 'pending'}`}>
+                      {scholar.status === 'Forwarded' || (scholar.faculty_forward && scholar.faculty_forward !== 'Back_To_Director') ? 'Forwarded' : 'Pending'}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="table-actions" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '6px' }}>
                       <button
-                        onClick={() => handleViewCertificates(scholar)}
-                        className="certificate-link"
+                        onClick={() => handleView(scholar)}
+                        className="table-action-btn btn-view"
+                        title="View Details"
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '12px',
+                          backgroundColor: '#A855F7',
+                          color: 'white',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = '#9333EA';
+                          e.target.style.transform = 'translateY(-1px)';
+                          e.target.style.boxShadow = '0 4px 12px rgba(168, 85, 247, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = '#A855F7';
+                          e.target.style.transform = 'translateY(0)';
+                          e.target.style.boxShadow = '0 2px 8px rgba(168, 85, 247, 0.3)';
+                        }}
                       >
-                        View Docs
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
                       </button>
-                    </td>
-                    <td>
-                      {scholar.dept_query || '-'}
-                    </td>
-                    <td>
-                      <span className={`status-pill ${getStatusClass(scholar.query_resolved || scholar.dept_review || 'Pending')}`}>
-                        {scholar.query_resolved || scholar.dept_review || 'Pending'}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`status-pill ${scholar.status === 'Forwarded' || (scholar.faculty_forward && scholar.faculty_forward !== 'Back_To_Director') ? 'forwarded' : 'pending'}`}>
-                        {scholar.status === 'Forwarded' || (scholar.faculty_forward && scholar.faculty_forward !== 'Back_To_Director') ? 'Forwarded' : 'Pending'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="table-actions" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '6px' }}>
-                        <button
-                          onClick={() => handleView(scholar)}
-                          className="table-action-btn btn-view"
-                          title="View Details"
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '12px',
-                            backgroundColor: '#A855F7',
-                            color: 'white',
-                            border: 'none',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease',
-                            boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = '#9333EA';
+                      <button
+                        onClick={() => openEditModal(scholar)}
+                        className="table-action-btn btn-edit"
+                        title={scholar.status === 'Forwarded' ? 'Cannot edit forwarded scholar' : 'Edit Scholar'}
+                        disabled={scholar.status === 'Forwarded'}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '12px',
+                          backgroundColor: scholar.status === 'Forwarded' ? '#9CA3AF' : '#3B82F6',
+                          color: 'white',
+                          border: 'none',
+                          cursor: scholar.status === 'Forwarded' ? 'not-allowed' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: scholar.status === 'Forwarded' ? 'none' : '0 2px 8px rgba(59, 130, 246, 0.3)',
+                          opacity: scholar.status === 'Forwarded' ? 0.5 : 1
+                        }}
+                        onMouseEnter={(e) => {
+                          if (scholar.status !== 'Forwarded') {
+                            e.target.style.backgroundColor = '#2563EB';
                             e.target.style.transform = 'translateY(-1px)';
-                            e.target.style.boxShadow = '0 4px 12px rgba(168, 85, 247, 0.4)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = '#A855F7';
+                            e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (scholar.status !== 'Forwarded') {
+                            e.target.style.backgroundColor = '#3B82F6';
                             e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = '0 2px 8px rgba(168, 85, 247, 0.3)';
-                          }}
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => openEditModal(scholar)}
-                          className="table-action-btn btn-edit"
-                          title={scholar.status === 'Forwarded' ? 'Cannot edit forwarded scholar' : 'Edit Scholar'}
-                          disabled={scholar.status === 'Forwarded'}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '12px',
-                            backgroundColor: scholar.status === 'Forwarded' ? '#9CA3AF' : '#3B82F6',
-                            color: 'white',
-                            border: 'none',
-                            cursor: scholar.status === 'Forwarded' ? 'not-allowed' : 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease',
-                            boxShadow: scholar.status === 'Forwarded' ? 'none' : '0 2px 8px rgba(59, 130, 246, 0.3)',
-                            opacity: scholar.status === 'Forwarded' ? 0.5 : 1
-                          }}
-                          onMouseEnter={(e) => {
-                            if (scholar.status !== 'Forwarded') {
-                              e.target.style.backgroundColor = '#2563EB';
-                              e.target.style.transform = 'translateY(-1px)';
-                              e.target.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.4)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (scholar.status !== 'Forwarded') {
-                              e.target.style.backgroundColor = '#3B82F6';
-                              e.target.style.transform = 'translateY(0)';
-                              e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-                            }
-                          }}
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => handleForward(scholar)}
-                          className="table-action-btn btn-forward"
-                          title={scholar.status === 'Forwarded' ? 'Scholar already forwarded' : 'Forward Scholar'}
-                          disabled={scholar.status === 'Forwarded'}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '12px',
-                            backgroundColor: scholar.status === 'Forwarded' ? '#9CA3AF' : '#10B981',
-                            color: 'white',
-                            border: 'none',
-                            cursor: scholar.status === 'Forwarded' ? 'not-allowed' : 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s ease',
-                            boxShadow: scholar.status === 'Forwarded' ? 'none' : '0 2px 8px rgba(16, 185, 129, 0.3)',
-                            opacity: scholar.status === 'Forwarded' ? 0.5 : 1
-                          }}
-                          onMouseEnter={(e) => {
-                            if (scholar.status !== 'Forwarded') {
-                              e.target.style.backgroundColor = '#059669';
-                              e.target.style.transform = 'translateY(-1px)';
-                              e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (scholar.status !== 'Forwarded') {
-                              e.target.style.backgroundColor = '#10B981';
-                              e.target.style.transform = 'translateY(0)';
-                              e.target.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-                            }
-                          }}
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                            e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+                          }
+                        }}
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleForward(scholar)}
+                        className="table-action-btn btn-forward"
+                        title={scholar.status === 'Forwarded' ? 'Scholar already forwarded' : 'Forward Scholar'}
+                        disabled={scholar.status === 'Forwarded'}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '12px',
+                          backgroundColor: scholar.status === 'Forwarded' ? '#9CA3AF' : '#10B981',
+                          color: 'white',
+                          border: 'none',
+                          cursor: scholar.status === 'Forwarded' ? 'not-allowed' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s ease',
+                          boxShadow: scholar.status === 'Forwarded' ? 'none' : '0 2px 8px rgba(16, 185, 129, 0.3)',
+                          opacity: scholar.status === 'Forwarded' ? 0.5 : 1
+                        }}
+                        onMouseEnter={(e) => {
+                          if (scholar.status !== 'Forwarded') {
+                            e.target.style.backgroundColor = '#059669';
+                            e.target.style.transform = 'translateY(-1px)';
+                            e.target.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (scholar.status !== 'Forwarded') {
+                            e.target.style.backgroundColor = '#10B981';
+                            e.target.style.transform = 'translateY(0)';
+                            e.target.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                          }
+                        }}
+                      >
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-          {getFilteredScholars().length === 0 && (
-            <div className="empty-state">
-              <div className="empty-state-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                </svg>
-              </div>
-              <h3>No Scholars Found</h3>
-              <p>
-                {searchTerm || selectedFaculty || selectedDepartment || selectedType
-                  ? 'No scholars match your current search criteria.'
-                  : 'No scholars have been added yet.'}
-              </p>
+        {getFilteredScholars().length === 0 && (
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
             </div>
-          )}
+            <h3>No Scholars Found</h3>
+            <p>
+              {searchTerm || selectedFaculty || selectedDepartment || selectedType
+                ? 'No scholars match your current search criteria.'
+                : 'No scholars have been added yet.'}
+            </p>
+          </div>
+        )}
 
         {/* Add/Edit Scholar Modal */}
         {showModal && (
@@ -2086,11 +2088,11 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                     </div>
                     <div className="form-group">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Program *</label>
-                      <select 
-                        name="program" 
-                        value={formData.program} 
-                        onChange={handleInputChange} 
-                        required 
+                      <select
+                        name="program"
+                        value={formData.program}
+                        onChange={handleInputChange}
+                        required
                         className="form-input w-full px-3 py-2 border border-gray-300 rounded-lg"
                         disabled={!formData.faculty}
                       >
@@ -2972,9 +2974,9 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                   <div className="view-field">
                     <label className="view-label">Certificates Drive Link:</label>
                     {viewingScholar.certificates && viewingScholar.certificates !== 'Certificates' && viewingScholar.certificates.startsWith('http') ? (
-                      <a 
-                        href={viewingScholar.certificates} 
-                        target="_blank" 
+                      <a
+                        href={viewingScholar.certificates}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="view-value text-blue-600 hover:text-blue-800 underline cursor-pointer"
                       >
@@ -3400,9 +3402,9 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                 <p className="text-xs text-blue-100">Choose an action below</p>
               </div>
             </div>
-            
+
             <div className="h-10 w-px bg-white/30"></div>
-            
+
             <div className="flex items-center gap-3">
               <button
                 onClick={handleBulkForward}
@@ -3413,7 +3415,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                 </svg>
                 Forward
               </button>
-              
+
               <button
                 onClick={handleBulkDelete}
                 className="flex items-center gap-2 px-5 py-2.5 bg-red-500/90 hover:bg-red-600 rounded-xl transition-all duration-200 font-medium backdrop-blur-sm border border-red-400/30 hover:scale-105"
@@ -3423,7 +3425,7 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                 </svg>
                 Delete
               </button>
-              
+
               <button
                 onClick={handleClearSelection}
                 className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-200 font-medium backdrop-blur-sm border border-white/20"
@@ -3614,8 +3616,8 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                             }
                           }}
                           className={`text-xs px-3 py-1.5 rounded-md transition-all font-medium flex items-center gap-1.5
-                            ${isAllInCategorySelected 
-                              ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' 
+                            ${isAllInCategorySelected
+                              ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                               : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'}`}
                         >
                           {isAllInCategorySelected ? (
@@ -3651,19 +3653,18 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
                                   onChange={() => toggleColumnSelection(col.key)}
                                   className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500/30 focus:outline-none checked:bg-blue-500 checked:border-blue-500 transition-all cursor-pointer"
                                 />
-                                <svg 
-                                  className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" 
-                                  fill="none" 
-                                  viewBox="0 0 24 24" 
-                                  stroke="currentColor" 
+                                <svg
+                                  className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
                                   strokeWidth="3"
                                 >
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                               </div>
-                              <span className={`text-sm leading-tight select-none pt-0.5 ${
-                                selectedColumns.includes(col.key) ? 'text-blue-800 font-medium' : 'text-gray-700'
-                              }`}>
+                              <span className={`text-sm leading-tight select-none pt-0.5 ${selectedColumns.includes(col.key) ? 'text-blue-800 font-medium' : 'text-gray-700'
+                                }`}>
                                 {col.label}
                               </span>
                             </label>
@@ -3687,11 +3688,10 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
               <button
                 onClick={confirmDownloadExcel}
                 disabled={selectedColumns.length === 0}
-                className={`px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-sm ${
-                  selectedColumns.length > 0
+                className={`px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-all shadow-sm ${selectedColumns.length > 0
                     ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-md'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
+                  }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -3707,5 +3707,5 @@ const QueryScholars = ({ onFullscreenChange, onModalStateChange }) => {
   );
 };
 
-export default QueryScholars; 
+export default QueryScholars;
 

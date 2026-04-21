@@ -36,7 +36,7 @@ const Modal = ({ children, show, onClose, title }) => {
 // --- Main QuestionPapers Component ---
 export default function QuestionPapers({ onFullscreenChange }) {
   const { questionPapersData, assignedFaculty, isLoadingSupabase } = useAppContext();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState({ department: '' });
   const [modal, setModal] = useState({ type: null, data: null });
@@ -49,11 +49,11 @@ export default function QuestionPapers({ onFullscreenChange }) {
   // Group papers by faculty and department
   const groupedByFacultyAndDept = useMemo(() => {
     const grouped = {};
-    
+
     questionPapersData.forEach(paper => {
       const faculty = paper.faculty_name || 'Unknown Faculty';
       const dept = paper.department_name || 'Unknown Department';
-      
+
       if (!grouped[faculty]) {
         grouped[faculty] = {};
       }
@@ -80,19 +80,24 @@ export default function QuestionPapers({ onFullscreenChange }) {
 
   // Filter faculties based on department search and filter
   const filteredFaculties = useMemo(() => {
-    return faculties.map(faculty => ({
-      name: faculty,
-      departments: Object.keys(groupedByFacultyAndDept[faculty] || {})
-        .filter(dept => {
-          if (filter.department && dept !== filter.department) return false;
-          if (searchTerm && searchTerm.trim()) {
-            const term = searchTerm.toLowerCase().trim();
-            return dept.toLowerCase().includes(term);
-          }
-          return true;
-        })
-        .sort()
-    }));
+    return faculties
+      .filter(faculty => {
+        if (filter.faculty && faculty !== filter.faculty) return false;
+        return true;
+      })
+      .map(faculty => ({
+        name: faculty,
+        departments: Object.keys(groupedByFacultyAndDept[faculty] || {})
+          .filter(dept => {
+            if (filter.department && dept !== filter.department) return false;
+            if (searchTerm && searchTerm.trim()) {
+              const term = searchTerm.toLowerCase().trim();
+              return dept.toLowerCase().includes(term);
+            }
+            return true;
+          })
+          .sort()
+      }));
   }, [faculties, searchTerm, filter, groupedByFacultyAndDept]);
 
   // Toggle accordion
@@ -101,8 +106,8 @@ export default function QuestionPapers({ onFullscreenChange }) {
   // Show papers modal for a department
   const showPapersModal = (facultyName, departmentName) => {
     const papers = groupedByFacultyAndDept[facultyName]?.[departmentName] || [];
-    setModal({ 
-      type: 'papers', 
+    setModal({
+      type: 'papers',
       data: { facultyName, departmentName, papers }
     });
   };
@@ -110,17 +115,17 @@ export default function QuestionPapers({ onFullscreenChange }) {
   // Handle file action (open link)
   const handleFileAction = (paper, setType) => {
     let link = setType === 'A' ? paper.set_a : paper.set_b;
-    
+
     if (!link) {
       setMessageBox({ show: true, title: 'Notification', message: `No question paper has been uploaded for Set ${setType}.`, type: 'warning' });
       return;
     }
-    
+
     // Parse URL from "Set A | URL" or "Set B | URL" format
     if (link.includes('|')) {
       link = link.split('|')[1].trim();
     }
-    
+
     window.open(link, '_blank');
   };
 
@@ -212,7 +217,7 @@ export default function QuestionPapers({ onFullscreenChange }) {
       />
 
       {/* Message Box */}
-      <MessageBox 
+      <MessageBox
         show={messageBox.show}
         title={messageBox.title}
         message={messageBox.message}
@@ -278,7 +283,7 @@ const PapersModal = ({ show, onClose, data, onViewPaper }) => {
   // Group papers by subject code (to keep same subject together)
   const groupedBySubject = useMemo(() => {
     if (!data || !data.papers) return {};
-    
+
     const grouped = {};
     data.papers.forEach(paper => {
       const subjectCode = paper.subject_code;
@@ -317,7 +322,7 @@ const PapersModal = ({ show, onClose, data, onViewPaper }) => {
                 <p className="text-sm text-gray-700"><span className="font-semibold">Subject Name:</span> {subjectData.name}</p>
                 <p className="text-sm text-gray-700 mt-1"><span className="font-semibold">Subject Code:</span> {subjectData.code}</p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Set A */}
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">

@@ -981,8 +981,7 @@ export default function Checklist({ onModalStateChange }) {
                                               ...(checklist || {})
                                             };
 
-                                            const allMandatoryChecked = checklist && typeof checklist === 'object' && Object.values(checklist).every(item => item && (item.type === 'optional' || item.checked));
-                                            const rowStatus = allMandatoryChecked ? 'Verified' : 'Pending';
+                                            const rowStatus = s.status === 'Completed' || s.status === 'Verified' || s.status === 'Approved' ? 'Verified' : 'Pending';
 
                                             return (
                                               <div key={s.id} className="table-row">

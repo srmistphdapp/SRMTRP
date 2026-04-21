@@ -546,7 +546,7 @@ export const unassignScholar = async (scholarId) => {
     }
 
     const supervisorName = scholarData.supervisor_name;
-    const scholarType = scholarData.type || scholarData.program_type;
+    const scholarType = scholarData.program_type;
 
     // Clear supervisor_name and supervisor_status in examination_records
     const { data, error } = await supabaseAdmin

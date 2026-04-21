@@ -82,6 +82,46 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
     const [selectedScholarType, setSelectedScholarType] = useState('');
     const [isDepartmentSelected, setIsDepartmentSelected] = useState(false);
 
+    // Derive the authoritative scholar type from the `program` field bracket notation.
+    // The `program` field (e.g. "Ph.d.- Commerce [full Time - Science And Humanities]")
+    // comes directly from the application form and is more reliable than `program_type`
+    // or `type` columns which can be incorrectly populated.
+    const deriveScholarType = (scholar) => {
+        const programField = (scholar.program || '').toLowerCase();
+        const bracketMatch = programField.match(/\[([^\]]+)\]/);
+        const bracketContent = bracketMatch ? bracketMatch[1] : '';
+
+        if (bracketContent.includes('part time external (industry)') || bracketContent.includes('pte(industry)')) {
+            return 'Part Time Industry';
+        }
+        if (bracketContent.includes('part time external')) {
+            return 'Part Time External';
+        }
+        if (bracketContent.includes('part time internal')) {
+            return 'Part Time Internal';
+        }
+        if (bracketContent.includes('part time')) {
+            // generic "part time" — use program_type to disambiguate
+            const pt = (scholar.program_type || '').trim();
+            if (pt === 'Part Time Internal' || pt === 'PTI') return 'Part Time Internal';
+            if (pt === 'Part Time External' || pt === 'PTE') return 'Part Time External';
+            if (pt === 'Part Time External (Industry)' || pt === 'PTE(Industry)' || pt === 'Part Time Industry') return 'Part Time Industry';
+            return 'Part Time Internal';
+        }
+        if (bracketContent.includes('full time')) {
+            return 'Full Time';
+        }
+
+        // No bracket info — use program_type strictly, no fallback to Full Time
+        const pt = (scholar.program_type || '').trim();
+        if (pt === 'Full Time' || pt === 'FT') return 'Full Time';
+        if (pt === 'Part Time Internal' || pt === 'PTI') return 'Part Time Internal';
+        if (pt === 'Part Time External' || pt === 'PTE') return 'Part Time External';
+        if (pt === 'Part Time External (Industry)' || pt === 'PTE(Industry)' || pt === 'Part Time Industry') return 'Part Time Industry';
+
+        return null; // unknown — excluded from all type filters
+    };
+
     // Load data on component mount
     useEffect(() => {
         loadAllData();
@@ -189,7 +229,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                 id: assignment.id,
                 scholarId: assignment.id, // examination_records id
                 supervisorName: assignment.supervisor_name,
-                mode: assignment.type || assignment.program_type,
+                mode: assignment.program_type,
                 scholarName: assignment.registered_name || assignment.name,
                 applicationNo: assignment.application_no,
                 faculty: assignment.faculty,
@@ -219,27 +259,12 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
             let filteredData = data;
             if (scholarType && data) {
                 filteredData = data.filter(scholar => {
-                    // Use program_type as the ONLY authoritative field for scholar type
-                    const scholarTypeField = (scholar.program_type || '').trim();
-
-                    // Exact match with the selected type
-                    if (scholarType === 'Full Time') {
-                        return scholarTypeField === 'Full Time' || scholarTypeField === 'FT';
-                    } else if (scholarType === 'Part Time Internal') {
-                        return scholarTypeField === 'Part Time Internal' || scholarTypeField === 'PTI';
-                    } else if (scholarType === 'Part Time External') {
-                        // Exact match "Part Time External" but NOT "Part Time External (Industry)"
-                        return scholarTypeField === 'Part Time External' || scholarTypeField === 'PTE';
-                    } else if (scholarType === 'Part Time Industry') {
-                        // Match "Part Time External (Industry)" or "Part Time Industry"
-                        return scholarTypeField === 'Part Time External (Industry)' ||
-                            scholarTypeField === 'PTE(Industry)' ||
-                            scholarTypeField === 'Part Time Industry';
-                    }
-                    return false;
+                    const effectiveType = deriveScholarType(scholar);
+                    console.log(`Scholar ${scholar.application_no}: program_type="${scholar.program_type}", derived="${effectiveType}"`);
+                    return effectiveType === scholarType;
                 });
                 console.log(`🔍 Filtered to ${filteredData.length} scholars of type "${scholarType}"`);
-                console.log('📋 Scholar types found:', filteredData.map(s => s.program_type || s.type));
+                console.log('📋 Effective types:', filteredData.map(s => ({ app: s.application_no, derived: deriveScholarType(s) })));
             }
 
             // Populate the scholar dropdown
@@ -1426,7 +1451,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                                     </tr>
                                                     <tr className="bg-gray-50">
                                                         <td className="border border-gray-300 px-4 py-2 font-semibold text-gray-700">Type</td>
-                                                        <td className="border border-gray-300 px-4 py-2">{selectedScholar.type || selectedScholar.program_type}</td>
+                                                        <td className="border border-gray-300 px-4 py-2">{deriveScholarType(selectedScholar) || selectedScholar.program_type}</td>
                                                     </tr>
                                                     <tr>
                                                         <td className="border border-gray-300 px-4 py-2 font-semibold text-gray-700">Written Marks</td>

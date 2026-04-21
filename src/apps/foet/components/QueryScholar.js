@@ -34,6 +34,11 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
   const [actionType, setActionType] = useState('');
   const [confirmAgreed, setConfirmAgreed] = useState(false);
 
+  // added for edit
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingScholar, setEditingScholar] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+
   // Filter states
   const [tempFilters, setTempFilters] = useState({
     type: 'All Types',
@@ -48,17 +53,7 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
   // Helper function to determine status based on query resolution and forwarding
   const getScholarStatus = (scholar) => {
     if (!scholar) return 'Pending';
-
-    // If query_resolved_dept has a value (like "resolved_to_cse"), status is "Forwarded"
-    if (scholar.query_resolved_dept) {
-      return 'Forwarded';
-    }
-
-    // If query_resolved is "Query Resolved" but not yet forwarded, status is "Pending"
-    if (scholar.query_resolved === 'Query Resolved') {
-      return 'Pending';
-    }
-
+    if (scholar.status === 'Forwarded') return 'Forwarded';
     return 'Pending';
   };
 
@@ -77,9 +72,8 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     // Apply active filters
     if (activeFilters.type !== 'All Types') {
       scholars = scholars.filter(s => {
-        const t = (s.type || '').toLowerCase();
-        if (activeFilters.type === 'Full Time') return /\bft[a-z]*\b|full\s*time/.test(t);
-        if (activeFilters.type === 'Part Time') return /\bpt[a-z]*\b|part\s*time/.test(t);
+        if (activeFilters.type === 'Full Time') return s.type === 'Full Time';
+        if (activeFilters.type === 'Part Time') return s.type === 'Part Time';
         return true;
       });
     }
@@ -99,9 +93,7 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
         (s.registered_name || '').toLowerCase().includes(searchLower) ||
         (s.application_no || '').toLowerCase().includes(searchLower) ||
         (s.faculty || '').toLowerCase().includes(searchLower) ||
-        (s.institution || '').toLowerCase().includes(searchLower) ||
-        (s.department || '').toLowerCase().includes(searchLower) ||
-        (s.type || '').toLowerCase().includes(searchLower)
+        (s.program || '').toLowerCase().includes(searchLower)
       );
     }
 
@@ -266,11 +258,11 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
           'Registered Name': scholar.registered_name || '-',
           'Application No': scholar.application_no || '-',
           'Have You Graduated From India?': scholar.graduated_from_india || 'Yes',
-          'Course': scholar.course || '-',
-          'Select Institution': scholar.institution || '-',
-          'Department': scholar.department || '-',
-          'Type': scholar.program_type || scholar.type || '-',
+          'Course': scholar.course || scholar.program || '-',
+          'Select Institution': scholar.faculty || '-',
+          'Select Program': cleanProgramName(scholar.program) || scholar.program || '-',
           'Certificates': scholar.certificates || '-',
+          '1 - Employee Id': scholar.employee_id || '-',
           '1 - Designation': scholar.designation || '-',
           '1 - Organization Name': scholar.organization_name || '-',
           '1 - Organization Address': scholar.organization_address || '-',
@@ -391,18 +383,17 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     const forwardingData = scholarsToForward.map(scholar => ({
       id: scholar.id,
       name: scholar.registered_name,
-      institution: scholar.institution,
-      department: scholar.department,
-      type: scholar.type
+      faculty: scholar.faculty,
+      program: scholar.program
     }));
 
     // Show confirmation
     const scholarList = forwardingData
-      .map(d => `${d.name} (${d.department || d.institution || ''})`)
+      .map(d => `${d.name} (${d.program})`)
       .join('\n');
 
     setConfirmMessage(
-      `Forward ${forwardingData.length} scholar(s) back to Director/Admin?\n\n${scholarList}`
+      scholarsToForward.length === 1 ? `for ${scholarsToForward[0].registered_name}` : `for ${scholarsToForward.length} scholars`
     );
     setActionType('forward');
     setConfirmAction(() => async () => {
@@ -411,19 +402,27 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     setShowConfirmModal(true);
   };
 
-  const handleForwardSingle = async (scholar) => {
-    const forwardingData = [{
-      id: scholar.id,
-      name: scholar.registered_name,
-      institution: scholar.institution,
-      department: scholar.department,
-      type: scholar.type
-    }];
-
+  const handleResolveQuery = async (scholar) => {
     setConfirmAgreed(false);
-    setActionType('forward');
+    setActionType('resolve');
+    setConfirmMessage(`for ${scholar.registered_name}`);
     setConfirmAction(() => async () => {
-      await performForwarding(forwardingData);
+      try {
+        const { error } = await supabase
+          .from('scholar_applications')
+          .update({ query_resolved: 'Query Resolved' })
+          .eq('id', scholar.id);
+        
+        if (error) throw error;
+        
+        setQueryScholarsData(prev => prev.map(s => s.id === scholar.id ? { ...s, query_resolved: 'Query Resolved' } : s));
+        showMessageBox('Query marked as resolved!', 'success');
+      } catch (err) {
+        console.error('Error resolving query:', err);
+        showMessageBox('Failed to mark query as resolved.', 'error');
+      }
+      setShowConfirmModal(false);
+      setSelectedScholarIds([]);
     });
     setShowConfirmModal(true);
   };
@@ -432,71 +431,31 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
     try {
       console.log('🔄 Starting forward process for resolved query scholars:', forwardingData);
 
-      // Update each scholar individually based on their institution and department
+      // Update each scholar individually to "Query Resolved"
       const updatePromises = forwardingData.map(async (data) => {
-        // Get the scholar's institution and department columns directly
-        const { data: scholarData, error: fetchError } = await supabase
-          .from('scholar_applications')
-          .select('institution, department, type')
-          .eq('id', data.id)
-          .single();
-
-        if (fetchError) {
-          console.error(`❌ Error fetching scholar ${data.id} data:`, fetchError);
-          return { error: fetchError };
+        // Find the scholar from loaded data
+        const fullScholar = queryScholarsData.find(s => s.id === data.id);
+        
+        // Construct the forwardText
+        let forwardText = 'Forward';
+        if (fullScholar && fullScholar.institution) {
+          const parts = [
+            fullScholar.institution, 
+            fullScholar.department, 
+            fullScholar.program_type || extractProgramType(fullScholar.program)
+          ].filter(Boolean);
+          forwardText = parts.length > 0 ? parts.join(' | ') : 'Forward';
         }
-
-        console.log(`🔍 DEBUG - Scholar ${data.id} data:`, {
-          institution: scholarData.institution,
-          department: scholarData.department,
-          type: scholarData.type,
-          assignedFaculty: assignedFaculty
-        });
-
-        // Use department + institution to derive the department code
-        let departmentCode = null;
-
-        // Import the function from departmentMapping utils
-        const { getDepartmentFromProgram } = await import('../utils/departmentMapping');
-
-        // Derive department code from department name + institution (no program needed)
-        departmentCode = getDepartmentFromProgram(
-          scholarData.department,
-          scholarData.institution
-        );
-
-        // Construct the resolved_to_* value
-        let resolvedDeptValue = null;
-        if (departmentCode) {
-          resolvedDeptValue = `resolved_to_${departmentCode}`;
-          console.log(`✅ Found department code: ${departmentCode} → ${resolvedDeptValue}`);
-        }
-
-        // Fallback logic if mapping didn't work
-        if (!resolvedDeptValue) {
-          console.log(`⚠️ Mapping failed, using institution fallback for scholar ${data.id}`);
-
-          // Institution-based fallback
-          const inst = (scholarData.institution || '').toLowerCase();
-          if (inst.includes('engineering') || inst.includes('technology')) {
-            resolvedDeptValue = 'resolved_to_CSE';
-          } else if (inst.includes('management')) {
-            resolvedDeptValue = 'resolved_to_MBA';
-          } else if (inst.includes('medical') || inst.includes('health')) {
-            resolvedDeptValue = 'resolved_to_BMS';
-          } else if (inst.includes('science') || inst.includes('humanities')) {
-            resolvedDeptValue = 'resolved_to_CS';
-          } else {
-            resolvedDeptValue = 'resolved_to_CSE';
-          }
-          console.log(`⚠️ Using institution fallback: ${scholarData.institution} → ${resolvedDeptValue}`);
-        }
-
-        console.log(`📝 FINAL: Updating scholar ${data.id} (${data.name}) with institution "${scholarData.institution}", department "${scholarData.department}", type "${scholarData.type}" - setting query_resolved_dept to '${resolvedDeptValue}'`);
 
         return supabase
           .from('scholar_applications')
-          .update({ query_resolved_dept: resolvedDeptValue })
+          .update({ 
+            query_resolved: 'Query Resolved',
+            query_resolved_dept: 'Query Resolved',
+            query_faculty: forwardText,
+            status: 'Forwarded',
+            forwarded_at: new Date().toISOString()
+          })
           .eq('id', data.id)
           .select();
       });
@@ -524,9 +483,9 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
       }
 
       // Success
-      console.log(`✅ Successfully forwarded ${forwardingData.length} resolved query scholars to their respective departments`);
+      console.log(`✅ Successfully marked ${forwardingData.length} queries as resolved`);
       showMessageBox(
-        `${forwardingData.length} scholar(s) successfully forwarded to their respective departments!`,
+        `${forwardingData.length} query(ies) successfully resolved and updated!`,
         'success'
       );
       setSelectedScholarIds([]);
@@ -540,6 +499,56 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
   const handleViewScholar = (scholar) => {
     setSelectedScholar(scholar);
     setShowViewModal(true);
+  };
+
+  const openEditModal = (scholar) => {
+    setEditingScholar(scholar);
+    setEditFormData({ ...scholar });
+    setShowEditModal(true);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatePayload = {
+        registered_name: editFormData.registered_name,
+        mobile_number: editFormData.mobile_number,
+        email: editFormData.email,
+        ug_cgpa: editFormData.ug_cgpa,
+        pg_cgpa: editFormData.pg_cgpa,
+        institution: editFormData.institution,
+        department: editFormData.department,
+        father_name: editFormData.father_name,
+        type: editFormData.type,
+        exam1_name: editFormData.exam1_name,
+        exam1_qualified: editFormData.exam1_qualified,
+        certificates: editFormData.certificates
+      };
+
+      const { error } = await supabase
+        .from('scholar_applications')
+        .update(updatePayload)
+        .eq('id', editingScholar.id);
+
+      if (error) throw error;
+      
+      showMessageBox('Scholar details updated successfully!', 'success');
+      
+      // Update local state
+      setQueryScholarsData(prev => prev.map(s => s.id === editingScholar.id ? { ...s, ...updatePayload } : s));
+      // filteredScholars is recomputed automatically from queryScholarsData in useEffect, 
+      // but if not, we can force a sync. The useEffect handles it, so we don't strictly need to set filteredScholars.
+      
+      setShowEditModal(false);
+    } catch (err) {
+      console.error('Error updating scholar:', err);
+      showMessageBox('Error updating scholar details.', 'error');
+    }
   };
 
   const getStatusInfo = (scholar) => {
@@ -680,13 +689,13 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
               <th>REGISTERED NAME</th>
               <th>APPLICATION NO</th>
               <th>SELECT INSTITUTION</th>
-              <th>DEPARTMENT</th>
+              <th>SELECT PROGRAM</th>
               <th>TYPE</th>
               <th>MOBILE NUMBER</th>
               <th>EMAIL ID</th>
               <th>GENDER</th>
               <th>CERTIFICATES</th>
-              <th>ADMIN REVIEW</th>
+              <th>REVIEW</th>
               <th>STATUS</th>
               <th>ACTIONS</th>
             </tr>
@@ -710,9 +719,9 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
                     <td className="text-center">{index + 1}</td>
                     <td>{scholar.registered_name}</td>
                     <td>{scholar.application_no}</td>
-                    <td>{scholar.institution || scholar.faculty}</td>
-                    <td>{scholar.department || '-'}</td>
-                    <td>{scholar.program_type || scholar.type || '-'}</td>
+                    <td>{scholar.faculty}</td>
+                    <td>{cleanProgramName(scholar.program) || scholar.program}</td>
+                    <td>{scholar.program_type || extractProgramType(scholar.program) || '-'}</td>
                     <td>{scholar.mobile_number}</td>
                     <td>{scholar.email}</td>
                     <td>{scholar.gender}</td>
@@ -724,33 +733,89 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
                       )}
                     </td>
                     <td className="text-center">
-                      <span className={`department-review-badge ${(scholar.query_resolved || scholar.dept_review || '').toLowerCase().replace(' ', '-')}`}>
-                        {scholar.query_resolved || scholar.dept_review || 'Pending'}
-                      </span>
+                      {scholar.query_resolved === 'Query Resolved' ? (
+                        <span style={{ backgroundColor: '#d1fae5', color: '#065f46', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600', border: '1px solid #a7f3d0' }}>
+                          Query Resolved
+                        </span>
+                      ) : (
+                        <span className={`department-review-badge ${(scholar.dept_review || '').toLowerCase().replace(' ', '-')}`}>
+                          {scholar.dept_review === 'Query' ? 'Query' : (scholar.dept_review || 'Pending')}
+                        </span>
+                      )}
                     </td>
                     <td className="text-center"><span className={`status-badge ${getStatusInfo(scholar).className}`}>{getStatusInfo(scholar).text}</span></td>
                     <td className="text-center">
-                      <button
-                        onClick={() => handleViewScholar(scholar)}
-                        className="table-action-btn view-btn"
-                        title="View Details"
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '12px',
-                          backgroundColor: '#A855F7',
-                          color: 'white',
-                          border: 'none',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.2s ease',
-                          boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)'
-                        }}
-                      >
-                        <Eye size={16} />
-                      </button>
+                      <div className="table-actions" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px' }}>
+                        <button
+                          onClick={() => handleViewScholar(scholar)}
+                          className="table-action-btn view-btn"
+                          title="View Details"
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '12px',
+                            backgroundColor: '#A855F7',
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)'
+                          }}
+                        >
+                          <Eye size={16} />
+                        </button>
+                        <button
+                          onClick={() => openEditModal(scholar)}
+                          className="table-action-btn btn-edit"
+                          title={scholar.status === 'Forwarded' ? 'Cannot edit resolved scholar' : 'Edit Scholar'}
+                          disabled={scholar.status === 'Forwarded'}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '12px',
+                            backgroundColor: scholar.status === 'Forwarded' ? '#9CA3AF' : '#3B82F6',
+                            color: 'white',
+                            border: 'none',
+                            cursor: scholar.status === 'Forwarded' ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease',
+                            boxShadow: scholar.status === 'Forwarded' ? 'none' : '0 2px 8px rgba(59, 130, 246, 0.3)',
+                            opacity: scholar.status === 'Forwarded' ? 0.5 : 1
+                          }}
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleResolveQuery(scholar)}
+                          className="table-action-btn btn-forward"
+                          title={scholar.query_resolved === 'Query Resolved' ? 'Query Already Resolved' : 'Mark Query Resolved'}
+                          disabled={scholar.query_resolved === 'Query Resolved' || scholar.status === 'Forwarded'}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '12px',
+                            backgroundColor: (scholar.query_resolved === 'Query Resolved' || scholar.status === 'Forwarded') ? '#9CA3AF' : '#10B981',
+                            color: 'white',
+                            border: 'none',
+                            cursor: (scholar.query_resolved === 'Query Resolved' || scholar.status === 'Forwarded') ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s ease',
+                            boxShadow: scholar.status === 'Forwarded' ? 'none' : '0 2px 8px rgba(16, 185, 129, 0.3)',
+                            opacity: scholar.status === 'Forwarded' ? 0.5 : 1
+                          }}
+                        >
+                          <Check size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -807,19 +872,19 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Course:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.course || selectedScholar.program || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Select Institution:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.institution || selectedScholar.faculty || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.faculty || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Select Program:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.department || selectedScholar.faculty || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{cleanProgramName(selectedScholar.program) || selectedScholar.faculty || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Type:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || selectedScholar.type || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program_type || extractProgramType(selectedScholar.program) || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Certificates Drive Link:</label>
@@ -1000,12 +1065,12 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
                 </div>
               </div>
 
-              {/* Application Status */}
+              {/* Application Status & Review */}
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 bg-gray-100 p-3 border-b border-gray-300">Application Status</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 bg-gray-100 p-3 border-b border-gray-300">Application Status & Review</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
                   <div className="view-field">
-                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Status:</label>
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Current Status:</label>
                     <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{getScholarStatus(selectedScholar) || '-'}</span>
                   </div>
                   <div className="view-field">
@@ -1014,15 +1079,71 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Department:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.department || '-'}</span>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.program || '-'}</span>
                   </div>
                   <div className="view-field">
                     <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Type:</label>
                     <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.type || '-'}</span>
                   </div>
                   <div className="view-field">
-                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>User Id:</label>
-                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.user_id || '-'}</span>
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Department Review:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.dept_review || 'Pending'}</span>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Faculty Status:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.faculty_status || 'N/A'}</span>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Overall Status:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.status || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Research & Academic Information */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 bg-gray-100 p-3 border-b border-gray-300">Research & Academic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Research Topic:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.research_topic || 'N/A'}</span>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Guide Name:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.guide_name || 'N/A'}</span>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>UG CGPA:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.ug_cgpa || 'N/A'}</span>
+                  </div>
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>PG CGPA:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block' }}>{selectedScholar.pg_cgpa || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documents & Certificates */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 bg-gray-100 p-3 border-b border-gray-300">Documents & Certificates</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="view-field">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Certificates Link:</label>
+                    <span className="view-value" style={{ fontSize: '0.9375rem', color: '#1f2937', fontWeight: '500', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', padding: '0.75rem', borderRadius: '16px', display: 'block', wordBreak: 'break-all' }}>{selectedScholar.certificates || 'Not provided'}</span>
+                  </div>
+                  <div className="view-field flex flex-col gap-1 justify-center">
+                    <label className="view-label" style={{ fontSize: '0.65rem', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em' }}>View Documents:</label>
+                    <button
+                      onClick={() => {
+                        if (selectedScholar.certificates) {
+                          window.open(selectedScholar.certificates, '_blank', 'noopener');
+                        }
+                      }}
+                      disabled={!selectedScholar.certificates}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${selectedScholar.certificates ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-200 cursor-pointer' : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'}`}
+                    >
+                      {selectedScholar.certificates ? 'Open Documents' : 'No Documents'}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1280,9 +1401,9 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
         showConfirmModal && (
           <div className="modal-overlay" style={{ display: 'flex', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <div className="modal-content max-w-md w-full">
-              <h3 className="text-2xl font-bold mb-3">Confirm Forwarding</h3>
+              <h3 className="text-2xl font-bold mb-3">{actionType === 'resolve' ? 'Confirm Query Resolved' : 'Confirm Forward'}</h3>
               <div className="mb-4 border rounded-lg p-4 bg-gray-50">
-                <div className="text-sm text-gray-600">Admin Name: <span className="font-semibold">{coordinatorInfo?.name || 'Research Coordinator'}</span></div>
+                <div className="text-sm text-gray-600">Coordinator Name: <span className="font-semibold">{coordinatorInfo?.name || 'Research Coordinator'}</span></div>
                 <div className="text-sm text-gray-600">Role: <span className="font-semibold">Research Coordinator, {coordinatorInfo?.faculty || 'Faculty'}</span></div>
                 <div className="text-sm text-gray-600">Email: <a href={`mailto:${coordinatorInfo?.email || ''}`} className="text-sky-600">{coordinatorInfo?.email || 'Not available'}</a></div>
               </div>
@@ -1300,18 +1421,85 @@ const QueryScholar = ({ onBackToDepartment, activeToggle, onToggleChange }) => {
                   <span className="text-sm whitespace-nowrap">I confirm I have read and agree to the above terms</span>
                 </label>
               </div>
-              <div className="mb-6 text-sm text-gray-700">You are about to <span className="font-bold">FORWARD</span> records {selectedScholarIds.length === 1 ? `for ${(() => {
-                const s = filteredScholars.find(x => selectedScholarIds.includes(x.id));
-                return s ? s.registered_name : 'this scholar';
-              })()}` : `for ${selectedScholarIds.length} scholars`} to the department for further processing.</div>
+              <div className="mb-6 text-sm text-gray-700">You are about to <span className="font-bold whitespace-nowrap">{actionType === 'resolve' ? 'MARK AS QUERY RESOLVED' : 'FORWARD SCHOLAR(S)'}</span> {confirmMessage}. This will update their status.</div>
               <div className="flex justify-end gap-3">
                 <button onClick={() => { setShowConfirmModal(false); setConfirmAgreed(false); }} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
-                <button onClick={confirmAction} disabled={!confirmAgreed} className={`py-2 px-4 rounded-lg font-bold text-white ${confirmAgreed ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-95' : 'bg-gray-300 cursor-not-allowed'}`}>Confirm Forward</button>
+                <button onClick={confirmAction} disabled={!confirmAgreed} className={`py-2 px-4 rounded-lg font-bold text-white ${confirmAgreed ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-95' : 'bg-gray-300 cursor-not-allowed'}`}>Confirm</button>
               </div>
             </div>
           </div>
         )
       }
+
+      {/* Edit Modal */}
+      {showEditModal && editingScholar && (
+        <div className="modal-overlay" style={{ display: 'flex', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto" style={{ margin: 'auto', position: 'relative', zIndex: 10000, border: '1px solid #d1d5db', borderRadius: '12px' }}>
+            <div className="sticky top-0 bg-white border-b border-gray-300 p-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Edit Scholar Details</h2>
+              <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleEditSubmit} className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Registered Name</label>
+                  <input type="text" name="registered_name" value={editFormData.registered_name || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                  <input type="text" name="mobile_number" value={editFormData.mobile_number || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email ID</label>
+                  <input type="email" name="email" value={editFormData.email || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">UG Marks / CGPA </label>
+                  <input type="text" name="ug_cgpa" value={editFormData.ug_cgpa || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">PG Marks / CGPA </label>
+                  <input type="text" name="pg_cgpa" value={editFormData.pg_cgpa || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Institution</label>
+                  <input type="text" name="institution" value={editFormData.institution || ''} onChange={handleEditChange} disabled className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                  <input type="text" name="department" value={editFormData.department || ''} onChange={handleEditChange} disabled className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Father Name</label>
+                  <input type="text" name="father_name" value={editFormData.father_name || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mode Of Study (Type)</label>
+                  <input type="text" name="type" value={editFormData.type || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Exam Name</label>
+                  <input type="text" name="exam1_name" value={editFormData.exam1_name || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Qualified Status</label>
+                  <input type="text" name="exam1_qualified" value={editFormData.exam1_qualified || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+                <div className="form-group mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Certificate Link</label>
+                  <input type="text" name="certificates" value={editFormData.certificates || ''} onChange={handleEditChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end gap-3">
+                <button type="button" onClick={() => setShowEditModal(false)} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div >
   );
 };

@@ -189,7 +189,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                 id: assignment.id,
                 scholarId: assignment.id, // examination_records id
                 supervisorName: assignment.supervisor_name,
-                mode: assignment.type || assignment.program_type,
+                mode: assignment.program_type,
                 scholarName: assignment.registered_name || assignment.name,
                 applicationNo: assignment.application_no,
                 faculty: assignment.faculty,
@@ -239,7 +239,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                     return false;
                 });
                 console.log(`🔍 Filtered to ${filteredData.length} scholars of type "${scholarType}"`);
-                console.log('📋 Scholar types found:', filteredData.map(s => s.program_type || s.type));
+                console.log('📋 Scholar types found:', filteredData.map(s => s.program_type));
             }
 
             // Populate the scholar dropdown
@@ -1426,7 +1426,7 @@ const Supervisors = ({ isSidebarClosed, onModalStateChange }) => {
                                                     </tr>
                                                     <tr className="bg-gray-50">
                                                         <td className="border border-gray-300 px-4 py-2 font-semibold text-gray-700">Type</td>
-                                                        <td className="border border-gray-300 px-4 py-2">{selectedScholar.type || selectedScholar.program_type}</td>
+                                                        <td className="border border-gray-300 px-4 py-2">{selectedScholar.program_type}</td>
                                                     </tr>
                                                     <tr>
                                                         <td className="border border-gray-300 px-4 py-2 font-semibold text-gray-700">Written Marks</td>

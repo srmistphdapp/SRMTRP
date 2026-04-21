@@ -120,7 +120,6 @@ export const addExaminationRecord = async (recordData) => {
       institution: recordData.institution,
       program: recordData.program,
       program_type: recordData.program_type,
-      type: recordData.type || recordData.program_type,
       mobile_number: recordData.mobile_number,
       email: recordData.email,
       date_of_birth: recordData.date_of_birth,
@@ -169,7 +168,6 @@ export const addExaminationRecord = async (recordData) => {
         institution: scholar.institution,
         program: scholar.program,
         program_type: scholar.program_type,
-        type: scholar.type,
         mobile_number: scholar.mobile_number,
         email: scholar.email,
         gender: scholar.gender,
@@ -202,7 +200,7 @@ const getOrCreateExamRecord = async (scholarId) => {
   // Get the scholar's application_no
   const { data: scholar, error: scholarError } = await supabase
     .from('scholar_applications')
-    .select('application_no, registered_name, faculty, department, institution, program, program_type, type, mobile_number, email, gender, date_of_birth, nationality')
+    .select('application_no, registered_name, faculty, department, institution, program, program_type, mobile_number, email, gender, date_of_birth, nationality')
     .eq('id', scholarId)
     .maybeSingle();
 
@@ -231,8 +229,7 @@ const getOrCreateExamRecord = async (scholarId) => {
       department: scholar.department,
       institution: scholar.institution,
       program: scholar.program,
-      program_type: scholar.program_type || scholar.type || null,
-      type: scholar.type || scholar.program_type || null,
+      program_type: scholar.program_type || null,
       mobile_number: scholar.mobile_number,
       email: scholar.email,
       gender: scholar.gender,
@@ -507,10 +504,9 @@ export const uploadExaminationExcel = async (file) => {
 
     // Helper function to extract type from program string
     const extractType = (programString) => {
-      if (!programString) return 'Full Time';
+      if (!programString) return null;
       const lowerProgram = programString.toLowerCase();
 
-      // Check for specific part-time categories in order
       if (lowerProgram.includes('pte (industry)') || lowerProgram.includes('part time external (industry)')) {
         return 'Part Time External (Industry)';
       }
@@ -523,7 +519,7 @@ export const uploadExaminationExcel = async (file) => {
       if (lowerProgram.includes('ft') || lowerProgram.includes('full time')) {
         return 'Full Time';
       }
-      return 'Full Time';
+      return null;
     };
 
     // Map Excel columns to database columns - matching exact Supabase schema
@@ -639,7 +635,6 @@ export const uploadExaminationExcel = async (file) => {
         // Additional fields for examination module
         faculty: faculty,
         department: getColumnValue(row, 'department', 'Department', 'Dept', 'Department Name', 'Dept Name'),
-        type: type,
 
         // Initialize examination-specific fields with default values (don't import from Excel)
         written_marks_100: 0,

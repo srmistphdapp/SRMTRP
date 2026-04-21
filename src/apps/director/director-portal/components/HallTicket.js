@@ -745,7 +745,7 @@ const HallTicket = ({ isSidebarMinimized, onFullscreenChange, onModalStateChange
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application No</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program / Mode</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mode</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
@@ -771,8 +771,7 @@ const HallTicket = ({ isSidebarMinimized, onFullscreenChange, onModalStateChange
                       <div className="truncate max-w-[200px]" title={scholar.department}>{scholar.department || '-'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      <div className="font-medium text-gray-800">{scholar.program || '-'}</div>
-                      <div className="text-xs text-blue-600 mt-1">{scholar.type || scholar.program_type || '-'}</div>
+                      <div className="text-xs text-blue-600">{scholar.type || scholar.program_type || '-'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${scholar.hall_ticket_generated ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>

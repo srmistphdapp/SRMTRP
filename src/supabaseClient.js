@@ -2,7 +2,13 @@ import { createClient } from '@supabase/supabase-js';
 
 // Get campus preference from localStorage (default to 'rmp')
 const getCampusPreference = () => {
-  return localStorage.getItem('campus_preference') || 'rmp';
+  try {
+    return localStorage.getItem('campus_preference') || 'rmp';
+  } catch (e) {
+    // If localStorage is not available, default to 'rmp'
+    console.warn('localStorage not available, defaulting to rmp:', e);
+    return 'rmp';
+  }
 };
 
 // Get Supabase configuration based on campus
@@ -28,7 +34,15 @@ const getSupabaseConfig = () => {
 const config = getSupabaseConfig();
 
 if (!config.url || !config.anonKey) {
-  console.error('Missing Supabase environment variables for campus:', getCampusPreference());
+  const campus = getCampusPreference();
+  console.error('Missing Supabase environment variables for campus:', campus);
+  console.error('Expected variables:');
+  console.error(`  - REACT_APP_${campus.toUpperCase()}_SUPABASE_URL`);
+  console.error(`  - REACT_APP_${campus.toUpperCase()}_SUPABASE_ANON_KEY`);
+  console.error('Config:', {
+    url: config.url ? '✓' : '✗',
+    anonKey: config.anonKey ? '✓' : '✗'
+  });
 }
 
 // Regular client for normal operations

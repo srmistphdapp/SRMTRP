@@ -18,6 +18,7 @@ import {
   fetchDistinctDepartments,
   fetchDistinctTypes
 } from '../../../../services/scholarService';
+import { normalizeFacultyName } from '../../../../utils/departmentUtils';
 
 const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
   const { facultiesData, scholarsData, setScholarsData, getScholarStats } = useAppContext();
@@ -2689,16 +2690,7 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
   }, [showModal, showViewModal, showUploadModal, showFilterModal, showHelpModal,
     showForwardModal, showForwardAllModal, showBulkForwardModal, showDeleteModal, showDeleteAllModal, showBulkDeleteModal, showDuplicatesModal, showDownloadModal, onModalStateChange]);
 
-  // Helper for safe string normalization (removes spaces, special chars, and common prefixes)
-  const normalize = (str) => {
-    if (!str) return '';
-    return str.toLowerCase()
-      .replace(/&/g, 'and')            // Replace & with and
-      .replace(/sciences/g, 'science') // Normalize plural sciences -> science
-      .replace(/faculty/g, '')         // Remove 'faculty'
-      .replace(/of/g, '')              // Remove 'of'
-      .replace(/[^a-z0-9]/g, '');      // Remove spaces/special chars
-  };
+  // Using centralized normalizeFacultyName from departmentUtils for robust matching
 
   // Filter and sort scholars
   const getFilteredScholars = () => {
@@ -2714,10 +2706,10 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
         scholar.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
         scholar.faculty.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // 2. Institution Filtering (Robust Fuzzy Match)
+      // 2. Institution Filtering (Robust Fuzzy Match) using centralized normalization
       const matchesFaculty = selectedFaculty === '' ||
-        normalize(scholar.institution).includes(normalize(selectedFaculty)) ||
-        normalize(selectedFaculty).includes(normalize(scholar.institution));
+        normalizeFacultyName(scholar.institution).includes(normalizeFacultyName(selectedFaculty)) ||
+        normalizeFacultyName(selectedFaculty).includes(normalizeFacultyName(scholar.institution));
 
       // 3. Department Filtering
       const matchesDepartment = selectedDepartment === '' ||

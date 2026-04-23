@@ -7,6 +7,7 @@ import {
 import { publishFacultyResults } from '../../../../services/examinationService';
 import { supabase } from '../../../../supabaseClient';
 import { toast } from 'react-toastify';
+import { normalizeFacultyName, normalizeDepartmentName } from '../../../../utils/departmentUtils';
 
 // Faculty color map
 const facultyColors = {
@@ -327,14 +328,9 @@ export default function Result({ onModalStateChange }) {
     setExpanded(e => ({ ...e, [key]: !e[key] }));
   };
 
-  // Helper function to normalize names for comparison
-  const normalizeName = (name) => {
-    if (!name) return '';
-    return name.toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
+  // Using centralized normalizeFacultyName from departmentUtils for robust faculty matching
+  // Also serves for department name normalization (same logic applies)
+  const normalizeName = (name) => normalizeFacultyName(name);
 
   // Get scholar count for a faculty - match by faculty field directly
   const getScholarCountForFaculty = (facultyName) => {

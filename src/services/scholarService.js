@@ -1,5 +1,16 @@
 import { supabase } from '../supabaseClient';
 import * as XLSX from 'xlsx';
+import { normalizeFacultyName } from '../utils/departmentUtils';
+
+// HELPER: Check if a string contains faculty abbreviation with robust "and" handling
+// Handles: "e and t", "e AND t", "e & t", "E and T", etc.
+const containsFacultyAbbreviation = (text, abbrev1, abbrev2) => {
+  if (!text) return false;
+  const lower = text.toLowerCase().replace(/\s*&\s*/g, ' and ');
+  const alt1 = abbrev1.toLowerCase().replace(/\s*&\s*/g, ' and ');
+  const alt2 = abbrev2?.toLowerCase().replace(/\s*&\s*/g, ' and ');
+  return lower.includes(alt1) || (alt2 ? lower.includes(alt2) : false);
+};
 
 // SHARED FETCH LOGIC - Used by BOTH Director and Admin Scholar Administration
 export const fetchDirectorAdminScholars = async () => {
@@ -919,8 +930,10 @@ export const uploadScholarExcel = async (file) => {
           // Medical must be checked BEFORE engineering/technology to avoid misclassifying
           // departments like "Anaesthesia Technology", "Renal Dialysis Technology" etc.
           if (fl.includes('medical') || fl.includes('health') || fl.includes('medicine')) return 'Faculty of Medical & Health Science';
-          if (fl.includes('engineering') || fl.includes('e and t') || fl.includes('e & t')) return 'Faculty of Engineering & Technology';
-          if (fl.includes('science') || fl.includes('humanities') || fl.includes('s and h') || fl.includes('s & h')) return 'Faculty of Science & Humanities';
+          // Use helper to check for E&T with all "and" variations
+          if (containsFacultyAbbreviation(fl, 'engineering', 'e and t') || containsFacultyAbbreviation(fl, 'e & t', 'foet')) return 'Faculty of Engineering & Technology';
+          // Use helper to check for S&H with all "and" variations
+          if (containsFacultyAbbreviation(fl, 'science', 's and h') || containsFacultyAbbreviation(fl, 's & h', 'fsh')) return 'Faculty of Science & Humanities';
           if (fl.includes('management') || fl.includes('mgt') || fl.includes('business')) return 'Faculty of Management';
           if (fl.includes('law') || fl.includes('legal')) return 'Faculty of Law';
           // Only fall back to 'technology' keyword after ruling out medical
@@ -942,8 +955,10 @@ export const uploadScholarExcel = async (file) => {
         if (programString) {
           const programLower = programString.toLowerCase();
           if (programLower.includes('medical') || programLower.includes('health') || programLower.includes('medicine')) return 'Faculty of Medical & Health Science';
-          if (programLower.includes('engineering') || programLower.includes('e and t') || programLower.includes('e & t')) return 'Faculty of Engineering & Technology';
-          if (programLower.includes('science') || programLower.includes('humanities') || programLower.includes('s and h') || programLower.includes('s & h')) return 'Faculty of Science & Humanities';
+          // Use helper to check for E&T with all "and" variations
+          if (containsFacultyAbbreviation(programLower, 'engineering', 'e and t') || containsFacultyAbbreviation(programLower, 'e & t', 'foet')) return 'Faculty of Engineering & Technology';
+          // Use helper to check for S&H with all "and" variations
+          if (containsFacultyAbbreviation(programLower, 'science', 's and h') || containsFacultyAbbreviation(programLower, 's & h', 'fsh')) return 'Faculty of Science & Humanities';
           if (programLower.includes('management') || programLower.includes('mgt') || programLower.includes('business')) return 'Faculty of Management';
           if (programLower.includes('law') || programLower.includes('legal')) return 'Faculty of Law';
           // Only use 'technology' as a fallback after ruling out medical

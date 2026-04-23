@@ -4,6 +4,7 @@ import { useAppContext } from '../../context/AppContext.js';
 import { fetchBackToDirectorCountsByFaculty, getTotalApplicationsCount, getScholarCountsByFacultyFromDB, getDepartmentWiseScholarCountsWithFaculties } from '../../../../services/scholarService';
 import { getCoordinatorStats } from '../../../../services/coordinatorService';
 import { getExaminationCountsByType } from '../../../../services/examinationService';
+import { normalizeFacultyName } from '../../../../utils/departmentUtils';
 
 const Dashboard = ({ appData }) => {
   const { facultiesData, getTotalDepartments } = useAppContext();
@@ -260,13 +261,16 @@ const Dashboard = ({ appData }) => {
   const extractFacultyFromProgram = (programString) => {
     if (!programString) return null;
 
-    const lowerProgram = programString.toLowerCase();
+    const lowerProgram = programString.toLowerCase()
+      .replace(/\s*&\s*/g, ' and ')      // Normalize & to 'and'
+      .replace(/\band\b/gi, 'and');       // Normalize all AND variations to 'and'
 
     // Check for faculty abbreviations in the program string
-    if (lowerProgram.includes('e and t') || lowerProgram.includes('e & t') || lowerProgram.includes('foet')) {
+    // Now handles: "e and t", "e AND t", "E and T", "e & t", etc.
+    if (lowerProgram.includes('e and t') || lowerProgram.includes('foet')) {
       return 'Faculty of Engineering & Technology';
     }
-    if (lowerProgram.includes('s and h') || lowerProgram.includes('s & h') || lowerProgram.includes('fsh')) {
+    if (lowerProgram.includes('s and h') || lowerProgram.includes('fsh')) {
       return 'Faculty of Science & Humanities';
     }
     if (lowerProgram.includes('mgt') || lowerProgram.includes('management') || lowerProgram.includes('fom')) {

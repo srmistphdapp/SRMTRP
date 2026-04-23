@@ -3,6 +3,7 @@ import { MdFullscreen, MdFullscreenExit } from 'react-icons/md';
 import './Checklist.css';
 import { useAppContext } from '../../context/AppContext.js';
 import { fetchAdmittedScholars, updateScholarChecklist } from '../../../../services/scholarService';
+import { normalizeFacultyName } from '../../../../utils/departmentUtils';
 
 // MODIFICATION: Added new fields at the top as requested.
 // Helper: default checklist structure for a scholar
@@ -49,18 +50,7 @@ const extractDepartmentFromProgram = (programString) => {
   return '';
 };
 
-// Normalize faculty name to handle variations like:
-// "Faculty of Medical & Health Science" (examination_records)
-// "Faculty of Medical and Health Sciences" (departments table)
-const normalizeFacultyName = (name) => {
-  if (!name) return '';
-  return name
-    .toLowerCase()
-    .replace(/\s*&\s*/g, ' and ')       // & → and
-    .replace(/sciences\b/g, 'science')  // plural → singular
-    .replace(/\s+/g, ' ')
-    .trim();
-};
+// Using centralized normalizeFacultyName from departmentUtils
 
 // Helper function to find matching department in faculty's department list
 const findMatchingDepartment = (extractedDept, facultyName, facultiesData) => {

@@ -1769,7 +1769,7 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
                           } else {
                             const marks70 = Math.round(((item.written_marks_100 || 0) / 100) * 70);
                             return (
-                              <span className={`marks-badge ${marks70 > 35 ? 'marks-passed' : 'marks-failed'}`}>
+                              <span className={`marks-badge ${marks70 >= 35 ? 'marks-passed' : 'marks-failed'}`}>
                                 {marks70}
                               </span>
                             );

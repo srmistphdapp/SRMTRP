@@ -132,3 +132,119 @@ export const getFacultyInterviewStatus = (institution) => {
   const group = getInstitutionGroup(institution) || 'Engineering';
   return `Forwarded_To_${group}`;
 };
+
+/**
+ * CRITICAL: Normalize faculty names to handle ALL variations of "and" and "&"
+ * Handles:
+ * - "and", "AND", "And" → all converted to "and"
+ * - "&" → converted to "and"
+ * - Plural forms: "sciences" → "science"
+ * - Extra whitespace
+ * 
+ * This is the PRIMARY function for all faculty matching.
+ * @param {string} name - Faculty name to normalize
+ * @returns {string} - Normalized faculty name
+ * @example
+ * normalizeFacultyName("Faculty of Engineering & Technology") 
+ * → "faculty of engineering and technology"
+ * normalizeFacultyName("Faculty of Medical AND Health Sciences") 
+ * → "faculty of medical and health science"
+ */
+export const normalizeFacultyName = (name) => {
+  if (!name) return '';
+  return name
+    .toString()
+    .toLowerCase()
+    .replace(/\s*&\s*/g, ' and ')        // & → and (with spaces)
+    .replace(/\band\b/gi, 'and')         // Normalize all "AND", "And" variations to "and"
+    .replace(/sciences\b/g, 'science')   // Plural → singular
+    .replace(/\s+/g, ' ')                // Collapse whitespace
+    .trim();
+};
+
+/**
+ * CRITICAL: Normalize department names similarly to faculty names
+ * This ensures consistent department matching across the application
+ * @param {string} name - Department name to normalize
+ * @returns {string} - Normalized department name
+ */
+export const normalizeDepartmentName = (name) => {
+  if (!name) return '';
+  return name
+    .toString()
+    .toLowerCase()
+    .replace(/\s*&\s*/g, ' and ')        // & → and
+    .replace(/\band\b/gi, 'and')         // Normalize all AND variations to "and"
+    .replace(/\s+/g, ' ')                // Collapse whitespace
+    .trim();
+};
+
+/**
+ * CRITICAL: Faculty matching with IF-ELSE LADDER logic
+ * Handles the "and" problem across the application
+ * 
+ * Logic order:
+ * 1. First try: normalize both and compare for exact match
+ * 2. Second try: normalize both and check if one includes the other
+ * 3. Third try: if above fails, try the "&" variant (check if "&" version matches)
+ * 
+ * @param {string} faculty1 - First faculty name
+ * @param {string} faculty2 - Second faculty name to match
+ * @returns {boolean} - True if faculties match
+ * @example
+ * isFacultyMatch("Faculty of Engineering & Technology", "Faculty of Engineering and Technology") → true
+ * isFacultyMatch("Faculty of Medical AND Health Science", "Faculty of Medical & Health Sciences") → true
+ */
+export const isFacultyMatch = (faculty1, faculty2) => {
+  if (!faculty1 || !faculty2) return false;
+
+  // Step 1: Normalize both and check for exact match
+  const norm1 = normalizeFacultyName(faculty1);
+  const norm2 = normalizeFacultyName(faculty2);
+
+  if (norm1 === norm2) {
+    return true;
+  }
+
+  // Step 2: Check if one includes the other (partial match)
+  if (norm1.includes(norm2) || norm2.includes(norm1)) {
+    return true;
+  }
+
+  // Step 3: Try alternative "&" matching if above doesn't match
+  // Create alternate form with "&" instead of "and"
+  const alt1 = norm1.replace(/\sand\s/g, ' & ');
+  const alt2 = norm2.replace(/\sand\s/g, ' & ');
+
+  if (alt1 === alt2 || alt1.includes(alt2) || alt2.includes(alt1)) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * Normalize department matching with the same robust logic as faculty matching
+ * @param {string} dept1 - First department name
+ * @param {string} dept2 - Second department name
+ * @returns {boolean} - True if departments match
+ */
+export const isDepartmentMatch = (dept1, dept2) => {
+  if (!dept1 || !dept2) return false;
+
+  // Normalize both
+  const norm1 = normalizeDepartmentName(dept1);
+  const norm2 = normalizeDepartmentName(dept2);
+
+  // Exact match
+  if (norm1 === norm2) {
+    return true;
+  }
+
+  // Partial match
+  if (norm1.includes(norm2) || norm2.includes(norm1)) {
+    return true;
+  }
+
+  return false;
+};

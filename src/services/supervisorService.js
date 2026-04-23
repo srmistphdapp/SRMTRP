@@ -1,4 +1,5 @@
 import { supabase, supabaseAdmin } from '../supabaseClient';
+import { normalizeFacultyName } from '../utils/departmentUtils';
 
 /**
  * Supervisor Service
@@ -283,14 +284,8 @@ export const getQualifiedScholarsByFacultyDept = async (facultyName, departmentN
       // 6. MUST match faculty — normalize before comparing to handle variations like:
       //    "Faculty of Medical & Health Science"  (examination_records)
       //    "Faculty of Medical and Health Sciences" (departments table)
-      const normalizeFaculty = (s) => (s || '')
-        .toLowerCase()
-        .replace(/\s*&\s*/g, ' and ')   // & → and
-        .replace(/sciences\b/g, 'science') // plural → singular
-        .replace(/\s+/g, ' ')
-        .trim();
-
-      const facultyMatch = normalizeFaculty(record.faculty) === normalizeFaculty(facultyName);
+      // Using centralized normalizeFacultyName utility from departmentUtils
+      const facultyMatch = normalizeFacultyName(record.faculty) === normalizeFacultyName(facultyName);
       if (!facultyMatch) {
         return false;
       }
@@ -350,8 +345,7 @@ export const getQualifiedScholarsByFacultyDept = async (facultyName, departmentN
       console.log(`❌ No completed scholars found. Debugging...`);
 
       // Debug 1: Check all scholars in this faculty (use same normalization)
-      const normFaculty = (s) => (s || '').toLowerCase().replace(/\s*&\s*/g, ' and ').replace(/sciences\b/g, 'science').replace(/\s+/g, ' ').trim();
-      const scholarsInFaculty = allScholars.filter(s => normFaculty(s.faculty) === normFaculty(facultyName));
+      const scholarsInFaculty = allScholars.filter(s => normalizeFacultyName(s.faculty) === normalizeFacultyName(facultyName));
       console.log(`📊 Total scholars in "${facultyName}": ${scholarsInFaculty.length}`);
 
       // Debug 2: Check scholars with all marks completed

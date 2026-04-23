@@ -7,6 +7,7 @@ import {
 import { publishFacultyResults } from '../../../../services/examinationService';
 import { supabase } from '../../../../supabaseClient';
 import { toast } from 'react-toastify';
+import { normalizeFacultyName, normalizeDepartmentName } from '../../../../utils/departmentUtils';
 
 // Faculty color map
 const facultyColors = {
@@ -323,25 +324,21 @@ export default function Result({ onModalStateChange }) {
     setExpanded(e => ({ ...e, [key]: !e[key] }));
   };
 
-  // Helper function to normalize names for comparison
-  const normalizeName = (name) => {
-    if (!name) return '';
-    return name.toLowerCase()
-      .replace(/&/g, 'and')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
+  // Using centralized normalizeFacultyName from departmentUtils for robust faculty matching
 
   // Get scholar count for a faculty - match by faculty field directly
   const getScholarCountForFaculty = (facultyName) => {
-    const normalizedFaculty = normalizeName(facultyName);
+    const normalizedFaculty = normalizeFacultyName(facultyName);
     return examRecords.filter(record => {
-      const recordFaculty = normalizeName(record.faculty || '');
+      const recordFaculty = normalizeFacultyName(record.faculty || '');
       return recordFaculty === normalizedFaculty ||
         recordFaculty.includes(normalizedFaculty) ||
         normalizedFaculty.includes(recordFaculty);
     }).length;
   };
+
+  // Helper: Generic normalization for names (works for both faculty and department)
+  const normalizeName = (name) => normalizeFacultyName(name);
 
   // Get scholar count for a department and type (considering faculty context)
   const getScholarCountForDepartment = (facultyName, deptName, type) => {

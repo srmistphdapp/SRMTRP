@@ -1158,6 +1158,28 @@ export const deleteAllDirectorAdminScholars = async () => {
     return { data: null, error: err };
   }
 };
+
+// Delete all scholars for Director/Admin/Research Coordinator (matches fetchDirectorAdminScholars criteria)
+export const deleteAllDirectorAdminCoordinatorScholars = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('scholar_applications')
+      .delete()
+      .or('current_owner.eq.director,current_owner.eq.research_coordinator,current_owner.eq.admin')
+      .select();
+
+    if (error) {
+      console.error('Error deleting all director/admin/coordinator scholars:', error);
+      return { data: null, error };
+    }
+
+    return { data, error: null };
+  } catch (err) {
+    console.error('Exception in deleteAllDirectorAdminCoordinatorScholars:', err);
+    return { data: null, error: err };
+  }
+};
+
 // Fetch scholars for Department based on status and faculty_status
 export const fetchDepartmentScholars = async (statusFilters = [], facultyStatusFilters = []) => {
   try {

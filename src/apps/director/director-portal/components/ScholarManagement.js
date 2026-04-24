@@ -13,6 +13,7 @@ import {
   forwardScholarToRC,
   uploadScholarExcel,
   deleteAllDirectorAdminScholars,
+  deleteAllDirectorAdminCoordinatorScholars,
   deleteScholar,
   fetchDistinctInstitutions,
   fetchDistinctDepartments,
@@ -1101,7 +1102,7 @@ const ScholarManagement = ({ onFullscreenChange, onModalStateChange }) => {
 
   // Confirm delete all scholars
   const confirmDeleteAll = async () => {
-    const { data, error } = await deleteAllDirectorAdminScholars();
+    const { data, error } = await deleteAllDirectorAdminCoordinatorScholars();
     if (error) {
       console.error('Error deleting all scholars:', error);
       showMessage('Error deleting all scholars', 'error');

@@ -16,6 +16,7 @@ import {
   forwardToDirectorForInterview,
   bulkForwardToDirectorForInterview
 } from '../../../../services/examinationService';
+import { deleteScholar } from '../../../../services/scholarService';
 
 // Helper data for dropdowns (replicated from context for local use)
 const facultiesData = [
@@ -1012,10 +1013,16 @@ const Examination = ({ onFullscreenChange, onModalStateChange }) => {
 
   const confirmBulkDelete = async () => {
     try {
-      const deletions = selectedScholars.map(id =>
-        deleteExaminationRecord(id)
-      );
-      await Promise.all(deletions);
+      const deletions = selectedScholars.map(id => deleteScholar(id));
+      const results = await Promise.all(deletions);
+      
+      // Check if any deletions failed
+      const failedDeletions = results.filter(r => r.error);
+      if (failedDeletions.length > 0) {
+        toast.error(`${failedDeletions.length} scholars failed to delete`);
+        return;
+      }
+      
       toast.success(`${selectedScholars.length} scholars deleted successfully!`);
       setShowBulkDeleteModal(false);
       handleClearSelection();

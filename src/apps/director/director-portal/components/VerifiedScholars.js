@@ -3,7 +3,7 @@ import { useAppContext } from '../../context/AppContext.js';
 import './ScholarManagement.css';
 import * as XLSX from 'xlsx';
 import { FaTimes, FaDownload } from 'react-icons/fa';
-import { fetchBackToDirectorScholars, updateScholar } from '../../../../services/scholarService';
+import { fetchBackToDirectorScholars, updateScholar, deleteScholar } from '../../../../services/scholarService';
 import { fetchDepartmentsByFaculty } from '../../../../services/departmentService';
 import { supabase } from '../../../../supabaseClient';
 
@@ -753,12 +753,25 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
   };
 
   // Confirm delete scholar
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deletingScholar) {
-      setScholarsData(prev => prev.filter(s => s.id !== deletingScholar.id));
-      showMessage(`${deletingScholar.name} deleted successfully!`, 'success');
-      setShowDeleteModal(false);
-      setDeletingScholar(null);
+      try {
+        const { data, error } = await deleteScholar(deletingScholar.id);
+        
+        if (error) {
+          console.error('Error deleting scholar:', error);
+          showMessage('Error deleting scholar from database', 'error');
+          return;
+        }
+        
+        setScholarsData(prev => prev.filter(s => s.id !== deletingScholar.id));
+        showMessage(`${deletingScholar.name} deleted successfully!`, 'success');
+        setShowDeleteModal(false);
+        setDeletingScholar(null);
+      } catch (err) {
+        console.error('Exception in confirmDelete:', err);
+        showMessage('Error deleting scholar', 'error');
+      }
     }
   };
 
@@ -900,7 +913,19 @@ const VerifiedScholars = ({ onFullscreenChange, onModalStateChange }) => {
 
   const confirmBulkDelete = async () => {
     try {
-      showMessage(`Bulk delete feature coming soon for ${selectedScholars.length} scholars!`, 'info');
+      const deletePromises = selectedScholars.map(id => deleteScholar(id));
+      const results = await Promise.all(deletePromises);
+      
+      // Check if any deletions failed
+      const failedDeletions = results.filter(r => r.error);
+      if (failedDeletions.length > 0) {
+        showMessage(`${failedDeletions.length} scholars failed to delete`, 'error');
+        return;
+      }
+      
+      // Update local state to remove deleted scholars
+      setScholarsData(prev => prev.filter(s => !selectedScholars.includes(s.id)));
+      showMessage(`${selectedScholars.length} scholars deleted successfully!`, 'success');
       setShowBulkDeleteModal(false);
       handleClearSelection();
     } catch (error) {
